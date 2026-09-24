@@ -12,7 +12,8 @@ Architecture: `ARCHITECTURE.md` · Facts, decisions, Bobcoin ledger: `MEMORY.md`
 
 ## Phase 0 — Before kickoff (Thu 24 Sep, now)
 
-- [ ] Register on lablab.ai (deadline tonight, 24 Sep)
+- [x] Register on lablab.ai
+- [ ] Create an IBMid on the registration email (needed to sign in to Bob)
 - [x] Create repo, write ARCHITECTURE / MEMORY / PLAN
 - [ ] Install Bob IDE, sign in, note the version number in MEMORY §2
 - [ ] Skim Bob docs for: custom mode file format, slash command path, `office_edit` usage
@@ -20,6 +21,11 @@ Architecture: `ARCHITECTURE.md` · Facts, decisions, Bobcoin ledger: `MEMORY.md`
 - [ ] Sleep. The recorded run needs a clear head on Sunday.
 
 No application code before kickoff (see MEMORY §2, pre-event work).
+
+## Kickoff (Fri 16:00 WAT)
+
+- [ ] Find the IBM Bob invite email (check spam; search "IBM Bob"), accept it
+- [ ] Sign in to Bob IDE, switch team to `ibm-coding-challenge-xxx`, confirm 40 Bobcoins in Settings → General
 
 ## Phase 1 — Fixture (Fri 16:00 → Sat 00:00, ~8h) · 0 Bobcoins
 

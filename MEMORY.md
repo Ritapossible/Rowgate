@@ -32,6 +32,8 @@ or Bobcoins are spent.
 | Subagents (parallel, isolated context) since 2.0.0; modes can restrict which subagents run; each spawn needs explicit approval | Changelog 2.0.0 |
 | Reads `.docx`, `.pdf`, `.xlsx` natively; Ask / Plan / Agent modes; parallel tool calls; single self-contained HTML summary | Bob V2 announcement |
 | `office_read` and `office_edit` for `.docx`, `.xlsx`, `.pptx` — **2.1.0 (Aug 2026)**. Edit = set values, add/remove content, find-and-replace. Comments not mentioned | Changelog 2.1.0 |
+| Hackathon account: invite email from the IBM Bob team **at the start of the hackathon** to the registration email ("added as a team member to ibm-hackathon-xxx", Enterprise plan). 40 Bobcoins auto-applied, no top-up. Sign in with an IBMid on the registration email. Usage shown in Bob IDE → Settings → General. Use only the `ibm-coding-challenge-xxx` instance during the event | Hackathon guide (May 2026 edition) — https://watsonx-hackathons-2026.s3.us.cloud-object-storage.appdomain.cloud/Lablab-IBM-Bob-hackathon-guide-May-2026.pdf |
+| Separate personal free trial: 50 Bobcoins for 30 days | https://bob.ibm.com/trial |
 | 2.2.0 (Sep 2026): live subagent tool results in chat; `plugins/` subdirectory for skills, modes, rules, MCP; HTTPS hook handlers | Changelog 2.2.0 |
 
 ### Unverified — check at kickoff (Fri 25 Sep)

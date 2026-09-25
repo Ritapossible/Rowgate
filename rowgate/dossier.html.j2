@@ -59,10 +59,11 @@
   pre.diff .del { background: var(--red-bg); color: var(--red); }
   pre.diff .at { color: var(--muted); }
   .test { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .test code, .decision code { overflow-wrap: anywhere; min-width: 0; }
   .arrow { color: var(--muted); }
   .why { color: var(--muted); margin: 0 0 12px; }
   .decision { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-  .problems { border: 2px solid var(--red); background: var(--red-bg); color: var(--red); border-radius: 10px; padding: 12px 16px; }
+  .problems { overflow-wrap: anywhere; border: 2px solid var(--red); background: var(--red-bg); color: var(--red); border-radius: 10px; padding: 12px 16px; }
   .skip { border-style: dashed; }
   footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   footer pre { background: var(--code-bg); padding: 10px 12px; border-radius: 8px; overflow-x: auto; color: var(--ink); }

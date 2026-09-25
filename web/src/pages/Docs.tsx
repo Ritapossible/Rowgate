@@ -118,10 +118,10 @@ scripts/reset_demo.sh --force       # branch feature/fast-checkout at demo/start
           <li><b>Decide</b> <span className="pill amber">human</span> fix the code, record a breaking change, or reject the finding.</li>
           <li><b>Measure and publish</b> <span className="pill">script</span> <code>run_contract_tests.sh after</code>, <code>render_dossier.py</code>, <code>export_site.py</code>.</li>
         </ol>
-        <Note kind="warn" title="Status: Bob configuration">
-          The Contract Gate mode, the Rowgate Skill and <code>/rowgate</code> are built during the hackathon window on the
-          IBM Bob hackathon account. Their files will live under <code>.bob/</code> once the file locations are confirmed in the
-          Bob build. Everything else on this page exists in the repository today.
+        <Note title="Where the Bob pieces live">
+          The Rowgate Skill is <code>.bob/skills/rowgate/SKILL.md</code>, with a contract-test template beside it. The Contract
+          Gate mode and the <code>/rowgate</code> command are defined in <code>rowgate/bob/</code>. <code>RUNBOOK.md</code> lists
+          every step of a run, what to approve, and the expected result.
         </Note>
       </>
     ),

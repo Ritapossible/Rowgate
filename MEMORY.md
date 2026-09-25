@@ -99,6 +99,7 @@ If dry run 1 costs more than 12, cut to two subagents (see ARCHITECTURE §8).
 | When (WAT) | What happened |
 | --- | --- |
 | 24 Sep | Idea chosen (Rowgate). Bob capability limits verified. Repo created; ARCHITECTURE, MEMORY, PLAN written. |
+| 25 Sep 18:20 WAT | Phase 2 started: Rowgate Skill + test template, Contract Gate mode and /rowgate text (paste-ready), RUNBOOK.md, publish_run.sh (tested in a scratch clone). Waiting on the Bob account to run. |
 | 25 Sep AM (3) | Web app built (D17): Overview, Run, Contract explorer; `export_site.py`. Checked in light/dark, desktop/phone, with and without a run (sample run kept out of the repo). |
 | 25 Sep AM (2) | Measured evidence (D15), `reset_demo.sh`, `demo/start` (D16), CI. Full simulated run renders with 0 problems. 14 tests green. |
 | 25 Sep AM | Phase 1 scaffold built before kickoff (D12): service, 41-rule workbook, branch with 3 breaks + decoy, scripts, renderer. 10 tests green on main and branch. 0 Bobcoins used. |

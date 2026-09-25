@@ -53,8 +53,9 @@ Phase 1 finished early, so Phase 2 starts at kickoff and the later phases gain ~
 - [x] Evidence is measured: diff excerpts by file + line, workbook edits by comparing with git (ARCHITECTURE §4)
 - [x] `scripts/reset_demo.sh` + `demo/start` branch; CI (`.github/workflows/tests.yml`) runs all tests on every PR
 - [x] Full simulated run (placeholder tests, scripted workbook edit): dossier renders with 0 problems
-- [ ] `.bob/skills/rowgate/SKILL.md`: procedure, schema, test naming rule, decoy guidance ("check serialization aliases before flagging a rename"), "never edit app/ unless decision = fix_code"
-- [ ] Contract Gate custom mode: instructions + allowed subagents
+- [x] `.bob/skills/rowgate/SKILL.md`: procedure, schema, test naming rule, decoy guidance ("check serialization aliases before flagging a rename"), "never edit app/ unless decision = fix_code"; test template beside it
+- [x] Contract Gate custom mode text (`rowgate/bob/contract-gate-mode.md`), `/rowgate` command text, `RUNBOOK.md`, `scripts/publish_run.sh`
+- [ ] Create the mode and command in Bob (paste); note where Bob saves them
 - [ ] `/rowgate` slash command (skip if the path is unclear; invoke the Skill directly)
 - [ ] Rehearse prompts in **Ask mode** on one sheet (≤ 8 coins). Log in MEMORY §6
 - [ ] **Dry run 1**, full path (≤ 10 coins). Record cost per subagent in MEMORY §6

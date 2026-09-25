@@ -45,7 +45,7 @@ export default function App() {
     <>
       <Nav />
       {page}
-      <Footer exportedAt={site?.exportedAt} />
+      <Footer />
     </>
   );
 }

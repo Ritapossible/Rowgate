@@ -410,9 +410,13 @@ table.sheet td.note::after { content: ""; position: absolute; top: 0; right: 0; 
 }
 
 /* ---------- footer ---------- */
-.footer { border-top: 1px solid var(--line); margin-top: 72px; padding: 36px 0 48px; color: var(--muted); font-size: 14px; }
-.footer-inner { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; }
-.footer a { color: var(--forest); }
+.footer { border-top: 1px solid var(--line); margin-top: 80px; padding: 56px 0 64px; color: var(--muted); font-size: 15px; text-align: center; }
+.footer-inner { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.footer-brand { display: flex; align-items: center; gap: 12px; font: 500 26px/1 var(--serif); color: var(--forest); letter-spacing: -0.01em; }
+.footer-tag { margin: 0; color: var(--ink); font-size: 16px; }
+.footer-meta { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; max-width: 46ch; }
+.footer-meta a { color: var(--forest); text-underline-offset: 3px; }
+.footer-note { margin: 0; font-size: 13px; color: var(--muted); }
 
 .fade-in { animation: fade 0.35s ease both; }
 @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }

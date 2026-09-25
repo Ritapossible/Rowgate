@@ -90,22 +90,21 @@ export function Nav() {
   );
 }
 
-export function Footer({ exportedAt }: { exportedAt?: string }) {
+export function Footer() {
   return (
     <footer className="footer">
       <div className="wrap footer-inner">
-        <div>
-          <b style={{ color: "var(--forest)" }}>Rowgate</b> · built with IBM Bob for the IBM Bob 2.0 Hackathon (lablab.ai). MIT licensed.
-          <br />
-          Independent project, not affiliated with IBM. The Kora partner, API and contract are fictional demo material.
+        <div className="footer-brand">
+          <Logo size={28} />
+          <span>Rowgate</span>
         </div>
-        <div>
-          <Link href="/docs">Docs</Link> ·{" "}
-          <a href={REPO} target="_blank" rel="noreferrer">
-            Source on GitHub
-          </a>
-          {exportedAt && <span> · data exported {exportedAt}</span>}
-        </div>
+        <p className="footer-tag">The signed contract, as a release gate.</p>
+        <p className="footer-meta">
+          <a href={REPO} target="_blank" rel="noreferrer">source</a>
+          <span aria-hidden="true">·</span>
+          <Link href="/docs">docs</Link>
+        </p>
+        <p className="footer-note">Built with IBM Bob · not affiliated with IBM</p>
       </div>
     </footer>
   );

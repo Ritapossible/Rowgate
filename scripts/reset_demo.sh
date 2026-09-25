@@ -4,11 +4,14 @@
 # Run before every dry run and before the recording.
 #
 # Usage: scripts/reset_demo.sh           check only; refuses if there are uncommitted changes
-#        scripts/reset_demo.sh --force   discard run leftovers and move the branch back to tag demo-start
+#        scripts/reset_demo.sh --force   discard run leftovers and move the branch back to demo/start
+#
+# demo/start is a branch that marks the untouched PR. Never commit to it.
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)"
 BRANCH=feature/fast-checkout
-START=demo-start
+START=$(git rev-parse --verify -q refs/heads/demo/start || git rev-parse --verify -q refs/remotes/origin/demo/start)
+[[ -n "$START" ]] || { echo "No demo/start branch (git fetch origin demo/start)"; exit 1; }
 PY="${PYTHON:-python}"
 FORCE=0; [[ "${1:-}" == "--force" ]] && FORCE=1
 
@@ -33,12 +36,12 @@ find out -mindepth 1 ! -name .gitkeep -delete 2>/dev/null
 fail=0
 check() { if eval "$2" >/dev/null 2>&1; then echo "  ✓ $1"; else echo "  ✗ $1"; fail=1; fi; }
 echo "Demo state:"
-check "on $BRANCH at $START" "[[ \$(git rev-parse HEAD) == \$(git rev-parse $START) ]]"
+check "on $BRANCH at demo/start" "[[ \$(git rev-parse HEAD) == \$(git rev-parse $START) ]]"
 check "branch includes the latest main (tooling up to date)" "git merge-base --is-ancestor main HEAD"
 check "PR changes only app/ (5 files)" "[[ \$(git diff --name-only main...HEAD | grep -cv '^app/') == 0 && \$(git diff --name-only main...HEAD | wc -l) == 5 ]]"
 check "no contract tests yet" "! ls tests/contract/test_*.py"
 check "workbook identical to main" "git diff --quiet main -- contract/api-contract.xlsx"
 check "out/ empty" "[[ -z \$(find out -mindepth 1 ! -name .gitkeep) ]]"
 check "existing tests green (the PR looks mergeable)" "$PY -m pytest -q -p no:cacheprovider tests --ignore=tests/contract"
-if [[ $fail -eq 0 ]]; then echo "Ready."; else echo "Not ready. Fix the ✗ items (scripts/reset_demo.sh --force resets to $START)."; fi
+if [[ $fail -eq 0 ]]; then echo "Ready."; else echo "Not ready. Fix the ✗ items (scripts/reset_demo.sh --force resets to demo/start)."; fi
 exit $fail

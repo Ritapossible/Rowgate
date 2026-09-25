@@ -2,14 +2,20 @@
 
 Inputs
   out/findings.json                 written by Bob (schema: rowgate/findings.schema.json)
+  out/diff.patch                    from scripts/collect_diff.sh; hunks are cut from here by file + line
   out/test_results.before.json      pytest JSON report on the untouched branch (optional)
   out/test_results.after.json       pytest JSON report after the approved changes (optional)
-  contract/api-contract.xlsx        the cited rows are read straight from the workbook
+  contract/api-contract.xlsx        cited rows are read from the workbook, and every cell that
+                                    differs from the base branch's copy is listed as measured
+
+Nothing in the dossier's evidence is taken on Bob's word: code comes from the diff, test
+outcomes from pytest, workbook edits from comparing the file with git.
 
 Usage: python scripts/render_dossier.py [--findings out/findings.json] [--out out/dossier.html]
 """
 
 import argparse
+import io
 import json
 import re
 import subprocess
@@ -24,31 +30,63 @@ from openpyxl.utils.cell import coordinate_from_string, column_index_from_string
 ROOT = Path(__file__).resolve().parent.parent
 CELL = re.compile(r"^([A-Za-z]+)!([A-Z]+[0-9]+)$")
 TEST = re.compile(r"^tests/contract/test_[a-z]+_([A-Z]+[0-9]+)_[a-z0-9_]+\.py$")
+HUNK_HEAD = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
 HEADER_KEYS = {"Rule", "Code", "Date", "Party"}
+EXCERPT = 6  # lines of context either side of the cited line
 
 
-def validate(doc: dict) -> list[str]:
-    """The checks that matter for the demo. Errors are shown in the dossier, not hidden."""
-    problems = []
-    for key in ("branch", "base", "workbook", "findings", "skipped"):
-        if key not in doc:
-            problems.append(f"findings.json is missing '{key}'")
-    for f in doc.get("findings", []):
-        fid = f.get("id", "?")
-        if not CELL.match(f.get("cell", "")):
-            problems.append(f"{fid}: cell '{f.get('cell')}' is not Sheet!A1 form")
-        m = TEST.match(f.get("test", ""))
-        if not m:
-            problems.append(f"{fid}: BREAK without a correctly named test (tests/contract/test_<sheet>_<cell>_<what>.py)")
-        elif CELL.match(f.get("cell", "")) and m.group(1) != CELL.match(f["cell"]).group(2):
-            problems.append(f"{fid}: test name cites {m.group(1)} but finding cites {f['cell']}")
-        elif not (ROOT / f["test"]).exists():
-            problems.append(f"{fid}: {f['test']} does not exist")
-    return problems
+# --- diff -------------------------------------------------------------------------------
+
+def parse_patch(text: str) -> dict[str, list[list[str]]]:
+    """file → list of hunks (each a list of lines, starting with the @@ header)."""
+    files: dict[str, list[list[str]]] = {}
+    current = None
+    for line in text.splitlines():
+        if line.startswith("+++ "):
+            path = line[4:].strip()
+            current = files.setdefault(path[2:] if path.startswith("b/") else path, [])
+        elif line.startswith("@@") and current is not None:
+            current.append([line])
+        elif current and line[:1] in (" ", "+", "-", "\\"):
+            current[-1].append(line)
+    return files
+
+
+def excerpt(patch: dict, file: str, line: int | None) -> tuple[list[tuple[str, str]], str | None]:
+    """Cut the hunk that covers `line` (new-file numbering) down to a few lines around it."""
+    hunks = patch.get(file)
+    if not hunks:
+        return [], f"{file} is not in out/diff.patch"
+    for hunk in hunks:
+        m = HUNK_HEAD.match(hunk[0])
+        new_start, new_len = int(m.group(3)), int(m.group(4) or 1)
+        if line is not None and not (new_start <= line < new_start + max(new_len, 1)):
+            continue
+        rows, new_no = [], new_start
+        for text in hunk[1:]:
+            kind = {"+": "add", "-": "del"}.get(text[:1], "ctx")
+            at = new_no
+            if kind != "del":
+                new_no += 1
+            if line is None or abs(at - line) <= EXCERPT:
+                rows.append(("hit " + kind if kind != "del" and at == line else kind, text))
+        head = f"@@ {file} around line {line} @@" if line else hunk[0]
+        return [("at", head)] + rows, None
+    return [], f"no hunk in out/diff.patch covers {file}:{line}"
+
+
+# --- workbook ---------------------------------------------------------------------------
+
+def git(*args: str, binary: bool = False):
+    try:
+        out = subprocess.run(["git", *args], cwd=ROOT, capture_output=True, check=True).stdout
+        return out if binary else out.decode().strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
 
 
 def cited_row(wb, ref: str) -> dict | None:
-    """Return the header row and the cited row so the dossier can show the cell in context."""
+    """The header row and the cited row, so the dossier shows the cell in context."""
     m = CELL.match(ref)
     if not m or m.group(1) not in wb.sheetnames:
         return None
@@ -79,6 +117,30 @@ def cited_row(wb, ref: str) -> dict | None:
     }
 
 
+def workbook_changes(wb, base: str, path: str) -> list[dict] | None:
+    """Every cell whose value differs from the base branch's copy of the workbook."""
+    blob = git("show", f"{base}:{path}", binary=True)
+    if blob is None:
+        return None
+    old = load_workbook(io.BytesIO(blob))
+    changes = []
+    for name in wb.sheetnames:
+        new_ws = wb[name]
+        old_ws = old[name] if name in old.sheetnames else None
+        rows = max(new_ws.max_row, old_ws.max_row if old_ws else 0)
+        cols = max(new_ws.max_column, old_ws.max_column if old_ws else 0)
+        for r in range(1, rows + 1):
+            for c in range(1, cols + 1):
+                a = old_ws.cell(row=r, column=c).value if old_ws else None
+                b = new_ws.cell(row=r, column=c).value
+                if a != b:
+                    changes.append({"cell": f"{name}!{get_column_letter(c)}{r}",
+                                    "old": "" if a is None else str(a), "new": "" if b is None else str(b)})
+    return changes
+
+
+# --- tests ------------------------------------------------------------------------------
+
 def outcomes(path: Path) -> dict[str, str]:
     """Map test file → worst outcome in a pytest-json-report file."""
     if not path.exists():
@@ -94,44 +156,82 @@ def outcomes(path: Path) -> dict[str, str]:
     return result
 
 
-def diff_lines(hunk: str) -> list[tuple[str, str]]:
-    kinds = []
-    for line in hunk.splitlines():
-        kind = "add" if line.startswith("+") else "del" if line.startswith("-") else "at" if line.startswith("@@") else "ctx"
-        kinds.append((kind, line))
-    return kinds
+# --- checks -----------------------------------------------------------------------------
 
-
-def git(*args: str) -> str:
-    try:
-        return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return ""
+def validate(doc: dict) -> list[str]:
+    """The checks that matter for the demo. Problems are shown in the dossier, not hidden."""
+    problems = []
+    for key in ("branch", "base", "workbook", "findings", "skipped"):
+        if key not in doc:
+            problems.append(f"findings.json is missing '{key}'")
+    for f in doc.get("findings", []):
+        fid = f.get("id", "?")
+        cell = CELL.match(f.get("cell", ""))
+        if not cell:
+            problems.append(f"{fid}: cell '{f.get('cell')}' is not Sheet!A1 form")
+        m = TEST.match(f.get("test", ""))
+        if not m:
+            problems.append(f"{fid}: BREAK without a correctly named test (tests/contract/test_<sheet>_<cell>_<what>.py)")
+        elif cell and m.group(1) != cell.group(2):
+            problems.append(f"{fid}: test name cites {m.group(1)} but finding cites {f['cell']}")
+        elif not (ROOT / f["test"]).exists():
+            problems.append(f"{fid}: {f['test']} does not exist")
+    return problems
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--findings", default="out/findings.json")
     ap.add_argument("--out", default="out/dossier.html")
+    ap.add_argument("--patch", default="out/diff.patch")
     args = ap.parse_args()
 
     doc = json.loads((ROOT / args.findings).read_text())
     problems = validate(doc)
-    wb = load_workbook(ROOT / doc.get("workbook", "contract/api-contract.xlsx"))
+    workbook_path = doc.get("workbook", "contract/api-contract.xlsx")
+    wb = load_workbook(ROOT / workbook_path)
+    patch_file = ROOT / args.patch
+    patch = parse_patch(patch_file.read_text()) if patch_file.exists() else {}
+    if not patch_file.exists():
+        problems.append(f"{args.patch} not found: run scripts/collect_diff.sh first")
     before = outcomes(ROOT / "out/test_results.before.json")
     after = outcomes(ROOT / "out/test_results.after.json")
+    changes = workbook_changes(wb, doc.get("base", "main"), workbook_path)
+    changed_cells = {c["cell"]: c["new"] for c in changes or []}
+
+    def evidence_rows(owner: str, ev) -> list:
+        if not isinstance(ev, dict) or "file" not in ev:
+            return []
+        if ev.get("hunk"):  # explicit hunk from Bob: shown, but only if it really is in the diff
+            body = [l for l in ev["hunk"].splitlines() if l[:1] in "+-"]
+            text = "\n".join(l for h in patch.get(ev["file"], []) for l in h)
+            if any(l not in text for l in body):
+                problems.append(f"{owner}: quoted hunk does not match out/diff.patch for {ev['file']}")
+            return [("at" if l.startswith("@@") else {"+": "add", "-": "del"}.get(l[:1], "ctx"), l)
+                    for l in ev["hunk"].splitlines()]
+        rows, err = excerpt(patch, ev["file"], ev.get("line"))
+        if err and patch:
+            problems.append(f"{owner}: {err}")
+        return rows
 
     findings = []
     for f in doc.get("findings", []):
+        fid = f.get("id", "?")
+        for cell, value in ((f.get("workbook_edit") or {}).get("cells") or {}).items():
+            if changes is not None and changed_cells.get(cell) != value:
+                problems.append(f"{fid}: claims {cell} = {value}, but the workbook has "
+                                f"{changed_cells.get(cell, 'no change there')!r}")
         findings.append({
             **f,
             "row": cited_row(wb, f.get("cell", "")),
             "related": [cited_row(wb, c) for c in f.get("related_cells", [])],
-            "diff": diff_lines(f.get("evidence", {}).get("hunk", "")),
+            "diff": evidence_rows(fid, f.get("evidence")),
             "before": before.get(f.get("test", "")),
             "after": after.get(f.get("test", "")),
         })
-    skipped = [{**s, "row": cited_row(wb, s.get("cell", ""))} for s in doc.get("skipped", [])]
+    skipped = [{**s, "row": cited_row(wb, s.get("cell", "")),
+                "diff": evidence_rows(s.get("cell", "skipped"), s.get("evidence"))}
+               for s in doc.get("skipped", [])]
 
     counts = {
         "breaks": len(findings),
@@ -139,23 +239,20 @@ def main() -> int:
         "red_before": sum(1 for f in findings if f["before"] == "failed"),
         "green_after": sum(1 for f in findings if f["after"] == "passed"),
         "recorded": sum(1 for f in findings if f.get("decision") == "record_breaking"),
-        "pending": sum(1 for f in findings if f.get("decision") == "pending"),
+        "cells_changed": len(changes or []),
     }
 
     env = Environment(loader=FileSystemLoader(ROOT / "rowgate"), autoescape=select_autoescape(["html", "j2"]))
     html = env.get_template("dossier.html.j2").render(
-        doc=doc,
-        findings=findings,
-        skipped=skipped,
-        counts=counts,
-        problems=problems,
-        head=git("rev-parse", "--short", "HEAD"),
+        doc=doc, findings=findings, skipped=skipped, counts=counts, problems=problems,
+        changes=changes, head=git("rev-parse", "--short", "HEAD"),
         generated=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
     )
     out = ROOT / args.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html)
-    print(f"wrote {args.out}: {counts['breaks']} breaks, {counts['skipped']} skipped, {len(problems)} problems")
+    print(f"wrote {args.out}: {counts['breaks']} breaks, {counts['skipped']} skipped, "
+          f"{counts['cells_changed']} workbook cells changed, {len(problems)} problems")
     for p in problems:
         print(f"  ! {p}", file=sys.stderr)
     return 1 if problems else 0

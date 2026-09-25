@@ -26,12 +26,13 @@
           "code_does": { "type": "string" },
           "evidence": {
             "type": "object",
-            "required": ["file", "hunk"],
+            "required": ["file", "line"],
             "additionalProperties": false,
+            "description": "Cite file and new-file line only; the renderer cuts the hunk from out/diff.patch",
             "properties": {
               "file": { "type": "string" },
-              "hunk": { "type": "string", "description": "The unified-diff hunk from out/diff.patch, verbatim" },
-              "line": { "type": "integer" }
+              "line": { "type": "integer", "description": "Line number in the branch version of the file" },
+              "hunk": { "type": "string", "description": "Optional. If given, it must match out/diff.patch or the dossier flags it" }
             }
           },
           "verdict": { "enum": ["BREAK"] },
@@ -62,7 +63,12 @@
           "cell": { "type": "string", "pattern": "^[A-Za-z]+![A-Z]+[0-9]+$" },
           "change": { "type": "string" },
           "why": { "type": "string" },
-          "evidence": { "type": "string" }
+          "evidence": {
+            "type": "object",
+            "required": ["file", "line"],
+            "additionalProperties": false,
+            "properties": { "file": { "type": "string" }, "line": { "type": "integer" } }
+          }
         }
       }
     }

@@ -1,0 +1,19 @@
+# Every push and PR runs the whole suite, including tests/contract/.
+# Once Rowgate has written contract tests, a PR that breaks a signed row fails here, with no model involved.
+name: tests
+on:
+  push:
+  pull_request:
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q

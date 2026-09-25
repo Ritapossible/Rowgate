@@ -58,6 +58,9 @@
   pre.diff .add { background: var(--green-bg); color: var(--green); }
   pre.diff .del { background: var(--red-bg); color: var(--red); }
   pre.diff .at { color: var(--muted); }
+  pre.diff .hit { font-weight: 700; box-shadow: inset 4px 0 0 var(--amber); }
+  table.edits td.old { color: var(--red); text-decoration: line-through; }
+  table.edits td.new { color: var(--green); font-weight: 600; }
   .test { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .test code, .decision code { overflow-wrap: anywhere; min-width: 0; }
   .arrow { color: var(--muted); }
@@ -155,11 +158,26 @@
   {% if s.change %}<p><span class="label">Looks like</span>{{ s.change }}</p>{% endif %}
   {{ rowtable(s.row) }}
   <p><span class="label">Why it is not a break</span>{{ s.why }}</p>
-  {% if s.evidence %}<pre class="diff"><span class="ctx">{{ s.evidence }}</span></pre>{% endif %}
+  {% if s.diff %}<span class="label">Diff{% if s.evidence %} · {{ s.evidence.file }}{% if s.evidence.line %}:{{ s.evidence.line }}{% endif %}{% endif %}</span>
+  <pre class="diff">{% for kind, line in s.diff %}<span class="{{ kind }}">{{ line }}</span>{% endfor %}</pre>{% endif %}
 </article>
 {% else %}
 <p>Nothing skipped.</p>
 {% endfor %}
+
+<h2>Workbook edits <span class="label" style="display:inline">measured against {{ doc.base }}:{{ doc.workbook }}</span></h2>
+{% if changes is none %}
+<p>Could not read the base copy of the workbook from git.</p>
+{% elif changes %}
+<article class="card">
+<div class="scroll"><table class="row edits">
+  <tr><th>Cell</th><th>Before</th><th>After</th></tr>
+  {% for c in changes %}<tr><td class="mono">{{ c.cell }}</td><td class="old">{{ c.old }}</td><td class="new">{{ c.new }}</td></tr>{% endfor %}
+</table></div>
+</article>
+{% else %}
+<p>No cells changed. The signed workbook is untouched.</p>
+{% endif %}
 
 <footer>
   <p>The tests stay in the repo. Every later PR is checked by pytest, with no model involved:</p>

@@ -43,3 +43,41 @@ def test_flags_break_without_cell_named_test(tmp_path):
     proc, html = render(tmp_path, synthetic("tests/contract/test_cover_B9_version.py"))
     assert proc.returncode == 1
     assert "test name cites B9 but finding cites Cover!B5" in html
+
+
+sys.path.insert(0, str(ROOT / "scripts"))
+import render_dossier as rd  # noqa: E402
+
+PATCH = """diff --git a/app/x.py b/app/x.py
+--- a/app/x.py
++++ b/app/x.py
+@@ -10,5 +10,5 @@ def f():
+ a = 1
+ b = 2
+-c = 3
++c = 4
+ d = 5
+ e = 6
+"""
+
+
+def test_excerpt_cuts_hunk_and_marks_cited_line():
+    rows, err = rd.excerpt(rd.parse_patch(PATCH), "app/x.py", 12)
+    assert err is None
+    assert ("hit add", "+c = 4") in rows
+    assert ("del", "-c = 3") in rows
+
+
+def test_excerpt_reports_uncovered_line():
+    rows, err = rd.excerpt(rd.parse_patch(PATCH), "app/x.py", 99)
+    assert rows == [] and "no hunk" in err
+
+
+def test_workbook_changes_are_measured_against_git():
+    import io
+    from openpyxl import load_workbook
+    # Start from the committed copy, so a demo run that edits the file doesn't break this test.
+    wb = load_workbook(io.BytesIO(rd.git("show", "HEAD:contract/api-contract.xlsx", binary=True)))
+    wb["Billing"]["H9"] = "BREAKING"
+    changes = rd.workbook_changes(wb, "HEAD", "contract/api-contract.xlsx")
+    assert changes == [{"cell": "Billing!H9", "old": "ACTIVE", "new": "BREAKING"}]

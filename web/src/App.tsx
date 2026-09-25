@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Footer, Nav } from "./components/Chrome";
 import { useData, useRun, type Contract, type PR } from "./data";
 import ContractPage from "./pages/Contract";
+import Docs from "./pages/Docs";
 import Home from "./pages/Home";
 import RunPage from "./pages/Run";
 import { Link, useLocation } from "./router";
@@ -10,6 +11,7 @@ const TITLES: Record<string, string> = {
   "/": "Rowgate · the signed contract, as a release gate",
   "/run": "Run · Rowgate",
   "/contract": "Contract · Rowgate",
+  "/docs": "Docs · Rowgate",
 };
 
 export default function App() {
@@ -30,6 +32,7 @@ export default function App() {
   if (path === "/") page = <Home contract={contract} pr={pr} run={run} />;
   else if (path === "/run") page = <RunPage run={run} pr={pr} loading={loading} hasDossier={!!site?.hasDossier} />;
   else if (path === "/contract") page = <ContractPage contract={contract} run={run} />;
+  else if (path === "/docs") page = <Docs />;
   else
     page = (
       <main className="wrap page-head">

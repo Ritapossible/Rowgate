@@ -65,6 +65,7 @@ export function Nav() {
     ["/", "Overview"],
     ["/run", "Run"],
     ["/contract", "Contract"],
+    ["/docs", "Docs"],
   ];
   return (
     <header className="nav">
@@ -99,6 +100,7 @@ export function Footer({ exportedAt }: { exportedAt?: string }) {
           Independent project, not affiliated with IBM. The Kora partner, API and contract are fictional demo material.
         </div>
         <div>
+          <Link href="/docs">Docs</Link> ·{" "}
           <a href={REPO} target="_blank" rel="noreferrer">
             Source on GitHub
           </a>

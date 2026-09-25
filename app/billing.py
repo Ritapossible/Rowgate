@@ -16,7 +16,6 @@ def create_invoice_for(order) -> InvoiceResponse:
         order_id=order.order_id,
         amount_cents=order.total_cents,
         tax_cents=round(order.total_cents * store.TAX_RATE),
-        currency=order.currency,
         status="open",
         issued_at=issued.isoformat(timespec="seconds"),
         due_date=(issued + timedelta(days=30)).date().isoformat(),

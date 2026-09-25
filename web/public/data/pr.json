@@ -3,15 +3,15 @@
  "base": "main",
  "commits": [
   {
-   "sha": "c9e9fb3",
+   "sha": "da189cc",
    "subject": "Fast checkout: accept orders immediately, confirm asynchronously"
   },
   {
-   "sha": "33d2993",
+   "sha": "9e93114",
    "subject": "Slim invoice payload: currency is implied by the partner account"
   },
   {
-   "sha": "291d7b7",
+   "sha": "cd7c09d",
    "subject": "Simplify token errors and use constant-time secret comparison"
   }
  ],

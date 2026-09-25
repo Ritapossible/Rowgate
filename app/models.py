@@ -11,7 +11,8 @@ class OrderCreate(BaseModel):
 
 class OrderResponse(BaseModel):
     order_id: str
-    request_id: str
+    # Internal name follows our req_* convention; the wire name stays request_id.
+    req_id: str = Field(serialization_alias="request_id")
     status: str
     total_cents: int
     currency: str
@@ -23,7 +24,6 @@ class InvoiceResponse(BaseModel):
     order_id: str
     amount_cents: int
     tax_cents: int | None = None
-    currency: str
     status: str
     issued_at: str
     due_date: str

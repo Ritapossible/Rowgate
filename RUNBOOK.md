@@ -8,8 +8,12 @@ reports"). For **every** Bob task you run, including the rehearsal:
 
 1. In Bob's chat panel: **Views and More Actions → History**. Make sure the Rowgate workspace is selected.
 2. Open the task, then click the **task header** to show its consumption summary.
-3. **Screenshot** the summary → `bob_sessions/NN-<step>.png`.
-4. Click **Export task history** → save the markdown as `bob_sessions/NN-<step>.md`.
+3. **Screenshot** the summary → `bob_sessions/ibm-hackathon-lablab_task<NN>_<short-description>.png`,
+   for example `ibm-hackathon-lablab_task01_rehearsal.png`, `ibm-hackathon-lablab_task02_rowgate-run.png`.
+4. Click **Export task history** → save it beside the screenshot with the same name and `.md`.
+
+The name carries the team, the task number and a short description, so judges can match
+each screenshot to its exported history.
 
 Before committing, open each exported `.md` and make sure it contains no API keys or tokens;
 `scripts/check_submission.sh` scans for them too. An exposed IBM credential gets the account suspended.
@@ -55,7 +59,7 @@ Ask mode, paste:
 
 Expected: the `POST /orders` field rows inherit from **ORD-011** (`Orders!C14` = 201), and
 BIL-007's status is the merged cell **Billing!D3** (200). If Bob gets this wrong, tell
-Claude before spending more coins. Screenshot → `bob_sessions/01-rehearsal.png`.
+Claude before spending more coins. Session report → `ibm-hackathon-lablab_task01_rehearsal`.
 
 ## 3. The run (Contract Gate mode)
 
@@ -76,7 +80,7 @@ Type `/rowgate feature/fast-checkout`, or paste:
 | Step | What you see | You do | Screenshot |
 | --- | --- | --- | --- |
 | Plan | Rows per resource | Check it names Orders, Billing, Auth/Errors and ignores PLANNED rows. Approve. | `02-plan.png` |
-| Subagents | 3 running in parallel | Approve each spawn. **Hold on this screen for the video.** | `03-subagents.png` |
+| Subagents | 3 running **at the same time** | Approve each spawn. **Screenshot while all three show as running**; that single frame is the evidence for "parallel tasks" and "subagents". If Bob runs them one after another, stop and tell Claude. | `03-subagents.png` |
 | Tests | 3 files in `tests/contract/`, `run_contract_tests.sh before` red | Check each file name has the cell | `04-tests-red.png` |
 | Findings | Summary from `render_dossier.py` | Check: 3 breaks, `Orders!D11` skipped, 0 problems | `05-findings.png` |
 | Decide | Bob asks per finding | **F1 Orders!C14: fix code · F2 Billing!E9: record breaking change · F3 Auth!E5: fix code** | `06-decisions.png` |

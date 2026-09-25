@@ -13,7 +13,7 @@ Architecture: `ARCHITECTURE.md` · Facts, decisions, Bobcoin ledger: `MEMORY.md`
 ## Phase 0 — Before kickoff (Thu 24 Sep)
 
 - [x] Register on lablab.ai
-- [ ] Create an IBMid on the registration email (needed to sign in to Bob)
+- [x] Create an IBMid on the registration email (needed to sign in to Bob)
 - [x] Create repo, write ARCHITECTURE / MEMORY / PLAN
 - [ ] Install Bob IDE, sign in, note the version number in MEMORY §2
 - [ ] Skim Bob docs for: custom mode file format, slash command path, `office_edit` usage
@@ -24,8 +24,9 @@ Non-AI scaffolding may be built before kickoff; all Bob work waits for the hacka
 
 ## Kickoff (Fri 16:00 WAT)
 
-- [ ] Find the IBM Bob invite email (check spam; search "IBM Bob"), accept it
-- [ ] Sign in to Bob IDE, switch team to `ibm-coding-challenge-xxx`, confirm 40 Bobcoins in Settings → General
+- [x] Find the IBM Bob invite email (check spam; search "IBM Bob"), accept it
+- [x] Hackathon account confirmed: team `ibm-hackathon-lablab`, Enterprise, 40 Bobcoins, 0 used (25 Sep 19:36 WAT)
+- [ ] Sign in to Bob IDE on the computer and select team `ibm-hackathon-lablab`
 
 ## Phase 1 — Fixture · 0 Bobcoins · ✅ done Fri 25 Sep morning (before kickoff, no Bob)
 

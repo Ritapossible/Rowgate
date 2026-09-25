@@ -31,6 +31,7 @@ export default function ContractPage({ contract, run }: { contract: Contract | n
   const [selected, setSelected] = useState<string | null>(target ? `${target.sheet}!${target.col}${target.row}` : null);
   const [copied, setCopied] = useState(false);
   const flashRef = useRef<HTMLTableCellElement | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!target) return;
@@ -40,7 +41,16 @@ export default function ContractPage({ contract, run }: { contract: Contract | n
   }, [search.get("cell")]);
 
   useEffect(() => {
-    flashRef.current?.scrollIntoView({ block: "center", inline: "center", behavior: "smooth" });
+    const cell = flashRef.current;
+    const wrap = wrapRef.current;
+    if (!cell || !wrap) return;
+    // bring the sheet under the nav, then centre the cell inside the sheet's own scroll area
+    wrap.scrollIntoView({ block: "start", behavior: "smooth" });
+    wrap.scrollTo({
+      top: cell.offsetTop - wrap.clientHeight / 2 + cell.offsetHeight / 2,
+      left: cell.offsetLeft - wrap.clientWidth / 2 + cell.offsetWidth / 2,
+      behavior: "smooth",
+    });
   }, [sheetName, contract]);
 
   const cited = useMemo(() => {
@@ -125,7 +135,7 @@ export default function ContractPage({ contract, run }: { contract: Contract | n
         </div>
       </div>
 
-      <div className="sheet-wrap" role="region" aria-label={`${sheet.name} sheet`} tabIndex={0}>
+      <div className="sheet-wrap" ref={wrapRef} role="region" aria-label={`${sheet.name} sheet`} tabIndex={0}>
         <table className="sheet">
           <thead>
             <tr>

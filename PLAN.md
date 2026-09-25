@@ -82,6 +82,7 @@ Cut if late: the breaking-change path (keep all three as fix-code).
 - [ ] Time the "human" baseline: skim the diff only, note what you catch and how long it takes
 - [ ] Screen-record the Rowgate run once, cleanly. **Stop iterating after this.**
 - [ ] Final `bob_sessions/` screenshots; commit final `out/dossier.html`
+- [ ] `python scripts/export_site.py`, commit `web/public/data/` + `web/public/dossier.html`; check the Vercel site shows the run
 - [ ] Record numbers: human (N of 3, decoy flagged?, minutes) vs Rowgate (3 of 3, decoy skipped, minutes)
 
 **Exit check:** a clean recording exists and the numbers are written in MEMORY.
@@ -91,7 +92,7 @@ Cut if late: the breaking-change path (keep all three as fix-code).
 - [ ] README: one-liner, the "who does what" table, how to run pytest without Bob, screenshots
 - [ ] Slides (5–6): problem → what ships → how Bob runs it → demo numbers → why it's not a review bot → install (one folder)
 - [ ] 3-minute video (script below)
-- [ ] Submission text (below), repo URL, video URL, slides
+- [ ] Submission text (below), repo URL, **Vercel URL**, video URL, slides
 - [ ] Check: MIT license present · `bob_sessions/` populated · repo public · no "workflow" wording outside `.github/` (`grep -ri workflow --exclude-dir=.github --exclude-dir=.git .`)
 - [ ] **Submit by 14:00 WAT**
 

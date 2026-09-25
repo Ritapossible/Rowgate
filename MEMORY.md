@@ -66,6 +66,7 @@ or Bobcoins are spent.
 | D13 | Bob never writes test outcomes; `run_contract_tests.sh before/after` saves pytest reports and the renderer reads them | Red → green is measured, not claimed |
 | D15 | Bob cites file + line only; the renderer cuts the excerpt from the diff and measures workbook edits against git | Fewer tokens for Bob, and no evidence can be misquoted or claimed |
 | D16 | The demo's starting point is the `demo/start` branch, not a tag | This environment can't push tags (HTTP 403). Never commit to `demo/start` |
+| D17 | A static web app on Vercel (`web/`, Vite + React) replaces "no web app" in D11. It only displays exported, measured data; it never calls a model or runs Rowgate | One public link for judges; the pages show the contract and the run, and Bob stays the engine. Palette: forest night / cream / warm paper |
 | D14 | Test files named `tests/contract/test_<sheet>_<cell>_<what>.py`; renderer rejects a mismatch | Enforces D5 mechanically |
 
 ## 4. Positioning
@@ -98,5 +99,6 @@ If dry run 1 costs more than 12, cut to two subagents (see ARCHITECTURE §8).
 | When (WAT) | What happened |
 | --- | --- |
 | 24 Sep | Idea chosen (Rowgate). Bob capability limits verified. Repo created; ARCHITECTURE, MEMORY, PLAN written. |
+| 25 Sep AM (3) | Web app built (D17): Overview, Run, Contract explorer; `export_site.py`. Checked in light/dark, desktop/phone, with and without a run (sample run kept out of the repo). |
 | 25 Sep AM (2) | Measured evidence (D15), `reset_demo.sh`, `demo/start` (D16), CI. Full simulated run renders with 0 problems. 14 tests green. |
 | 25 Sep AM | Phase 1 scaffold built before kickoff (D12): service, 41-rule workbook, branch with 3 breaks + decoy, scripts, renderer. 10 tests green on main and branch. 0 Bobcoins used. |

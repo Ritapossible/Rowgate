@@ -343,7 +343,7 @@ details.file .diff { border-radius: 0; border-top: 1px solid var(--line); }
 .tab .count { margin-left: 6px; font: 11px var(--mono); opacity: 0.7; }
 .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
 .sheet-wrap {
-  overflow: auto; max-height: 72vh; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  overflow: auto; max-height: calc(100vh - 170px); scroll-margin-top: 80px; border: 1px solid var(--line); border-radius: var(--radius-sm);
   background: var(--surface); box-shadow: var(--shadow);
 }
 table.sheet { border-collapse: separate; border-spacing: 0; font-size: 13px; min-width: 100%; }

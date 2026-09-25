@@ -224,7 +224,7 @@ One self-contained page (inline CSS, no external requests):
 
 ## 7. Non-goals
 
-- No web app, auth, database, or multi-tenant anything.
+- No backend, auth, database, or multi-tenant anything. The web app (`web/`) is static and only shows exported data (MEMORY D17).
 - No watsonx or other model outside Bob.
 - No PDF/DOCX policy checking (that was the earlier "Clause" idea; out of scope).
 - No auto-merge. No rewriting product code without a per-finding human decision.

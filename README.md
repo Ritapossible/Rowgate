@@ -24,9 +24,29 @@ later PR is then checked by pytest, with no model in the loop.
 | `scripts/render_dossier.py` | Turns Bob's `out/findings.json` into `out/dossier.html` (no model) |
 | `rowgate/findings.schema.json` | The format Bob must write |
 | `tests/contract/` | Contract tests written by Rowgate, named after the cell they check |
+| `scripts/export_site.py` | Exports contract, PR and run data for the web app (no model) |
+| `web/` | The web app deployed on Vercel |
 | `bob_sessions/` | Screenshots of every Bob task summary |
 
 Design: [ARCHITECTURE.md](ARCHITECTURE.md) · Plan: [PLAN.md](PLAN.md) · Decisions and facts: [MEMORY.md](MEMORY.md)
+
+## Web app (Vercel)
+
+`web/` is a static Vite + React site with three pages: **Overview**, **Run** (the latest
+Rowgate run, measured) and **Contract** (the signed workbook, with deep links such as
+`/contract?cell=Orders!C14`). It reads JSON from `web/public/data/`, written by
+`scripts/export_site.py`, so Vercel needs no Python and no server.
+
+Deploy: on vercel.com, **Add New → Project**, import `Ritapossible/Rowgate`, set
+**Root Directory** to `web`, keep the detected Vite settings, **Deploy**. Every push to
+`main` redeploys.
+
+Publish a run: after a Rowgate run, `python scripts/export_site.py`, then commit
+`web/public/data/` and `web/public/dossier.html`.
+
+```bash
+cd web && npm install && npm run dev      # http://localhost:5173
+```
 
 ## Run the demo service locally
 

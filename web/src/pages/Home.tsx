@@ -23,6 +23,7 @@ function HeroSheet({ contract }: { contract: Contract | null }) {
           <span key={s.name} className={s.name === "Orders" ? "on" : undefined}>{s.name}</span>
         ))}
       </div>
+      <div className="sheet-preview-scroll" tabIndex={0} aria-label="Orders rows 11 to 14">
       <table>
         <tbody>
           {rows.map((r) => (
@@ -37,6 +38,7 @@ function HeroSheet({ contract }: { contract: Contract | null }) {
           ))}
         </tbody>
       </table>
+      </div>
       <figcaption style={{ padding: "10px 12px", borderTop: "1px solid var(--night-line)", color: "var(--night-muted)", fontFamily: "var(--sans)", fontSize: 13 }}>
         Orders!C14 · signed {contract!.signed} · not in any diff
       </figcaption>

@@ -207,6 +207,18 @@ button { font: inherit; color: inherit; }
 .sheet-preview td.n { color: var(--night-muted); width: 1%; }
 .sheet-preview td.hit { background: rgba(241, 215, 133, 0.16); box-shadow: inset 0 0 0 1.5px #d9b24f; font-weight: 600; }
 .sheet-preview .strike { color: #f0a58f; }
+.sheet-preview-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+@media (max-width: 560px) {
+  .sheet-preview { font-size: 12px; }
+  .sheet-preview td { padding: 8px 7px; }
+  .sheet-preview-top { overflow-x: auto; }
+}
+@media (max-width: 400px) {
+  .hero .card-night { padding: 24px 18px; }
+  .sheet-preview { font-size: 11.5px; }
+  .sheet-preview td { padding: 8px 5px; }
+  .sheet-preview td.n { padding-left: 10px; }
+}
 
 /* ---------- pills ---------- */
 .pill {

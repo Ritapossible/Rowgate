@@ -143,7 +143,7 @@ Bob's only structured output. The renderer trusts nothing else.
       "reasoning": "one or two sentences",
       "test": "tests/contract/test_orders_C14_create_returns_201.py",
       "decision": "fix_code",                // fix_code | record_breaking | reject | pending
-      "decided_by": "Rita",
+      "decided_by": "release owner",
       "workbook_edit": null                  // or { "cells": { "Billing!H9": "BREAKING" }, "changelog_row": 6 }
     }
   ],

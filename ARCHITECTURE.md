@@ -138,7 +138,7 @@ Bob's only structured output. The renderer trusts nothing else.
       "rule": "ORD-011",
       "contract_says": "POST /orders → 201 Created",
       "code_does": "returns 202 Accepted",
-      "evidence": { "file": "app/orders.py", "hunk": "@@ -41,7 +41,7 @@ ...", "line": 44 },
+      "evidence": { "file": "app/orders.py", "line": 22 },   // renderer cuts the hunk from out/diff.patch
       "verdict": "BREAK",                    // findings are breaks only; lookalikes go in "skipped"
       "reasoning": "one or two sentences",
       "test": "tests/contract/test_orders_C14_create_returns_201.py",
@@ -152,6 +152,14 @@ Bob's only structured output. The renderer trusts nothing else.
   ]
 }
 ```
+
+Nothing in the dossier's evidence is taken on Bob's word:
+
+| Evidence | Where it comes from |
+| --- | --- |
+| Code excerpt | Cut from `out/diff.patch` by file + line; the cited line is marked. A quoted hunk that isn't in the diff is flagged |
+| Red → green | pytest JSON reports (below) |
+| Workbook edits | Every cell that differs from `<base>:contract/api-contract.xlsx` in git. A claimed edit that isn't in the file is flagged |
 
 Test outcomes are **not** written by Bob. `scripts/run_contract_tests.sh before` and
 `... after` save pytest JSON reports (`out/test_results.before.json` / `.after.json`); the
@@ -209,7 +217,7 @@ one merged cell (`D3:D9`). The next free Changelog row is 6.
 One self-contained page (inline CSS, no external requests):
 
 1. Header: branch, workbook version, run time, counts (3 BREAK / 1 skipped / 0 errors).
-2. Per finding: the cell and its row rendered as a mini table, then the diff hunk, then the test name with red → green badges, then the decision and who made it.
+2. Per finding: the cell and its row rendered as a mini table, then the diff excerpt around the cited line, then the test name with red → green badges, then the decision and who made it.
 3. Skipped section: the decoy and why it was skipped.
 4. Workbook edits: cells changed by `office_edit` plus the new Changelog row.
 5. Footer: rollback note (revert commit SHA) and how to re-run pytest without Bob.
@@ -232,4 +240,5 @@ One self-contained page (inline CSS, no external requests):
 | Custom mode can't restrict subagents as expected | Keep the mode for its instructions; mention restriction only if shown |
 | Subagent run too expensive in Bobcoins | Two subagents (orders+billing, auth+errors) instead of three |
 | Bob misses the decoy or flags it | Tighten Skill instructions on serialization aliases; that is the precision story, worth the rehearsal |
+| A dry run leaves commits or edits behind | `scripts/reset_demo.sh --force` moves the branch back to `demo/start` and checks 7 conditions |
 | Live run flakes during recording | Record the best clean run; `bob_sessions/` screenshots are the evidence |

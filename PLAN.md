@@ -50,6 +50,9 @@ Phase 1 finished early, so Phase 2 starts at kickoff and the later phases gain ~
 
 - [x] `rowgate/findings.schema.json`
 - [x] `scripts/render_dossier.py` + `rowgate/dossier.html.j2`, tested on synthetic findings (light/dark, phone width)
+- [x] Evidence is measured: diff excerpts by file + line, workbook edits by comparing with git (ARCHITECTURE §4)
+- [x] `scripts/reset_demo.sh` + `demo/start` branch; CI (`.github/workflows/tests.yml`) runs all tests on every PR
+- [x] Full simulated run (placeholder tests, scripted workbook edit): dossier renders with 0 problems
 - [ ] `.bob/skills/rowgate/SKILL.md`: procedure, schema, test naming rule, decoy guidance ("check serialization aliases before flagging a rename"), "never edit app/ unless decision = fix_code"
 - [ ] Contract Gate custom mode: instructions + allowed subagents
 - [ ] `/rowgate` slash command (skip if the path is unclear; invoke the Skill directly)
@@ -67,7 +70,7 @@ Cut if late (in order): slash command → third subagent (merge auth into billin
 - [ ] Fix-code path: minimal patch, rerun → green, captured in `findings.json`
 - [ ] Breaking path: `office_edit` sets `Billing!<Status>` = `BREAKING`, appends a Changelog row
 - [ ] Renderer shows before/after test status and the workbook edits
-- [ ] **Dry run 2** end to end on a fresh checkout of the branch
+- [ ] **Dry run 2** end to end after `scripts/reset_demo.sh --force`
 
 **Exit check:** dossier shows 3 findings with red → green (or recorded breaking change), 1 skipped decoy with reason, workbook edit visible when re-opening the xlsx.
 
@@ -75,7 +78,7 @@ Cut if late: the breaking-change path (keep all three as fix-code).
 
 ## Phase 4 — Recorded run (Sat 22:00 → Sun 06:00, with sleep) · ≤ 8 Bobcoins
 
-- [ ] Reset: fresh clone, branch checked out, `out/` empty, workbook restored
+- [ ] Reset: `scripts/reset_demo.sh --force` → all 7 checks ✓
 - [ ] Time the "human" baseline: skim the diff only, note what you catch and how long it takes
 - [ ] Screen-record the Rowgate run once, cleanly. **Stop iterating after this.**
 - [ ] Final `bob_sessions/` screenshots; commit final `out/dossier.html`
@@ -89,7 +92,7 @@ Cut if late: the breaking-change path (keep all three as fix-code).
 - [ ] Slides (5–6): problem → what ships → how Bob runs it → demo numbers → why it's not a review bot → install (one folder)
 - [ ] 3-minute video (script below)
 - [ ] Submission text (below), repo URL, video URL, slides
-- [ ] Check: MIT license present · `bob_sessions/` populated · repo public · no "workflow" wording anywhere (`grep -ri workflow`)
+- [ ] Check: MIT license present · `bob_sessions/` populated · repo public · no "workflow" wording outside `.github/` (`grep -ri workflow --exclude-dir=.github --exclude-dir=.git .`)
 - [ ] **Submit by 14:00 WAT**
 
 ## Video script (3:00)

@@ -68,6 +68,12 @@ def test_excerpt_cuts_hunk_and_marks_cited_line():
     assert ("del", "-c = 3") in rows
 
 
+def test_next_file_header_is_not_part_of_the_hunk():
+    two = PATCH + PATCH.replace("app/x.py", "app/y.py")
+    rows, _ = rd.excerpt(rd.parse_patch(two), "app/x.py", 12)
+    assert not any(line.startswith("---") for _, line in rows)
+
+
 def test_excerpt_reports_uncovered_line():
     rows, err = rd.excerpt(rd.parse_patch(PATCH), "app/x.py", 99)
     assert rows == [] and "no hunk" in err

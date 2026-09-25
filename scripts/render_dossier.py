@@ -42,7 +42,9 @@ def parse_patch(text: str) -> dict[str, list[list[str]]]:
     files: dict[str, list[list[str]]] = {}
     current = None
     for line in text.splitlines():
-        if line.startswith("+++ "):
+        if line.startswith("diff --git"):
+            current = None  # file headers ("--- a/...") until the next "+++" are not hunk lines
+        elif line.startswith("+++ "):
             path = line[4:].strip()
             current = files.setdefault(path[2:] if path.startswith("b/") else path, [])
         elif line.startswith("@@") and current is not None:

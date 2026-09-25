@@ -34,6 +34,7 @@ or Bobcoins are spent.
 | `office_read` and `office_edit` for `.docx`, `.xlsx`, `.pptx` — **2.1.0 (Aug 2026)**. Edit = set values, add/remove content, find-and-replace. Comments not mentioned | Changelog 2.1.0 |
 | Hackathon account: invite email from the IBM Bob team **at the start of the hackathon** to the registration email ("added as a team member to ibm-hackathon-xxx", Enterprise plan). 40 Bobcoins auto-applied, no top-up. Sign in with an IBMid on the registration email. Usage shown in Bob IDE → Settings → General. Use only the `ibm-coding-challenge-xxx` instance during the event | Hackathon guide (May 2026 edition) — https://watsonx-hackathons-2026.s3.us.cloud-object-storage.appdomain.cloud/Lablab-IBM-Bob-hackathon-guide-May-2026.pdf |
 | Separate personal free trial: 50 Bobcoins for 30 days | https://bob.ibm.com/trial |
+| **Confirmed 25 Sep 19:36 WAT:** hackathon account active. Team `ibm-hackathon-lablab`, Enterprise plan, region US East, 40 Bobcoins, 0 used. Use this team (not a personal account) for every Bob step | Bob admin portal, Subscription page |
 | 2.2.0 (Sep 2026): live subagent tool results in chat; `plugins/` subdirectory for skills, modes, rules, MCP; HTTPS hook handlers | Changelog 2.2.0 |
 
 ### Unverified — check at kickoff (Fri 25 Sep)
@@ -99,6 +100,7 @@ If dry run 1 costs more than 12, cut to two subagents (see ARCHITECTURE §8).
 | When (WAT) | What happened |
 | --- | --- |
 | 24 Sep | Idea chosen (Rowgate). Bob capability limits verified. Repo created; ARCHITECTURE, MEMORY, PLAN written. |
+| 25 Sep 19:36 WAT | Bob hackathon account confirmed (team ibm-hackathon-lablab, 40 coins, 0 used). On phone only; setup and runs wait for a computer. |
 | 25 Sep 18:20 WAT | Phase 2 started: Rowgate Skill + test template, Contract Gate mode and /rowgate text (paste-ready), RUNBOOK.md, publish_run.sh (tested in a scratch clone). Waiting on the Bob account to run. |
 | 25 Sep AM (3) | Web app built (D17): Overview, Run, Contract explorer; `export_site.py`. Checked in light/dark, desktop/phone, with and without a run (sample run kept out of the repo). |
 | 25 Sep AM (2) | Measured evidence (D15), `reset_demo.sh`, `demo/start` (D16), CI. Full simulated run renders with 0 problems. 14 tests green. |

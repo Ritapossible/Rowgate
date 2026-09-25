@@ -134,26 +134,32 @@ Bob's only structured output. The renderer trusts nothing else.
     {
       "id": "F1",
       "cell": "Orders!C14",
+      "related_cells": [],                   // e.g. ["Errors!D6"] for a referenced row
+      "rule": "ORD-011",
       "contract_says": "POST /orders → 201 Created",
       "code_does": "returns 202 Accepted",
       "evidence": { "file": "app/orders.py", "hunk": "@@ -41,7 +41,7 @@ ...", "line": 44 },
-      "verdict": "BREAK",                    // BREAK | OK | DECOY-OK
+      "verdict": "BREAK",                    // findings are breaks only; lookalikes go in "skipped"
       "reasoning": "one or two sentences",
       "test": "tests/contract/test_orders_C14_create_returns_201.py",
-      "test_status_before": "failed",        // filled from test_results.json
       "decision": "fix_code",                // fix_code | record_breaking | reject | pending
-      "test_status_after": "passed",
-      "workbook_edit": null                  // or { "cell": "Orders!H14", "value": "BREAKING", "changelog_row": 7 }
+      "decided_by": "Rita",
+      "workbook_edit": null                  // or { "cells": { "Billing!H9": "BREAKING" }, "changelog_row": 6 }
     }
   ],
   "skipped": [
-    { "cell": "Orders!C9", "why": "field renamed in code but serialization alias keeps wire name request_id" }
+    { "cell": "Orders!D11", "change": "request_id renamed to req_id", "why": "serialization alias keeps the wire name request_id" }
   ]
 }
 ```
 
-Rules:
-- A `BREAK` without a `test` path is invalid; the renderer shows it as an error.
+Test outcomes are **not** written by Bob. `scripts/run_contract_tests.sh before` and
+`... after` save pytest JSON reports (`out/test_results.before.json` / `.after.json`); the
+renderer reads red → green from those, so the badges can't be claimed, only measured.
+
+Rules (enforced by `scripts/render_dossier.py`, shown in a red box in the dossier):
+- A `BREAK` without a test file named after its cell is invalid.
+- The test must exist on disk.
 - Test file names must contain the cell (`test_<sheet>_<cell>_...`), so the test name *is* the citation.
 - `skipped` is shown in the dossier. It shows the precision half of the demo: Rowgate says why it did not flag something.
 
@@ -184,11 +190,19 @@ least 40 data rows so the three breaks are not obvious by eye.
 | --- | --- | --- | --- | --- |
 | 1 | `Orders!C14` | `POST /orders` → **201** | returns **202** | BREAK |
 | 2 | `Billing!E9` | `GET /invoices/{id}` requires `currency` | field dropped from response model | BREAK |
-| 3 | `Errors!D6` via `Auth!F5` | bad credentials → **401** `{"error":"invalid_grant"}` | returns **400** `{"detail":...}` | BREAK |
+| 3 | `Auth!E5` (+ `Errors!D6`) | wrong client_secret → **401** with `{"error":"invalid_grant", ...}` | returns **400** `{"detail":...}` | BREAK |
 | D | `Orders!D11` | `request_id` required in response | renamed `req_id` in code **with** `serialization_alias="request_id"` | DECOY-OK (skip) |
 
-Final cell addresses are fixed when `build_contract.py` is written; update this table then.
-The existing `tests/test_smoke.py` passes on the branch, so the PR looks mergeable.
+These addresses are final: `scripts/build_contract.py` asserts them on every build.
+The existing tests pass on the branch, so the PR looks mergeable. The branch also carries
+noise that is *not* a break: a `_price_cents` helper, a log line, a constant-time secret
+comparison, a version bump, and `status` moving from `confirmed` to `pending` (both allowed
+by `Orders!E5`).
+
+Other traps in the workbook: `ORD-007`, `ORD-014`, `BIL-010/011`, `AUT-005`, `ERR-003/007`
+are PLANNED and `ORD-013` is DEPRECATED, so none of them may be flagged. Field rows on
+Orders inherit their status code from `ORD-011` ("↳ ORD-011"), and Billing's status code is
+one merged cell (`D3:D9`). The next free Changelog row is 6.
 
 ## 6. Dossier (`out/dossier.html`)
 

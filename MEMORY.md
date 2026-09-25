@@ -44,7 +44,7 @@ or Bobcoins are spent.
 - [ ] Whether `plugins/rowgate/` packaging works.
 - [ ] Whether `office_edit` can append a row to another sheet (Changelog) in one call.
 - [ ] Bobcoin cost of one subagent spawn and of one full run.
-- [ ] Rules on pre-event work: may code be written before 25 Sep 16:00 WAT? (Assume **no**: only planning docs exist before kickoff.)
+- [ ] Rules on pre-event work: confirm at kickoff that non-AI scaffolding built before 16:00 WAT is fine (see D12).
 - [ ] Whether kickoff changes the Bobcoin budget or unlocks workflow authoring. If authoring unlocks, reconsider; do not plan on it.
 
 ## 3. Decisions (and why)
@@ -62,6 +62,9 @@ or Bobcoins are spent.
 | D9 | Decoy = `request_id` renamed `req_id` with a serialization alias, so the wire format is unchanged | Grounded in a real contract fact; a diff skim flags it, a correct reading doesn't |
 | D10 | FastAPI + pytest demo service | Smallest stack where status codes and response fields are explicit |
 | D11 | No web app, no watsonx, no OpenAPI | Score comes from Bob being the engine; scope is the strategy |
+| D12 | Non-AI scaffolding (service, workbook, scripts, renderer) built before kickoff; every Bob step waits for the hackathon account | lablab's general rule allows libraries and non-AI scaffolding; the guide adds nothing stricter. Bob sessions must be on the `ibm-coding-challenge-xxx` instance for valid `bob_sessions/` evidence. Watch kickoff for rule changes |
+| D13 | Bob never writes test outcomes; `run_contract_tests.sh before/after` saves pytest reports and the renderer reads them | Red → green is measured, not claimed |
+| D14 | Test files named `tests/contract/test_<sheet>_<cell>_<what>.py`; renderer rejects a mismatch | Enforces D5 mechanically |
 
 ## 4. Positioning
 
@@ -92,4 +95,5 @@ If dry run 1 costs more than 12, cut to two subagents (see ARCHITECTURE §8).
 
 | When (WAT) | What happened |
 | --- | --- |
-| 24 Sep | Idea chosen (Rowgate). Bob capability limits verified. Repo created; ARCHITECTURE, MEMORY, PLAN written. No code before kickoff. |
+| 24 Sep | Idea chosen (Rowgate). Bob capability limits verified. Repo created; ARCHITECTURE, MEMORY, PLAN written. |
+| 25 Sep AM | Phase 1 scaffold built before kickoff (D12): service, 41-rule workbook, branch with 3 breaks + decoy, scripts, renderer. 10 tests green on main and branch. 0 Bobcoins used. |

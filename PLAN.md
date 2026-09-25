@@ -10,44 +10,46 @@ Architecture: `ARCHITECTURE.md` · Facts, decisions, Bobcoin ledger: `MEMORY.md`
 
 ---
 
-## Phase 0 — Before kickoff (Thu 24 Sep, now)
+## Phase 0 — Before kickoff (Thu 24 Sep)
 
 - [x] Register on lablab.ai
 - [ ] Create an IBMid on the registration email (needed to sign in to Bob)
 - [x] Create repo, write ARCHITECTURE / MEMORY / PLAN
 - [ ] Install Bob IDE, sign in, note the version number in MEMORY §2
 - [ ] Skim Bob docs for: custom mode file format, slash command path, `office_edit` usage
-- [ ] Prepare local env: Python 3.11+, `pip install fastapi uvicorn pytest httpx openpyxl pytest-json-report jinja2`
+- [x] Prepare local env: `pip install -r requirements.txt`
 - [ ] Sleep. The recorded run needs a clear head on Sunday.
 
-No application code before kickoff (see MEMORY §2, pre-event work).
+Non-AI scaffolding may be built before kickoff; all Bob work waits for the hackathon account (MEMORY D12).
 
 ## Kickoff (Fri 16:00 WAT)
 
 - [ ] Find the IBM Bob invite email (check spam; search "IBM Bob"), accept it
 - [ ] Sign in to Bob IDE, switch team to `ibm-coding-challenge-xxx`, confirm 40 Bobcoins in Settings → General
 
-## Phase 1 — Fixture (Fri 16:00 → Sat 00:00, ~8h) · 0 Bobcoins
+## Phase 1 — Fixture · 0 Bobcoins · ✅ done Fri 25 Sep morning (before kickoff, no Bob)
 
-Build the thing Rowgate reviews. No Bob tokens spent here; Bob Ask mode only if stuck.
+Build the thing Rowgate reviews. No Bob tokens spent here.
 
-- [ ] `LICENSE` (MIT), `README.md` stub, `.gitignore` (`out/*`, keep `out/dossier.html` at the end)
-- [ ] `app/` FastAPI service on `main`: orders, billing, auth; Pydantic models
-- [ ] `tests/test_smoke.py` passing on `main`
-- [ ] `scripts/build_contract.py` → `contract/api-contract.xlsx`: 6 sheets (Cover, Orders, Billing, Auth, Errors, Changelog), merged headers, notes column, 40+ rows, column order differs between sheets
-- [ ] Fix final cell addresses; update ARCHITECTURE §5 table
-- [ ] Branch `feature/fast-checkout`: breaks 1–3 plus the decoy, each as a plausible code change
-- [ ] Hand-write **one** reference contract test for break 1; confirm it fails on the branch and passes on `main`, then delete it (Bob writes the real one)
-- [ ] `scripts/collect_diff.sh`, `scripts/run_contract_tests.sh`
+- [x] `LICENSE` (MIT), `README.md` stub, `.gitignore` (`out/*`, keep `out/dossier.html` at the end)
+- [x] `app/` FastAPI service on `main`: orders, billing, auth; Pydantic models
+- [x] `tests/test_smoke.py` passing on `main`
+- [x] `scripts/build_contract.py` → `contract/api-contract.xlsx`: 6 sheets (Cover, Orders, Billing, Auth, Errors, Changelog), merged headers, notes column, 40+ rows, column order differs between sheets
+- [x] Fix final cell addresses; update ARCHITECTURE §5 table
+- [x] Branch `feature/fast-checkout`: breaks 1–3 plus the decoy, each as a plausible code change
+- [x] Reference check (kept out of the repo): all 27 ACTIVE rows hold on `main`; on the branch exactly `Orders!C14`, `Billing!E9`, `Auth!E5` fail and `Orders!D11` holds
+- [x] `scripts/collect_diff.sh`, `scripts/run_contract_tests.sh`
 
 **Exit check:** on the branch, `pytest tests/test_smoke.py` is green (PR looks mergeable), and opening the xlsx by hand you can point at the 3 cells the branch violates.
 
 Cut if late: Cover sheet polish, Notes column realism.
 
-## Phase 2 — Rowgate in Bob (Sat 00:00 → Sat 16:00, ~16h, with sleep) · ≤ 18 Bobcoins
+## Phase 2 — Rowgate in Bob (starts at kickoff, Fri 16:00 WAT) · ≤ 18 Bobcoins
 
-- [ ] `rowgate/findings.schema.json`
-- [ ] `scripts/render_dossier.py` + `rowgate/dossier.html.j2`; test it on a **hand-written** `findings.json` first (0 coins)
+Phase 1 finished early, so Phase 2 starts at kickoff and the later phases gain ~8h of slack.
+
+- [x] `rowgate/findings.schema.json`
+- [x] `scripts/render_dossier.py` + `rowgate/dossier.html.j2`, tested on synthetic findings (light/dark, phone width)
 - [ ] `.bob/skills/rowgate/SKILL.md`: procedure, schema, test naming rule, decoy guidance ("check serialization aliases before flagging a rename"), "never edit app/ unless decision = fix_code"
 - [ ] Contract Gate custom mode: instructions + allowed subagents
 - [ ] `/rowgate` slash command (skip if the path is unclear; invoke the Skill directly)

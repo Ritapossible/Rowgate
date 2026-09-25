@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import type { Contract, PR, Run } from "../data";
 import { Link } from "../router";
 
@@ -12,6 +13,22 @@ const STEPS: { n: string; title: string; body: string; who: [string, string][] }
 ];
 
 function HeroSheet({ contract }: { contract: Contract | null }) {
+  const scroller = useRef<HTMLDivElement | null>(null);
+  const [more, setMore] = useState(false);
+  useEffect(() => {
+    const el = scroller.current;
+    if (!el) return;
+    // show the swipe hint only while part of the table is out of view
+    const check = () => setMore(el.scrollLeft + el.clientWidth < el.scrollWidth - 2);
+    check();
+    el.addEventListener("scroll", check, { passive: true });
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", check);
+      ro.disconnect();
+    };
+  }, [contract]);
   const orders = contract?.sheets.find((s) => s.name === "Orders");
   if (!orders) return null;
   const rows = [11, 12, 13, 14];
@@ -23,7 +40,7 @@ function HeroSheet({ contract }: { contract: Contract | null }) {
           <span key={s.name} className={s.name === "Orders" ? "on" : undefined}>{s.name}</span>
         ))}
       </div>
-      <div className="sheet-preview-scroll" tabIndex={0} aria-label="Orders rows 11 to 14">
+      <div ref={scroller} className={`sheet-preview-scroll${more ? " more" : ""}`} tabIndex={0} aria-label="Orders rows 11 to 14, scrolls sideways">
       <table>
         <tbody>
           {rows.map((r) => (
@@ -39,8 +56,9 @@ function HeroSheet({ contract }: { contract: Contract | null }) {
         </tbody>
       </table>
       </div>
-      <figcaption style={{ padding: "10px 12px", borderTop: "1px solid var(--night-line)", color: "var(--night-muted)", fontFamily: "var(--sans)", fontSize: 13 }}>
-        Orders!C14 · signed {contract!.signed} · not in any diff
+      <figcaption style={{ padding: "10px 12px", borderTop: "1px solid var(--night-line)", color: "var(--night-muted)", fontFamily: "var(--sans)", fontSize: 13, display: "flex", flexWrap: "wrap", gap: "4px 12px" }}>
+        <span>Orders!C14 · signed {contract!.signed} · not in any diff</span>
+        {more && <span className="swipe-hint">swipe →</span>}
       </figcaption>
     </figure>
   );

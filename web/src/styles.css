@@ -202,12 +202,16 @@ button { font: inherit; color: inherit; }
 .sheet-preview-top { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--night-line); color: var(--night-muted); font-family: var(--sans); font-size: 12px; }
 .sheet-preview-top span { padding: 3px 8px; border-radius: 6px; }
 .sheet-preview-top span.on { background: var(--night); color: var(--night-ink); }
-.sheet-preview table { border-collapse: collapse; width: 100%; }
+.sheet-preview table { border-collapse: collapse; width: max-content; min-width: 100%; }
 .sheet-preview td { padding: 8px 10px; border-top: 1px solid var(--night-line); white-space: nowrap; }
 .sheet-preview td.n { color: var(--night-muted); width: 1%; }
 .sheet-preview td.hit { background: rgba(241, 215, 133, 0.16); box-shadow: inset 0 0 0 1.5px #d9b24f; font-weight: 600; }
 .sheet-preview .strike { color: #f0a58f; }
-.sheet-preview-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.hero-grid > * { min-width: 0; }
+.sheet-preview { min-width: 0; max-width: 100%; }
+.sheet-preview-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; touch-action: pan-x pan-y; }
+.sheet-preview-scroll.more { -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent); mask-image: linear-gradient(90deg, #000 82%, transparent); }
+.swipe-hint { margin-left: auto; color: var(--night-ink); white-space: nowrap; }
 @media (max-width: 560px) {
   .sheet-preview { font-size: 12px; }
   .sheet-preview td { padding: 8px 7px; }

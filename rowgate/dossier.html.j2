@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rowgate · {{ doc.branch }}</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --panel: #ffffff; --ink: #1b1d21; --muted: #5f6570; --line: #e3e4e8;
+    --red: #c62f2f; --red-bg: #fdecec; --green: #1d7a46; --green-bg: #e7f5ec;
+    --amber: #9a6200; --amber-bg: #fff4dc; --blue: #1f5fbf; --blue-bg: #e8f0fc;
+    --hit: #ffe28a; --code-bg: #f1f2f4;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121417; --panel: #1b1e23; --ink: #e8e9ec; --muted: #9aa0aa; --line: #2c3037;
+      --red: #ff7b7b; --red-bg: #3a1c1e; --green: #62d394; --green-bg: #173024;
+      --amber: #f2c14e; --amber-bg: #372c14; --blue: #8ab4ff; --blue-bg: #1b2a44;
+      --hit: #6b5a12; --code-bg: #15171b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); }
+  main { max-width: 1040px; margin: 0 auto; padding: 32px 16px 64px; }
+  header h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  header p { margin: 0; color: var(--muted); }
+  code, pre, .mono { font-family: var(--mono); font-size: 13px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 24px 0 32px; }
+  .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .stat b { display: block; font-size: 28px; line-height: 1.1; }
+  .stat span { color: var(--muted); font-size: 13px; }
+  h2 { font-size: 18px; margin: 36px 0 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+  .card-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; margin-bottom: 14px; }
+  .cell { font: 600 18px var(--mono); }
+  .pill { font: 600 12px var(--sans); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .pill.red { color: var(--red); background: var(--red-bg); }
+  .pill.green { color: var(--green); background: var(--green-bg); }
+  .pill.amber { color: var(--amber); background: var(--amber-bg); }
+  .pill.blue { color: var(--blue); background: var(--blue-bg); }
+  .pill.grey { color: var(--muted); background: var(--code-bg); }
+  .says { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .says div { border-left: 3px solid var(--line); padding-left: 10px; }
+  .says .contract { border-color: var(--blue); }
+  .says .code { border-color: var(--red); }
+  .label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  .scroll { overflow-x: auto; margin: 0 0 14px; border: 1px solid var(--line); border-radius: 8px; }
+  table.row { border-collapse: collapse; width: 100%; font-size: 13px; }
+  table.row th, table.row td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+  table.row th { color: var(--muted); font-weight: 600; background: var(--code-bg); white-space: nowrap; }
+  table.row th small { display: block; font: 11px var(--mono); opacity: 0.7; }
+  table.row td.hit { background: var(--hit); font-weight: 700; outline: 2px solid var(--amber); outline-offset: -2px; }
+  table.row td.rownum { color: var(--muted); font-family: var(--mono); width: 1%; }
+  pre.diff { margin: 0 0 14px; background: var(--code-bg); border-radius: 8px; padding: 10px 0; overflow-x: auto; }
+  pre.diff span { display: block; padding: 0 12px; white-space: pre; }
+  pre.diff .add { background: var(--green-bg); color: var(--green); }
+  pre.diff .del { background: var(--red-bg); color: var(--red); }
+  pre.diff .at { color: var(--muted); }
+  .test { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .arrow { color: var(--muted); }
+  .why { color: var(--muted); margin: 0 0 12px; }
+  .decision { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .problems { border: 2px solid var(--red); background: var(--red-bg); color: var(--red); border-radius: 10px; padding: 12px 16px; }
+  .skip { border-style: dashed; }
+  footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+  footer pre { background: var(--code-bg); padding: 10px 12px; border-radius: 8px; overflow-x: auto; color: var(--ink); }
+  @media (max-width: 640px) { .says { grid-template-columns: 1fr; } header h1 { font-size: 22px; } }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Rowgate · <span class="mono">{{ doc.branch }}</span></h1>
+  <p>Checked against <b>{{ doc.workbook }}</b>{% if doc.workbook_version %} ({{ doc.workbook_version }}){% endif %}
+     · base <span class="mono">{{ doc.base }}</span>{% if head %} · head <span class="mono">{{ head }}</span>{% endif %}
+     · {{ generated }}</p>
+</header>
+
+{% if problems %}
+<section class="problems">
+  <b>This dossier has {{ problems|length }} problem{{ '' if problems|length == 1 else 's' }}:</b>
+  <ul>{% for p in problems %}<li>{{ p }}</li>{% endfor %}</ul>
+</section>
+{% endif %}
+
+<section class="stats">
+  <div class="stat"><b>{{ counts.breaks }}</b><span>contract cells broken</span></div>
+  <div class="stat"><b>{{ counts.red_before }}/{{ counts.breaks }}</b><span>tests red on the branch</span></div>
+  <div class="stat"><b>{{ counts.green_after }}/{{ counts.breaks }}</b><span>green after approved fixes</span></div>
+  <div class="stat"><b>{{ counts.recorded }}</b><span>breaking changes recorded in the workbook</span></div>
+  <div class="stat"><b>{{ counts.skipped }}</b><span>lookalikes checked and skipped</span></div>
+</section>
+
+{% macro rowtable(r) -%}
+{% if r %}
+<div class="scroll"><table class="row">
+  <tr><th></th>{% for h in r.headers or r.letters %}<th><small>{{ r.letters[loop.index0] }}</small>{{ h if r.headers else '' }}</th>{% endfor %}</tr>
+  <tr><td class="rownum">{{ r.row }}</td>{% for c in r.cells %}<td{% if loop.index0 == r.hit %} class="hit"{% endif %}>{{ c }}</td>{% endfor %}</tr>
+</table></div>
+{% endif %}
+{%- endmacro %}
+
+{% macro outcome(o) -%}
+{% if o == 'failed' %}<span class="pill red">red</span>{% elif o == 'passed' %}<span class="pill green">green</span>{% elif o %}<span class="pill amber">{{ o }}</span>{% else %}<span class="pill grey">not run</span>{% endif %}
+{%- endmacro %}
+
+<h2>Broken contract cells</h2>
+{% for f in findings %}
+<article class="card" id="{{ f.id }}">
+  <div class="card-head">
+    <span class="cell">{{ f.cell }}</span>
+    {% if f.rule %}<span class="pill blue">{{ f.rule }}</span>{% endif %}
+    {% for c in f.related_cells or [] %}<span class="pill grey mono">{{ c }}</span>{% endfor %}
+    <span class="pill red">BREAK</span>
+  </div>
+  <div class="says">
+    <div class="contract"><span class="label">Contract says</span>{{ f.contract_says }}</div>
+    <div class="code"><span class="label">Branch does</span>{{ f.code_does }}</div>
+  </div>
+  <span class="label">Signed row · {{ f.row.sheet if f.row else '?' }}</span>
+  {{ rowtable(f.row) }}
+  {% for r in f.related %}{% if r %}<span class="label">Referenced row · {{ r.sheet }}</span>{{ rowtable(r) }}{% endif %}{% endfor %}
+  <span class="label">Diff · {{ f.evidence.file }}{% if f.evidence.line %}:{{ f.evidence.line }}{% endif %}</span>
+  <pre class="diff">{% for kind, line in f.diff %}<span class="{{ kind }}">{{ line }}</span>{% endfor %}</pre>
+  <p class="why">{{ f.reasoning }}</p>
+  <div class="test">
+    <span class="label">Test</span><code>{{ f.test }}</code>
+    {{ outcome(f.before) }}<span class="arrow">→</span>{{ outcome(f.after) }}
+  </div>
+  <div class="decision">
+    <span class="label">Decision</span>
+    {% if f.decision == 'fix_code' %}<span class="pill green">code fixed</span>
+    {% elif f.decision == 'record_breaking' %}<span class="pill amber">breaking change recorded</span>
+    {% elif f.decision == 'reject' %}<span class="pill grey">finding rejected</span>
+    {% else %}<span class="pill grey">waiting for a human</span>{% endif %}
+    {% if f.decided_by %}<span>by {{ f.decided_by }}</span>{% endif %}
+    {% if f.fix_commit %}<code>{{ f.fix_commit }}</code>{% endif %}
+    {% if f.workbook_edit %}
+      {% for cell, val in (f.workbook_edit.cells or {}).items() %}<span class="pill amber mono">{{ cell }} = {{ val }}</span>{% endfor %}
+      {% if f.workbook_edit.changelog_row %}<span class="pill amber mono">Changelog!A{{ f.workbook_edit.changelog_row }}</span>{% endif %}
+    {% endif %}
+  </div>
+</article>
+{% else %}
+<p>No broken cells.</p>
+{% endfor %}
+
+<h2>Checked and skipped</h2>
+{% for s in skipped %}
+<article class="card skip">
+  <div class="card-head"><span class="cell">{{ s.cell }}</span><span class="pill green">holds</span></div>
+  {% if s.change %}<p><span class="label">Looks like</span>{{ s.change }}</p>{% endif %}
+  {{ rowtable(s.row) }}
+  <p><span class="label">Why it is not a break</span>{{ s.why }}</p>
+  {% if s.evidence %}<pre class="diff"><span class="ctx">{{ s.evidence }}</span></pre>{% endif %}
+</article>
+{% else %}
+<p>Nothing skipped.</p>
+{% endfor %}
+
+<footer>
+  <p>The tests stay in the repo. Every later PR is checked by pytest, with no model involved:</p>
+  <pre>python -m pytest tests/contract -q</pre>
+  <p>Rollback: revert the approved fix commits listed above; the contract tests will go red again.</p>
+  <p>Generated by <b>Rowgate</b> (IBM Bob: Contract Gate mode + Rowgate Skill). Rendering is deterministic: scripts/render_dossier.py.</p>
+</footer>
+</main>
+</body>
+</html>

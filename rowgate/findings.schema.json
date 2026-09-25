@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rowgate/findings.schema.json",
+  "title": "Rowgate findings",
+  "description": "The only structured output Bob writes during a Rowgate run (out/findings.json). scripts/render_dossier.py turns it into out/dossier.html.",
+  "type": "object",
+  "required": ["branch", "base", "workbook", "findings", "skipped"],
+  "additionalProperties": false,
+  "properties": {
+    "branch": { "type": "string" },
+    "base": { "type": "string" },
+    "workbook": { "type": "string", "description": "Path to the contract workbook, e.g. contract/api-contract.xlsx" },
+    "workbook_version": { "type": "string", "description": "As stated on the Cover sheet" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "cell", "contract_says", "code_does", "evidence", "verdict", "reasoning", "test", "decision"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^F[0-9]+$" },
+          "cell": { "type": "string", "pattern": "^[A-Za-z]+![A-Z]+[0-9]+$", "description": "Primary cited cell, e.g. Orders!C14" },
+          "related_cells": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z]+![A-Z]+[0-9]+$" } },
+          "rule": { "type": "string", "description": "Rule ID in column A of that row, e.g. ORD-011" },
+          "contract_says": { "type": "string" },
+          "code_does": { "type": "string" },
+          "evidence": {
+            "type": "object",
+            "required": ["file", "hunk"],
+            "additionalProperties": false,
+            "properties": {
+              "file": { "type": "string" },
+              "hunk": { "type": "string", "description": "The unified-diff hunk from out/diff.patch, verbatim" },
+              "line": { "type": "integer" }
+            }
+          },
+          "verdict": { "enum": ["BREAK"] },
+          "reasoning": { "type": "string", "description": "One or two sentences" },
+          "test": { "type": "string", "pattern": "^tests/contract/test_[a-z]+_[A-Z]+[0-9]+_[a-z0-9_]+\\.py$", "description": "Test file named after the cell: test_<sheet>_<cell>_<what>.py" },
+          "decision": { "enum": ["pending", "fix_code", "record_breaking", "reject"] },
+          "decided_by": { "type": "string" },
+          "fix_commit": { "type": "string" },
+          "workbook_edit": {
+            "type": ["object", "null"],
+            "additionalProperties": false,
+            "properties": {
+              "cells": { "type": "object", "additionalProperties": { "type": "string" }, "description": "cell → new value, e.g. {\"Billing!H9\": \"BREAKING\"}" },
+              "changelog_row": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "description": "Changes that look like a break but are not. Shown in the dossier with the reason.",
+      "items": {
+        "type": "object",
+        "required": ["cell", "why"],
+        "additionalProperties": false,
+        "properties": {
+          "cell": { "type": "string", "pattern": "^[A-Za-z]+![A-Z]+[0-9]+$" },
+          "change": { "type": "string" },
+          "why": { "type": "string" },
+          "evidence": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -68,6 +68,8 @@ or Bobcoins are spent.
 | D15 | Bob cites file + line only; the renderer cuts the excerpt from the diff and measures workbook edits against git | Fewer tokens for Bob, and no evidence can be misquoted or claimed |
 | D16 | The demo's starting point is the `demo/start` branch, not a tag | This environment can't push tags (HTTP 403). Never commit to `demo/start` |
 | D17 | A static web app on Vercel (`web/`, Vite + React) replaces "no web app" in D11. It only displays exported, measured data; it never calls a model or runs Rowgate | One public link for judges; the pages show the contract and the run, and Bob stays the engine. Palette: forest night / cream / warm paper |
+| D18 | The website is frozen until the run is published; only the run data changes it | The run is the product (Grok's review, agreed) |
+| D19 | From 25 Sep evening, `feature/fast-checkout` and `demo/start` are frozen: Claude no longer rebuilds or force-pushes them. Only the user's Bob run adds commits to the feature branch | The user works from a local clone; a rebuild would clash with it |
 | D14 | Test files named `tests/contract/test_<sheet>_<cell>_<what>.py`; renderer rejects a mismatch | Enforces D5 mechanically |
 
 ## 4. Positioning
@@ -100,6 +102,7 @@ If dry run 1 costs more than 12, cut to two subagents (see ARCHITECTURE §8).
 | When (WAT) | What happened |
 | --- | --- |
 | 24 Sep | Idea chosen (Rowgate). Bob capability limits verified. Repo created; ARCHITECTURE, MEMORY, PLAN written. |
+| 25 Sep 20:00 WAT | Submission kit: submission/SLIDES.md, VIDEO.md, SUBMISSION.md, BASELINE.md; run_numbers.py; check_submission.sh (credential scan tested); RUNBOOK updated with the guide's session-export steps. Demo branches rebuilt once and frozen (D19). |
 | 25 Sep 19:36 WAT | Bob hackathon account confirmed (team ibm-hackathon-lablab, 40 coins, 0 used). On phone only; setup and runs wait for a computer. |
 | 25 Sep 18:20 WAT | Phase 2 started: Rowgate Skill + test template, Contract Gate mode and /rowgate text (paste-ready), RUNBOOK.md, publish_run.sh (tested in a scratch clone). Waiting on the Bob account to run. |
 | 25 Sep AM (3) | Web app built (D17): Overview, Run, Contract explorer; `export_site.py`. Checked in light/dark, desktop/phone, with and without a run (sample run kept out of the repo). |

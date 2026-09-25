@@ -3,8 +3,18 @@
 What to click, what to paste, and when to screenshot. Budget: **40 Bobcoins, no refill.**
 Log every step's cost in `MEMORY.md` §6 (Bob IDE → Settings → General shows usage).
 
-Screenshot **every Bob task summary** into `bob_sessions/` as `NN-<step>.png`. Missing
-screenshots disqualify the entry.
+**Session reports are required for judging** (hackathon guide, "Exporting Bob task session
+reports"). For **every** Bob task you run, including the rehearsal:
+
+1. In Bob's chat panel: **Views and More Actions → History**. Make sure the Rowgate workspace is selected.
+2. Open the task, then click the **task header** to show its consumption summary.
+3. **Screenshot** the summary → `bob_sessions/NN-<step>.png`.
+4. Click **Export task history** → save the markdown as `bob_sessions/NN-<step>.md`.
+
+Before committing, open each exported `.md` and make sure it contains no API keys or tokens;
+`scripts/check_submission.sh` scans for them too. An exposed IBM credential gets the account suspended.
+
+The in-run screenshots listed in step 3 are extra material for the video and slides.
 
 ---
 
@@ -26,7 +36,7 @@ scripts/reset_demo.sh --force   # must end with "Ready."
 ## 1. Once: set up Bob (no coins)
 
 1. Open the `Rowgate` folder in Bob IDE, signed in to the **hackathon** team
-   (`ibm-coding-challenge-…`, Settings → General).
+   **`ibm-hackathon-lablab`** (Settings → General). Never run Rowgate on a personal account.
 2. **Skill:** `.bob/skills/rowgate/SKILL.md` is already in the repo. Check Bob lists it
    (Skills panel). If Bob asks to approve it on first use, approve.
 3. **Mode:** create a custom mode and paste the fields from
@@ -48,6 +58,12 @@ BIL-007's status is the merged cell **Billing!D3** (200). If Bob gets this wrong
 Claude before spending more coins. Screenshot → `bob_sessions/01-rehearsal.png`.
 
 ## 3. The run (Contract Gate mode)
+
+Before the **recorded** run only:
+- Get the human baseline done (`submission/BASELINE.md`), ideally by someone who hasn't seen the project.
+- On GitHub, open a pull request from `feature/fast-checkout` into `main`. **Do not merge it.**
+  CI runs and shows green: that is the video's opening shot (`submission/VIDEO.md`).
+- Start the screen recorder.
 
 Make sure you are on `feature/fast-checkout` and `scripts/reset_demo.sh` says `Ready.`
 
@@ -80,7 +96,15 @@ git push origin feature/fast-checkout
 scripts/publish_run.sh          # exports the run + screenshots to main and pushes main
 ```
 
-Then check the site's Run page shows the run once Vercel has deployed `main`.
+Then check the site's Run page shows the run once Vercel has deployed `main`, and run the
+final check on `main`:
+
+```bash
+git checkout main && git pull
+python scripts/run_numbers.py       # numbers for the slides, video and form
+scripts/check_submission.sh         # must end with "Ready to submit."
+git checkout feature/fast-checkout
+```
 
 ## Dry runs
 
@@ -92,8 +116,9 @@ scripts/reset_demo.sh --force
 
 For the **recorded** run, do not reset afterwards; do step 4.
 
-## Open the pull request (for the video)
+## The pull request (for the video)
 
-After step 4, on GitHub open a pull request from `feature/fast-checkout` into `main`, and
-**do not merge it**. CI runs `tests/contract` on it. With F2 recorded as a breaking change,
-its test stays red, so the PR shows red: the signed contract gating the release.
+The pull request you opened before the recorded run updates when step 4 pushes
+`feature/fast-checkout`. CI now runs `tests/contract`. With F2 recorded as a breaking change,
+its test stays red, so the PR turns red: the signed contract gating the release. That is the
+video's closing shot. **Never merge it.**

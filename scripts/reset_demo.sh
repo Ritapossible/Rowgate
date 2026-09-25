@@ -37,7 +37,7 @@ fail=0
 check() { if eval "$2" >/dev/null 2>&1; then echo "  ✓ $1"; else echo "  ✗ $1"; fail=1; fi; }
 echo "Demo state:"
 check "on $BRANCH at demo/start" "[[ \$(git rev-parse HEAD) == \$(git rev-parse $START) ]]"
-check "tooling identical to main (everything but app/ and the website)" "git diff --quiet main HEAD -- . ':!app' ':!web'"
+check "tooling identical to main" "git diff --quiet main HEAD -- scripts rowgate .bob contract tests/conftest.py tests/test_smoke.py pytest.ini requirements.txt"
 check "PR changes only app/ (5 files)" "[[ \$(git diff --name-only main...HEAD | grep -cv '^app/') == 0 && \$(git diff --name-only main...HEAD | wc -l) == 5 ]]"
 check "no contract tests yet" "! ls tests/contract/test_*.py"
 check "workbook identical to main" "git diff --quiet main -- contract/api-contract.xlsx"

@@ -228,7 +228,7 @@ scripts/run_contract_tests.sh after    # after the approved changes
 `}</Code>
         <p>
           Results are saved as pytest JSON reports in <code>out/</code>; red and green in the dossier come from those files, not
-          from the model. <code>.github/workflows/tests.yml</code> runs the whole suite on every push and pull request, so once the
+          from the model. The CI config in <code>.github/</code> runs the whole suite on every push and pull request, so once the
           tests exist a PR that breaks a signed row fails CI.
         </p>
       </>

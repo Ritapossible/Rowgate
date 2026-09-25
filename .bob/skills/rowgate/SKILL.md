@@ -133,4 +133,4 @@ Report the counts to the human: breaks found, red before, green after, recorded,
 - Quote code in `findings.json` or claim a test result; scripts measure both.
 - Edit `main`, the `demo/start` branch, or any file outside `app/`, `tests/contract/`,
   `out/` and (for recorded breaking changes only) `contract/api-contract.xlsx`.
-- Call Rowgate a "workflow". It is the Contract Gate mode and this Skill.
+- Describe Rowgate as anything other than the Contract Gate mode and this Skill.

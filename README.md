@@ -6,7 +6,26 @@ Rowgate checks a release branch against the **signed API contract spreadsheet** 
 the contract test that fails when a row breaks. Every finding cites a cell (`Orders!C14`).
 A human decides what happens next.
 
-Built for the IBM Bob 2.0 Hackathon (lablab.ai, 25–27 Sep 2026). Status: in progress.
+Built with IBM Bob for the IBM Bob 2.0 Hackathon (lablab.ai, 25–27 Sep 2026).
+
+**Live:** [rowgate.vercel.app](https://rowgate.vercel.app) · [Run results](https://rowgate.vercel.app/run) ·
+[Contract explorer](https://rowgate.vercel.app/contract?cell=Orders!C14) · [Docs](https://rowgate.vercel.app/docs) ·
+Bob session reports in [`bob_sessions/`](bob_sessions/)
+
+## How it runs in IBM Bob
+
+Rowgate is a **Contract Gate custom mode** and a **Rowgate Skill** (`.bob/skills/rowgate/SKILL.md`),
+started with `/rowgate`:
+
+1. `scripts/collect_diff.sh` captures the branch diff (script, no tokens).
+2. Bob reads `contract/api-contract.xlsx` with **office_read**: merged cells, inherited rules, a shared Errors sheet, PLANNED rows it must ignore.
+3. **Plan mode** maps the diff to contract rows; you approve.
+4. **Three parallel subagents** check orders, billing and auth.
+5. **Agent mode** writes one failing test per broken cell, named after the cell.
+6. You decide per finding: fix the code, or record a breaking change, which Bob writes into the workbook with **office_edit**.
+7. Scripts measure and publish: pytest before/after, the dossier, the website.
+
+Step by step, with the expected result: [`RUNBOOK.md`](RUNBOOK.md).
 
 ## Why
 
@@ -28,6 +47,10 @@ later PR is then checked by pytest, with no model in the loop.
 | `tests/contract/` | Contract tests written by Rowgate, named after the cell they check |
 | `scripts/export_site.py` | Exports contract, PR and run data for the web app (no model) |
 | `web/` | The web app deployed on Vercel |
+| `.bob/skills/rowgate/` | The Rowgate Skill and a contract-test template |
+| `rowgate/bob/` | Contract Gate mode and `/rowgate` command definitions |
+| `scripts/publish_run.sh` | Publishes a finished run and its session reports to the site |
+| `scripts/check_submission.sh` | Pre-submission check (session reports, no credentials, run published) |
 | `bob_sessions/` | Screenshots of every Bob task summary |
 
 Design: [ARCHITECTURE.md](ARCHITECTURE.md) · Plan: [PLAN.md](PLAN.md) · Decisions and facts: [MEMORY.md](MEMORY.md)

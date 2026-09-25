@@ -1,0 +1,809 @@
+{
+ "branch": "feature/fast-checkout",
+ "base": "main",
+ "commits": [
+  {
+   "sha": "c9e9fb3",
+   "subject": "Fast checkout: accept orders immediately, confirm asynchronously"
+  },
+  {
+   "sha": "33d2993",
+   "subject": "Slim invoice payload: currency is implied by the partner account"
+  },
+  {
+   "sha": "291d7b7",
+   "subject": "Simplify token errors and use constant-time secret comparison"
+  }
+ ],
+ "files": [
+  {
+   "path": "app/auth.py",
+   "added": 8,
+   "removed": 3,
+   "hunks": [
+    {
+     "header": "@@ -1,8 +1,8 @@",
+     "lines": [
+      {
+       "kind": "ctx",
+       "text": "import secrets",
+       "old": 1,
+       "new": 1
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 2,
+       "new": 2
+      },
+      {
+       "kind": "del",
+       "text": "from fastapi import APIRouter",
+       "old": 3,
+       "new": null
+      },
+      {
+       "kind": "add",
+       "text": "from fastapi import APIRouter, HTTPException",
+       "old": null,
+       "new": 3
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 4,
+       "new": 4
+      },
+      {
+       "kind": "ctx",
+       "text": "from app.errors import error_response",
+       "old": 5,
+       "new": 5
+      },
+      {
+       "kind": "ctx",
+       "text": "from app.models import TokenRequest, TokenResponse",
+       "old": 6,
+       "new": 6
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 7,
+       "new": 7
+      },
+      {
+       "kind": "ctx",
+       "text": "router = APIRouter()",
+       "old": 8,
+       "new": 8
+      }
+     ]
+    },
+    {
+     "header": "@@ -10,12 +10,17 @@ router = APIRouter()",
+     "lines": [
+      {
+       "kind": "ctx",
+       "text": "# Demo credentials only. A real service reads these from a secret store.",
+       "old": 10,
+       "new": 10
+      },
+      {
+       "kind": "ctx",
+       "text": "CLIENTS = {\"kora-pos\": \"demo-secret-kora-pos\"}",
+       "old": 11,
+       "new": 11
+      },
+      {
+       "kind": "ctx",
+       "text": "SUPPORTED_GRANTS = {\"client_credentials\"}",
+       "old": 12,
+       "new": 12
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 13,
+       "new": 13
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 14,
+       "new": 14
+      },
+      {
+       "kind": "add",
+       "text": "def _is_valid_client(client_id: str, client_secret: str) -> bool:",
+       "old": null,
+       "new": 15
+      },
+      {
+       "kind": "add",
+       "text": "    expected = CLIENTS.get(client_id)",
+       "old": null,
+       "new": 16
+      },
+      {
+       "kind": "add",
+       "text": "    return expected is not None and secrets.compare_digest(expected, client_secret)",
+       "old": null,
+       "new": 17
+      },
+      {
+       "kind": "add",
+       "text": "",
+       "old": null,
+       "new": 18
+      },
+      {
+       "kind": "add",
+       "text": "",
+       "old": null,
+       "new": 19
+      },
+      {
+       "kind": "ctx",
+       "text": "@router.post(\"/auth/token\", response_model=TokenResponse)",
+       "old": 15,
+       "new": 20
+      },
+      {
+       "kind": "ctx",
+       "text": "def issue_token(body: TokenRequest):",
+       "old": 16,
+       "new": 21
+      },
+      {
+       "kind": "ctx",
+       "text": "    if body.grant_type not in SUPPORTED_GRANTS:",
+       "old": 17,
+       "new": 22
+      },
+      {
+       "kind": "ctx",
+       "text": "        return error_response(400, \"unsupported_grant_type\", f\"grant_type {body.grant_type} is not supported\")",
+       "old": 18,
+       "new": 23
+      },
+      {
+       "kind": "del",
+       "text": "    if CLIENTS.get(body.client_id) != body.client_secret:",
+       "old": 19,
+       "new": null
+      },
+      {
+       "kind": "del",
+       "text": "        return error_response(401, \"invalid_grant\", \"Client authentication failed\")",
+       "old": 20,
+       "new": null
+      },
+      {
+       "kind": "add",
+       "text": "    if not _is_valid_client(body.client_id, body.client_secret):",
+       "old": null,
+       "new": 24
+      },
+      {
+       "kind": "add",
+       "text": "        raise HTTPException(status_code=400, detail=\"invalid client credentials\")",
+       "old": null,
+       "new": 25
+      },
+      {
+       "kind": "ctx",
+       "text": "    return TokenResponse(access_token=secrets.token_urlsafe(24), token_type=\"Bearer\", expires_in=3600)",
+       "old": 21,
+       "new": 26
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "path": "app/billing.py",
+   "added": 0,
+   "removed": 1,
+   "hunks": [
+    {
+     "header": "@@ -14,11 +14,10 @@ def create_invoice_for(order) -> InvoiceResponse:",
+     "lines": [
+      {
+       "kind": "ctx",
+       "text": "    invoice = InvoiceResponse(",
+       "old": 14,
+       "new": 14
+      },
+      {
+       "kind": "ctx",
+       "text": "        invoice_id=order.order_id.replace(\"ord_\", \"inv_\"),",
+       "old": 15,
+       "new": 15
+      },
+      {
+       "kind": "ctx",
+       "text": "        order_id=order.order_id,",
+       "old": 16,
+       "new": 16
+      },
+      {
+       "kind": "ctx",
+       "text": "        amount_cents=order.total_cents,",
+       "old": 17,
+       "new": 17
+      },
+      {
+       "kind": "ctx",
+       "text": "        tax_cents=round(order.total_cents * store.TAX_RATE),",
+       "old": 18,
+       "new": 18
+      },
+      {
+       "kind": "del",
+       "text": "        currency=order.currency,",
+       "old": 19,
+       "new": null
+      },
+      {
+       "kind": "ctx",
+       "text": "        status=\"open\",",
+       "old": 20,
+       "new": 19
+      },
+      {
+       "kind": "ctx",
+       "text": "        issued_at=issued.isoformat(timespec=\"seconds\"),",
+       "old": 21,
+       "new": 20
+      },
+      {
+       "kind": "ctx",
+       "text": "        due_date=(issued + timedelta(days=30)).date().isoformat(),",
+       "old": 22,
+       "new": 21
+      },
+      {
+       "kind": "ctx",
+       "text": "    )",
+       "old": 23,
+       "new": 22
+      },
+      {
+       "kind": "ctx",
+       "text": "    store.INVOICES[invoice.invoice_id] = invoice.model_dump()",
+       "old": 24,
+       "new": 23
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "path": "app/main.py",
+   "added": 1,
+   "removed": 1,
+   "hunks": [
+    {
+     "header": "@@ -4,11 +4,11 @@ from fastapi import FastAPI",
+     "lines": [
+      {
+       "kind": "ctx",
+       "text": "from fastapi.exceptions import RequestValidationError",
+       "old": 4,
+       "new": 4
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 5,
+       "new": 5
+      },
+      {
+       "kind": "ctx",
+       "text": "from app import auth, billing, orders",
+       "old": 6,
+       "new": 6
+      },
+      {
+       "kind": "ctx",
+       "text": "from app.errors import validation_error_handler",
+       "old": 7,
+       "new": 7
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 8,
+       "new": 8
+      },
+      {
+       "kind": "del",
+       "text": "app = FastAPI(title=\"Kora Partner API\", version=\"3.2.0\")",
+       "old": 9,
+       "new": null
+      },
+      {
+       "kind": "add",
+       "text": "app = FastAPI(title=\"Kora Partner API\", version=\"3.3.0-rc1\")",
+       "old": null,
+       "new": 9
+      },
+      {
+       "kind": "ctx",
+       "text": "app.add_exception_handler(RequestValidationError, validation_error_handler)",
+       "old": 10,
+       "new": 10
+      },
+      {
+       "kind": "ctx",
+       "text": "app.include_router(orders.router)",
+       "old": 11,
+       "new": 11
+      },
+      {
+       "kind": "ctx",
+       "text": "app.include_router(billing.router)",
+       "old": 12,
+       "new": 12
+      },
+      {
+       "kind": "ctx",
+       "text": "app.include_router(auth.router)",
+       "old": 13,
+       "new": 13
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 14,
+       "new": 14
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "path": "app/models.py",
+   "added": 2,
+   "removed": 2,
+   "hunks": [
+    {
+     "header": "@@ -9,11 +9,12 @@ class OrderCreate(BaseModel):",
+     "lines": [
+      {
+       "kind": "ctx",
+       "text": "    customer_id: str = Field(min_length=1)",
+       "old": 9,
+       "new": 9
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 10,
+       "new": 10
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 11,
+       "new": 11
+      },
+      {
+       "kind": "ctx",
+       "text": "class OrderResponse(BaseModel):",
+       "old": 12,
+       "new": 12
+      },
+      {
+       "kind": "ctx",
+       "text": "    order_id: str",
+       "old": 13,
+       "new": 13
+      },
+      {
+       "kind": "del",
+       "text": "    request_id: str",
+       "old": 14,
+       "new": null
+      },
+      {
+       "kind": "add",
+       "text": "    # Internal name follows our req_* convention; the wire name stays request_id.",
+       "old": null,
+       "new": 14
+      },
+      {
+       "kind": "add",
+       "text": "    req_id: str = Field(serialization_alias=\"request_id\")",
+       "old": null,
+       "new": 15
+      },
+      {
+       "kind": "ctx",
+       "text": "    status: str",
+       "old": 15,
+       "new": 16
+      },
+      {
+       "kind": "ctx",
+       "text": "    total_cents: int",
+       "old": 16,
+       "new": 17
+      },
+      {
+       "kind": "ctx",
+       "text": "    currency: str",
+       "old": 17,
+       "new": 18
+      },
+      {
+       "kind": "ctx",
+       "text": "    created_at: str",
+       "old": 18,
+       "new": 19
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 19,
+       "new": 20
+      }
+     ]
+    },
+    {
+     "header": "@@ -21,11 +22,10 @@ class OrderResponse(BaseModel):",
+     "lines": [
+      {
+       "kind": "ctx",
+       "text": "class InvoiceResponse(BaseModel):",
+       "old": 21,
+       "new": 22
+      },
+      {
+       "kind": "ctx",
+       "text": "    invoice_id: str",
+       "old": 22,
+       "new": 23
+      },
+      {
+       "kind": "ctx",
+       "text": "    order_id: str",
+       "old": 23,
+       "new": 24
+      },
+      {
+       "kind": "ctx",
+       "text": "    amount_cents: int",
+       "old": 24,
+       "new": 25
+      },
+      {
+       "kind": "ctx",
+       "text": "    tax_cents: int | None = None",
+       "old": 25,
+       "new": 26
+      },
+      {
+       "kind": "del",
+       "text": "    currency: str",
+       "old": 26,
+       "new": null
+      },
+      {
+       "kind": "ctx",
+       "text": "    status: str",
+       "old": 27,
+       "new": 27
+      },
+      {
+       "kind": "ctx",
+       "text": "    issued_at: str",
+       "old": 28,
+       "new": 28
+      },
+      {
+       "kind": "ctx",
+       "text": "    due_date: str",
+       "old": 29,
+       "new": 29
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 30,
+       "new": 30
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 31,
+       "new": 31
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "path": "app/orders.py",
+   "added": 13,
+   "removed": 5,
+   "hunks": [
+    {
+     "header": "@@ -1,5 +1,6 @@",
+     "lines": [
+      {
+       "kind": "add",
+       "text": "import logging",
+       "old": null,
+       "new": 1
+      },
+      {
+       "kind": "ctx",
+       "text": "import uuid",
+       "old": 1,
+       "new": 2
+      },
+      {
+       "kind": "ctx",
+       "text": "from datetime import datetime, timezone",
+       "old": 2,
+       "new": 3
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 3,
+       "new": 4
+      },
+      {
+       "kind": "ctx",
+       "text": "from fastapi import APIRouter, Header, status",
+       "old": 4,
+       "new": 5
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 5,
+       "new": 6
+      }
+     ]
+    },
+    {
+     "header": "@@ -7,26 +8,33 @@ from app import store",
+     "lines": [
+      {
+       "kind": "ctx",
+       "text": "from app.errors import error_response",
+       "old": 7,
+       "new": 8
+      },
+      {
+       "kind": "ctx",
+       "text": "from app.models import OrderCreate, OrderResponse",
+       "old": 8,
+       "new": 9
+      },
+      {
+       "kind": "ctx",
+       "text": "from app.billing import create_invoice_for",
+       "old": 9,
+       "new": 10
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 10,
+       "new": 11
+      },
+      {
+       "kind": "ctx",
+       "text": "router = APIRouter()",
+       "old": 11,
+       "new": 12
+      },
+      {
+       "kind": "add",
+       "text": "log = logging.getLogger(\"kora.orders\")",
+       "old": null,
+       "new": 13
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 12,
+       "new": 14
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 13,
+       "new": 15
+      },
+      {
+       "kind": "del",
+       "text": "@router.post(\"/orders\", status_code=status.HTTP_201_CREATED, response_model=OrderResponse)",
+       "old": 14,
+       "new": null
+      },
+      {
+       "kind": "add",
+       "text": "def _price_cents(sku: str, quantity: int) -> int:",
+       "old": null,
+       "new": 16
+      },
+      {
+       "kind": "add",
+       "text": "    return store.PRICES_CENTS.get(sku, store.DEFAULT_PRICE_CENTS) * quantity",
+       "old": null,
+       "new": 17
+      },
+      {
+       "kind": "add",
+       "text": "",
+       "old": null,
+       "new": 18
+      },
+      {
+       "kind": "add",
+       "text": "",
+       "old": null,
+       "new": 19
+      },
+      {
+       "kind": "add",
+       "text": "# Fast checkout: accept the order immediately and confirm it asynchronously,",
+       "old": null,
+       "new": 20
+      },
+      {
+       "kind": "add",
+       "text": "# so the POS no longer waits on invoice creation.",
+       "old": null,
+       "new": 21
+      },
+      {
+       "kind": "add",
+       "text": "@router.post(\"/orders\", status_code=status.HTTP_202_ACCEPTED, response_model=OrderResponse)",
+       "old": null,
+       "new": 22
+      },
+      {
+       "kind": "ctx",
+       "text": "def create_order(body: OrderCreate, x_request_id: str | None = Header(default=None)) -> OrderResponse:",
+       "old": 15,
+       "new": 23
+      },
+      {
+       "kind": "ctx",
+       "text": "    order_id = f\"ord_{uuid.uuid4().hex[:12]}\"",
+       "old": 16,
+       "new": 24
+      },
+      {
+       "kind": "del",
+       "text": "    unit_price = store.PRICES_CENTS.get(body.sku, store.DEFAULT_PRICE_CENTS)",
+       "old": 17,
+       "new": null
+      },
+      {
+       "kind": "ctx",
+       "text": "    order = OrderResponse(",
+       "old": 18,
+       "new": 25
+      },
+      {
+       "kind": "ctx",
+       "text": "        order_id=order_id,",
+       "old": 19,
+       "new": 26
+      },
+      {
+       "kind": "del",
+       "text": "        request_id=x_request_id or f\"req_{uuid.uuid4().hex[:12]}\",",
+       "old": 20,
+       "new": null
+      },
+      {
+       "kind": "del",
+       "text": "        status=\"confirmed\",",
+       "old": 21,
+       "new": null
+      },
+      {
+       "kind": "del",
+       "text": "        total_cents=unit_price * body.quantity,",
+       "old": 22,
+       "new": null
+      },
+      {
+       "kind": "add",
+       "text": "        req_id=x_request_id or f\"req_{uuid.uuid4().hex[:12]}\",",
+       "old": null,
+       "new": 27
+      },
+      {
+       "kind": "add",
+       "text": "        status=\"pending\",",
+       "old": null,
+       "new": 28
+      },
+      {
+       "kind": "add",
+       "text": "        total_cents=_price_cents(body.sku, body.quantity),",
+       "old": null,
+       "new": 29
+      },
+      {
+       "kind": "ctx",
+       "text": "        currency=store.CURRENCY,",
+       "old": 23,
+       "new": 30
+      },
+      {
+       "kind": "ctx",
+       "text": "        created_at=datetime.now(timezone.utc).isoformat(timespec=\"seconds\"),",
+       "old": 24,
+       "new": 31
+      },
+      {
+       "kind": "ctx",
+       "text": "    )",
+       "old": 25,
+       "new": 32
+      },
+      {
+       "kind": "ctx",
+       "text": "    store.ORDERS[order_id] = order.model_dump()",
+       "old": 26,
+       "new": 33
+      },
+      {
+       "kind": "ctx",
+       "text": "    create_invoice_for(order)",
+       "old": 27,
+       "new": 34
+      },
+      {
+       "kind": "add",
+       "text": "    log.info(\"order accepted %s sku=%s qty=%d\", order_id, body.sku, body.quantity)",
+       "old": null,
+       "new": 35
+      },
+      {
+       "kind": "ctx",
+       "text": "    return order",
+       "old": 28,
+       "new": 36
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 29,
+       "new": 37
+      },
+      {
+       "kind": "ctx",
+       "text": "",
+       "old": 30,
+       "new": 38
+      },
+      {
+       "kind": "ctx",
+       "text": "@router.get(\"/orders/{order_id}\", response_model=OrderResponse)",
+       "old": 31,
+       "new": 39
+      },
+      {
+       "kind": "ctx",
+       "text": "def get_order(order_id: str):",
+       "old": 32,
+       "new": 40
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

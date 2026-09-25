@@ -181,21 +181,15 @@ def validate(doc: dict) -> list[str]:
     return problems
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--findings", default="out/findings.json")
-    ap.add_argument("--out", default="out/dossier.html")
-    ap.add_argument("--patch", default="out/diff.patch")
-    args = ap.parse_args()
-
-    doc = json.loads((ROOT / args.findings).read_text())
+def build_context(findings_path: Path, patch_path: Path) -> dict:
+    """Everything the dossier shows, measured. Shared by the HTML renderer and the web export."""
+    doc = json.loads(findings_path.read_text())
     problems = validate(doc)
     workbook_path = doc.get("workbook", "contract/api-contract.xlsx")
     wb = load_workbook(ROOT / workbook_path)
-    patch_file = ROOT / args.patch
-    patch = parse_patch(patch_file.read_text()) if patch_file.exists() else {}
-    if not patch_file.exists():
-        problems.append(f"{args.patch} not found: run scripts/collect_diff.sh first")
+    patch = parse_patch(patch_path.read_text()) if patch_path.exists() else {}
+    if not patch_path.exists():
+        problems.append(f"{patch_path.relative_to(ROOT)} not found: run scripts/collect_diff.sh first")
     before = outcomes(ROOT / "out/test_results.before.json")
     after = outcomes(ROOT / "out/test_results.after.json")
     changes = workbook_changes(wb, doc.get("base", "main"), workbook_path)
@@ -243,16 +237,27 @@ def main() -> int:
         "recorded": sum(1 for f in findings if f.get("decision") == "record_breaking"),
         "cells_changed": len(changes or []),
     }
+    return {
+        "doc": doc, "findings": findings, "skipped": skipped, "counts": counts,
+        "problems": problems, "changes": changes, "head": git("rev-parse", "--short", "HEAD"),
+        "generated": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+    }
 
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--findings", default="out/findings.json")
+    ap.add_argument("--out", default="out/dossier.html")
+    ap.add_argument("--patch", default="out/diff.patch")
+    args = ap.parse_args()
+
+    ctx = build_context(ROOT / args.findings, ROOT / args.patch)
     env = Environment(loader=FileSystemLoader(ROOT / "rowgate"), autoescape=select_autoescape(["html", "j2"]))
-    html = env.get_template("dossier.html.j2").render(
-        doc=doc, findings=findings, skipped=skipped, counts=counts, problems=problems,
-        changes=changes, head=git("rev-parse", "--short", "HEAD"),
-        generated=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-    )
+    html = env.get_template("dossier.html.j2").render(**ctx)
     out = ROOT / args.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html)
+    counts, problems = ctx["counts"], ctx["problems"]
     print(f"wrote {args.out}: {counts['breaks']} breaks, {counts['skipped']} skipped, "
           f"{counts['cells_changed']} workbook cells changed, {len(problems)} problems")
     for p in problems:

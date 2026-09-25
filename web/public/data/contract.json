@@ -1,0 +1,985 @@
+{
+ "workbook": "contract/api-contract.xlsx",
+ "title": "Kora POS ⇄ Kora Partner API — Integration Contract",
+ "partner": "Kora Retail Ltd. (POS and mobile checkout)",
+ "version": "v3.2",
+ "signed": "2026-08-14",
+ "totals": {
+  "rules": 41,
+  "ACTIVE": 27,
+  "PLANNED": 5,
+  "DEPRECATED": 1,
+  "BREAKING": 0
+ },
+ "sheets": [
+  {
+   "name": "Cover",
+   "maxRow": 14,
+   "maxCol": 6,
+   "letters": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F"
+   ],
+   "headerRow": null,
+   "statusCol": null,
+   "cells": [
+    [
+     "Kora POS ⇄ Kora Partner API — Integration Contract",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Partner",
+     "Kora Retail Ltd. (POS and mobile checkout)",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Provider",
+     "Kora Partner API team",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Contract version",
+     "v3.2",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Signed",
+     "2026-08-14",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Scope",
+     "Orders, Billing, Auth. Webhooks are covered by a separate contract (KWH-1).",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Change rule",
+     "This workbook is the signed source of truth. Any behaviour change to an ACTIVE row needs a Changelog entry and partner sign-off before release.",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "How to read",
+     "Rows marked PLANNED or DEPRECATED are informational and not enforced. \"↳ ORD-011\" means the value is inherited from that rule.",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Sign-off",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Party",
+     "Name",
+     "Role",
+     "Date",
+     "Signature",
+     ""
+    ],
+    [
+     "Kora Retail",
+     "A. Okafor",
+     "Head of Payments",
+     "2026-08-14",
+     "signed",
+     ""
+    ],
+    [
+     "Kora Partner API",
+     "T. Bello",
+     "Engineering Manager",
+     "2026-08-14",
+     "signed",
+     ""
+    ]
+   ],
+   "merges": [
+    {
+     "r1": 4,
+     "c1": 2,
+     "r2": 4,
+     "c2": 6
+    },
+    {
+     "r1": 11,
+     "c1": 1,
+     "r2": 11,
+     "c2": 6
+    },
+    {
+     "r1": 7,
+     "c1": 2,
+     "r2": 7,
+     "c2": 6
+    },
+    {
+     "r1": 6,
+     "c1": 2,
+     "r2": 6,
+     "c2": 6
+    },
+    {
+     "r1": 1,
+     "c1": 1,
+     "r2": 1,
+     "c2": 6
+    },
+    {
+     "r1": 3,
+     "c1": 2,
+     "r2": 3,
+     "c2": 6
+    },
+    {
+     "r1": 5,
+     "c1": 2,
+     "r2": 5,
+     "c2": 6
+    },
+    {
+     "r1": 8,
+     "c1": 2,
+     "r2": 8,
+     "c2": 6
+    },
+    {
+     "r1": 9,
+     "c1": 2,
+     "r2": 9,
+     "c2": 6
+    }
+   ],
+   "rowStatus": {},
+   "notes": {}
+  },
+  {
+   "name": "Orders",
+   "maxRow": 19,
+   "maxCol": 9,
+   "letters": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I"
+   ],
+   "headerRow": 3,
+   "statusCol": 8,
+   "cells": [
+    [
+     "Orders — POST /orders, GET /orders/{id}",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Operation",
+     "",
+     "",
+     "Response contract",
+     "",
+     "",
+     "",
+     "Governance",
+     ""
+    ],
+    [
+     "Rule",
+     "Operation",
+     "HTTP status",
+     "Field",
+     "Type",
+     "Required",
+     "Scenario / error ref",
+     "Contract status",
+     "Notes"
+    ],
+    [
+     "ORD-001",
+     "POST /orders",
+     "↳ ORD-011",
+     "order_id",
+     "string (ord_*)",
+     "Y",
+     "valid order",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "ORD-002",
+     "POST /orders",
+     "↳ ORD-011",
+     "status",
+     "enum: pending | confirmed",
+     "Y",
+     "valid order",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "ORD-003",
+     "POST /orders",
+     "↳ ORD-011",
+     "total_cents",
+     "integer",
+     "Y",
+     "valid order",
+     "ACTIVE",
+     "Unit price × quantity, minor units."
+    ],
+    [
+     "ORD-004",
+     "POST /orders",
+     "↳ ORD-011",
+     "currency",
+     "string (ISO 4217)",
+     "Y",
+     "valid order",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "ORD-005",
+     "POST /orders",
+     "↳ ORD-011",
+     "created_at",
+     "string (RFC 3339, UTC)",
+     "Y",
+     "valid order",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "ORD-006",
+     "POST /orders",
+     "422",
+     "error",
+     "string",
+     "Y",
+     "quantity ≤ 0 or > 100 → ERR-002",
+     "ACTIVE",
+     "Body per Errors sheet."
+    ],
+    [
+     "ORD-007",
+     "POST /orders",
+     "409",
+     "error",
+     "string",
+     "Y",
+     "duplicate Idempotency-Key → ERR-003",
+     "PLANNED",
+     "Targeted for v3.3. Do not test yet."
+    ],
+    [
+     "ORD-008",
+     "POST /orders",
+     "↳ ORD-011",
+     "request_id",
+     "string",
+     "Y",
+     "valid order; echoes X-Request-ID if sent",
+     "ACTIVE",
+     "POS reconciles orders by request_id. Name on the wire must be exactly request_id."
+    ],
+    [
+     "ORD-009",
+     "GET /orders/{id}",
+     "200",
+     "order_id",
+     "string",
+     "Y",
+     "known id",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "ORD-010",
+     "GET /orders/{id}",
+     "200",
+     "status",
+     "enum: pending | confirmed",
+     "Y",
+     "known id",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "ORD-011",
+     "POST /orders",
+     "201",
+     "—",
+     "—",
+     "—",
+     "valid order: synchronous create",
+     "ACTIVE",
+     "POS treats any other 2xx as a failed checkout and retries (see INC-2291)."
+    ],
+    [
+     "ORD-012",
+     "GET /orders/{id}",
+     "404",
+     "error",
+     "string",
+     "Y",
+     "unknown id → ERR-005",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "ORD-013",
+     "DELETE /orders/{id}",
+     "204",
+     "—",
+     "—",
+     "—",
+     "cancel",
+     "DEPRECATED",
+     "Removed in v3.0. Cancellation moves to POST /orders/{id}/cancel."
+    ],
+    [
+     "ORD-014",
+     "POST /orders/{id}/cancel",
+     "200",
+     "status",
+     "enum: cancelled",
+     "Y",
+     "cancel",
+     "PLANNED",
+     ""
+    ],
+    [
+     "ORD-015",
+     "GET /orders/{id}",
+     "200",
+     "total_cents",
+     "integer",
+     "Y",
+     "known id",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "ORD-016",
+     "GET /orders/{id}",
+     "200",
+     "currency",
+     "string (ISO 4217)",
+     "Y",
+     "known id",
+     "ACTIVE",
+     ""
+    ]
+   ],
+   "merges": [
+    {
+     "r1": 1,
+     "c1": 1,
+     "r2": 1,
+     "c2": 9
+    },
+    {
+     "r1": 2,
+     "c1": 4,
+     "r2": 2,
+     "c2": 7
+    },
+    {
+     "r1": 2,
+     "c1": 8,
+     "r2": 2,
+     "c2": 9
+    },
+    {
+     "r1": 2,
+     "c1": 1,
+     "r2": 2,
+     "c2": 3
+    }
+   ],
+   "rowStatus": {
+    "4": "ACTIVE",
+    "5": "ACTIVE",
+    "6": "ACTIVE",
+    "7": "ACTIVE",
+    "8": "ACTIVE",
+    "9": "ACTIVE",
+    "10": "PLANNED",
+    "11": "ACTIVE",
+    "12": "ACTIVE",
+    "13": "ACTIVE",
+    "14": "ACTIVE",
+    "15": "ACTIVE",
+    "16": "DEPRECATED",
+    "17": "PLANNED",
+    "18": "ACTIVE",
+    "19": "ACTIVE"
+   },
+   "notes": {
+    "I14": "Agreed after INC-2291 (duplicate charges, July 2026)."
+   }
+  },
+  {
+   "name": "Billing",
+   "maxRow": 13,
+   "maxCol": 9,
+   "letters": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I"
+   ],
+   "headerRow": 2,
+   "statusCol": 8,
+   "cells": [
+    [
+     "Billing — GET /invoices/{id}",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Rule",
+     "Endpoint",
+     "Scenario",
+     "HTTP status",
+     "Field",
+     "Type",
+     "Required",
+     "Contract status",
+     "Notes"
+    ],
+    [
+     "BIL-001",
+     "GET /invoices/{id}",
+     "known invoice",
+     "200",
+     "invoice_id",
+     "string (inv_*)",
+     "Y",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "BIL-002",
+     "GET /invoices/{id}",
+     "known invoice",
+     "",
+     "order_id",
+     "string",
+     "Y",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "BIL-003",
+     "GET /invoices/{id}",
+     "known invoice",
+     "",
+     "amount_cents",
+     "integer",
+     "Y",
+     "ACTIVE",
+     "Equals order total_cents."
+    ],
+    [
+     "BIL-004",
+     "GET /invoices/{id}",
+     "known invoice",
+     "",
+     "issued_at",
+     "string (RFC 3339)",
+     "Y",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "BIL-005",
+     "GET /invoices/{id}",
+     "known invoice",
+     "",
+     "status",
+     "enum: open | paid | void",
+     "Y",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "BIL-006",
+     "GET /invoices/{id}",
+     "known invoice",
+     "",
+     "due_date",
+     "string (YYYY-MM-DD)",
+     "Y",
+     "ACTIVE",
+     "issued_at + 30 days."
+    ],
+    [
+     "BIL-007",
+     "GET /invoices/{id}",
+     "known invoice",
+     "",
+     "currency",
+     "string (ISO 4217)",
+     "Y",
+     "ACTIVE",
+     "Mandatory for multi-currency settlement. Partner ledger rejects invoices without it."
+    ],
+    [
+     "BIL-008",
+     "GET /invoices/{id}",
+     "unknown id",
+     "404",
+     "error",
+     "string",
+     "Y",
+     "ACTIVE",
+     "→ ERR-005"
+    ],
+    [
+     "BIL-009",
+     "GET /invoices/{id}",
+     "known invoice",
+     "200",
+     "tax_cents",
+     "integer",
+     "N",
+     "ACTIVE",
+     "Optional. VAT 7.5% when present."
+    ],
+    [
+     "BIL-010",
+     "GET /invoices?order_id=",
+     "list by order",
+     "200",
+     "items[]",
+     "array",
+     "Y",
+     "PLANNED",
+     "v3.3"
+    ],
+    [
+     "BIL-011",
+     "POST /invoices/{id}/void",
+     "void",
+     "200",
+     "status",
+     "enum: void",
+     "Y",
+     "PLANNED",
+     "v3.4"
+    ]
+   ],
+   "merges": [
+    {
+     "r1": 1,
+     "c1": 1,
+     "r2": 1,
+     "c2": 9
+    },
+    {
+     "r1": 3,
+     "c1": 4,
+     "r2": 9,
+     "c2": 4
+    }
+   ],
+   "rowStatus": {
+    "3": "ACTIVE",
+    "4": "ACTIVE",
+    "5": "ACTIVE",
+    "6": "ACTIVE",
+    "7": "ACTIVE",
+    "8": "ACTIVE",
+    "9": "ACTIVE",
+    "10": "ACTIVE",
+    "11": "ACTIVE",
+    "12": "PLANNED",
+    "13": "PLANNED"
+   },
+   "notes": {}
+  },
+  {
+   "name": "Auth",
+   "maxRow": 9,
+   "maxCol": 8,
+   "letters": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+   ],
+   "headerRow": 3,
+   "statusCol": 7,
+   "cells": [
+    [
+     "Auth — POST /auth/token (OAuth 2.0 client credentials)",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Errors use the shared envelope on the Errors sheet. FastAPI's default {\"detail\": …} is not accepted by POS.",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Rule",
+     "Endpoint",
+     "grant_type",
+     "Scenario",
+     "HTTP status",
+     "Error ref",
+     "Contract status",
+     "Notes"
+    ],
+    [
+     "AUT-001",
+     "POST /auth/token",
+     "client_credentials",
+     "valid client",
+     "200",
+     "—",
+     "ACTIVE",
+     "Body: access_token, token_type=Bearer, expires_in=3600."
+    ],
+    [
+     "AUT-002",
+     "POST /auth/token",
+     "client_credentials",
+     "wrong client_secret",
+     "401",
+     "ERR-004",
+     "ACTIVE",
+     "POS shows 're-enter API key' only on 401 + invalid_grant."
+    ],
+    [
+     "AUT-003",
+     "POST /auth/token",
+     "password",
+     "unsupported grant",
+     "400",
+     "ERR-006",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "AUT-004",
+     "POST /auth/token",
+     "client_credentials",
+     "missing client_id",
+     "422",
+     "ERR-002",
+     "ACTIVE",
+     ""
+    ],
+    [
+     "AUT-005",
+     "POST /auth/refresh",
+     "refresh_token",
+     "refresh",
+     "200",
+     "—",
+     "PLANNED",
+     "v3.4"
+    ],
+    [
+     "AUT-006",
+     "POST /auth/token",
+     "client_credentials",
+     "valid client",
+     "200",
+     "—",
+     "ACTIVE",
+     "token_type must be exactly \"Bearer\"."
+    ]
+   ],
+   "merges": [
+    {
+     "r1": 2,
+     "c1": 1,
+     "r2": 2,
+     "c2": 8
+    },
+    {
+     "r1": 1,
+     "c1": 1,
+     "r2": 1,
+     "c2": 8
+    }
+   ],
+   "rowStatus": {
+    "4": "ACTIVE",
+    "5": "ACTIVE",
+    "6": "ACTIVE",
+    "7": "ACTIVE",
+    "8": "PLANNED",
+    "9": "ACTIVE"
+   },
+   "notes": {}
+  },
+  {
+   "name": "Errors",
+   "maxRow": 10,
+   "maxCol": 6,
+   "letters": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F"
+   ],
+   "headerRow": 2,
+   "statusCol": null,
+   "cells": [
+    [
+     "Errors — shared error envelope",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Code",
+     "HTTP status",
+     "error",
+     "Body (exact shape)",
+     "Used by",
+     "Notes"
+    ],
+    [
+     "ERR-001",
+     "400",
+     "invalid_request",
+     "{\"error\": \"invalid_request\", \"error_description\": \"<text>\"}",
+     "reserved",
+     ""
+    ],
+    [
+     "ERR-002",
+     "422",
+     "validation_failed",
+     "{\"error\": \"validation_failed\", \"error_description\": \"<text>\"}",
+     "ORD-006, AUT-004",
+     ""
+    ],
+    [
+     "ERR-003",
+     "409",
+     "duplicate_request",
+     "{\"error\": \"duplicate_request\", \"error_description\": \"<text>\"}",
+     "ORD-007",
+     "PLANNED"
+    ],
+    [
+     "ERR-004",
+     "401",
+     "invalid_grant",
+     "{\"error\": \"invalid_grant\", \"error_description\": \"Client authentication failed\"}",
+     "AUT-002",
+     "error_description text is shown to cashiers verbatim."
+    ],
+    [
+     "ERR-005",
+     "404",
+     "not_found",
+     "{\"error\": \"not_found\", \"error_description\": \"<text>\"}",
+     "ORD-012, BIL-008",
+     ""
+    ],
+    [
+     "ERR-006",
+     "400",
+     "unsupported_grant_type",
+     "{\"error\": \"unsupported_grant_type\", \"error_description\": \"<text>\"}",
+     "AUT-003",
+     ""
+    ],
+    [
+     "ERR-007",
+     "429",
+     "rate_limited",
+     "{\"error\": \"rate_limited\", \"error_description\": \"<text>\"}",
+     "—",
+     "PLANNED"
+    ],
+    [
+     "ERR-008",
+     "500",
+     "internal_error",
+     "{\"error\": \"internal_error\", \"error_description\": \"<text>\"}",
+     "all",
+     "Never leak stack traces."
+    ]
+   ],
+   "merges": [
+    {
+     "r1": 1,
+     "c1": 1,
+     "r2": 1,
+     "c2": 6
+    }
+   ],
+   "rowStatus": {
+    "3": "ACTIVE",
+    "4": "ACTIVE",
+    "5": "PLANNED",
+    "6": "ACTIVE",
+    "7": "ACTIVE",
+    "8": "ACTIVE",
+    "9": "PLANNED",
+    "10": "ACTIVE"
+   },
+   "notes": {}
+  },
+  {
+   "name": "Changelog",
+   "maxRow": 5,
+   "maxCol": 6,
+   "letters": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F"
+   ],
+   "headerRow": 2,
+   "statusCol": null,
+   "cells": [
+    [
+     "Changelog — every change to an ACTIVE row",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Date",
+     "Version",
+     "Cell",
+     "Change",
+     "Decision",
+     "Approved by"
+    ],
+    [
+     "2026-03-02",
+     "v3.0",
+     "Orders!A16",
+     "DELETE /orders/{id} deprecated",
+     "breaking, accepted",
+     "A. Okafor"
+    ],
+    [
+     "2026-06-10",
+     "v3.1",
+     "Billing!E11",
+     "tax_cents added (optional)",
+     "additive",
+     "T. Bello"
+    ],
+    [
+     "2026-08-14",
+     "v3.2",
+     "Orders!C14",
+     "Create must return 201 (INC-2291)",
+     "clarification",
+     "A. Okafor"
+    ]
+   ],
+   "merges": [
+    {
+     "r1": 1,
+     "c1": 1,
+     "r2": 1,
+     "c2": 6
+    }
+   ],
+   "rowStatus": {},
+   "notes": {}
+  }
+ ]
+}

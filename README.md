@@ -1,3 +1,5 @@
+<img src="web/public/logo.svg" width="72" alt="Rowgate logo: an arch gate with a spreadsheet row through it and one amber cell">
+
 # Rowgate
 
 Rowgate checks a release branch against the **signed API contract spreadsheet** and writes

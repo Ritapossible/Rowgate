@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "../router";
 
-export function Logo({ size = 30 }: { size?: number }) {
+/** A gate made of an arch and a spreadsheet row; the amber cell is the one a release breaks. */
+export function Logo({ size = 32 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
-      <rect width="32" height="32" rx="8" fill="var(--forest)" />
-      <path d="M9 23V9h8.5a4.5 4.5 0 0 1 0 9H9" fill="none" stroke="var(--bg)" strokeWidth="2.6" strokeLinejoin="round" />
-      <path d="M16.5 18l6 5" stroke="var(--bg)" strokeWidth="2.6" strokeLinecap="round" />
+    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+      <rect width="64" height="64" rx="16" fill="var(--logo-tile)" />
+      <path d="M17 51V29a15 15 0 0 1 30 0v22" fill="none" stroke="var(--logo-ink)" strokeWidth="6" strokeLinecap="round" />
+      <rect x="17" y="34" width="30" height="8" fill="var(--logo-ink)" opacity="0.38" />
+      <rect x="27" y="31" width="10" height="14" rx="2" fill="var(--logo-cell)" />
     </svg>
   );
 }

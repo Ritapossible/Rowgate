@@ -33,6 +33,10 @@
   --sans: "Inter", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
+  --logo-tile: #0f1611;
+  --logo-ink: #e8dcb8;
+  --logo-cell: #e3b64f;
+
   --radius: 22px;
   --radius-sm: 12px;
   --shadow: 0 1px 0 rgba(22, 33, 26, 0.04), 0 12px 32px -18px rgba(22, 33, 26, 0.25);
@@ -41,6 +45,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    --logo-tile: #e8dcb8; --logo-ink: #0f1611; --logo-cell: #c8921e;
     --bg: #0b100c; --surface: #121913; --ink: #ece5d1; --forest: #e8dcb8; --muted: #9c9c8c;
     --line: #222c23; --line-strong: #334034;
     --night: #151e17; --night-2: #1f2a21; --night-line: #2b372d;
@@ -52,6 +57,7 @@
   }
 }
 :root[data-theme="dark"] {
+  --logo-tile: #e8dcb8; --logo-ink: #0f1611; --logo-cell: #c8921e;
   --bg: #0b100c; --surface: #121913; --ink: #ece5d1; --forest: #e8dcb8; --muted: #9c9c8c;
   --line: #222c23; --line-strong: #334034;
   --night: #151e17; --night-2: #1f2a21; --night-line: #2b372d;

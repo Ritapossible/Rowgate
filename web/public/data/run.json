@@ -39,7 +39,7 @@
     "workbook_edit": {
      "cells": {
       "Billing!H9": "BREAKING",
-      "Changelog!A6": "2025-07-14",
+      "Changelog!A6": "2026-09-26",
       "Changelog!B6": "v3.3",
       "Changelog!C6": "Billing!E9",
       "Changelog!D6": "currency field removed from GET /invoices/{id} response",
@@ -260,7 +260,7 @@
    "workbook_edit": {
     "cells": {
      "Billing!H9": "BREAKING",
-     "Changelog!A6": "2025-07-14",
+     "Changelog!A6": "2026-09-26",
      "Changelog!B6": "v3.3",
      "Changelog!C6": "Billing!E9",
      "Changelog!D6": "currency field removed from GET /invoices/{id} response",
@@ -816,6 +816,7 @@
   "skipped": 2,
   "red_before": 4,
   "green_after": 3,
+  "fixed": 3,
   "recorded": 1,
   "cells_changed": 7
  },
@@ -829,7 +830,7 @@
   {
    "cell": "Changelog!A6",
    "old": "",
-   "new": "2025-07-14"
+   "new": "2026-09-26"
   },
   {
    "cell": "Changelog!B6",
@@ -857,6 +858,6 @@
    "new": "A. Okafor"
   }
  ],
- "head": "528ce25",
- "generated": "2026-09-26 22:24 UTC"
+ "head": "5fffc93",
+ "generated": "2026-09-26 22:45 UTC"
 }

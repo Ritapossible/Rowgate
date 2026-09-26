@@ -3,83 +3,32 @@
  "base": "main",
  "commits": [
   {
-   "sha": "cb3dbe0",
+   "sha": "4358848",
    "subject": "Fast checkout: accept orders immediately, confirm asynchronously"
   },
   {
-   "sha": "cf176ed",
+   "sha": "2e79edf",
    "subject": "Slim invoice payload: currency is implied by the partner account"
   },
   {
-   "sha": "528ce25",
+   "sha": "8f9fc68",
    "subject": "Simplify token errors and use constant-time secret comparison"
+  },
+  {
+   "sha": "05a97d3",
+   "subject": "Rowgate run: contract tests and approved decisions"
+  },
+  {
+   "sha": "5fffc93",
+   "subject": "Correct the Changelog date Bob wrote"
   }
  ],
  "files": [
   {
    "path": "app/auth.py",
-   "added": 8,
-   "removed": 3,
+   "added": 6,
+   "removed": 1,
    "hunks": [
-    {
-     "header": "@@ -1,8 +1,8 @@",
-     "lines": [
-      {
-       "kind": "ctx",
-       "text": "import secrets",
-       "old": 1,
-       "new": 1
-      },
-      {
-       "kind": "ctx",
-       "text": "",
-       "old": 2,
-       "new": 2
-      },
-      {
-       "kind": "del",
-       "text": "from fastapi import APIRouter",
-       "old": 3,
-       "new": null
-      },
-      {
-       "kind": "add",
-       "text": "from fastapi import APIRouter, HTTPException",
-       "old": null,
-       "new": 3
-      },
-      {
-       "kind": "ctx",
-       "text": "",
-       "old": 4,
-       "new": 4
-      },
-      {
-       "kind": "ctx",
-       "text": "from app.errors import error_response",
-       "old": 5,
-       "new": 5
-      },
-      {
-       "kind": "ctx",
-       "text": "from app.models import TokenRequest, TokenResponse",
-       "old": 6,
-       "new": 6
-      },
-      {
-       "kind": "ctx",
-       "text": "",
-       "old": 7,
-       "new": 7
-      },
-      {
-       "kind": "ctx",
-       "text": "router = APIRouter()",
-       "old": 8,
-       "new": 8
-      }
-     ]
-    },
     {
      "header": "@@ -10,12 +10,17 @@ router = APIRouter()",
      "lines": [
@@ -174,21 +123,15 @@
        "new": null
       },
       {
-       "kind": "del",
-       "text": "        return error_response(401, \"invalid_grant\", \"Client authentication failed\")",
-       "old": 20,
-       "new": null
-      },
-      {
        "kind": "add",
        "text": "    if not _is_valid_client(body.client_id, body.client_secret):",
        "old": null,
        "new": 24
       },
       {
-       "kind": "add",
-       "text": "        raise HTTPException(status_code=400, detail=\"invalid client credentials\")",
-       "old": null,
+       "kind": "ctx",
+       "text": "        return error_response(401, \"invalid_grant\", \"Client authentication failed\")",
+       "old": 20,
        "new": 25
       },
       {
@@ -526,8 +469,8 @@
   },
   {
    "path": "app/orders.py",
-   "added": 13,
-   "removed": 5,
+   "added": 12,
+   "removed": 4,
    "hunks": [
     {
      "header": "@@ -1,5 +1,6 @@",
@@ -622,12 +565,6 @@
        "new": 15
       },
       {
-       "kind": "del",
-       "text": "@router.post(\"/orders\", status_code=status.HTTP_201_CREATED, response_model=OrderResponse)",
-       "old": 14,
-       "new": null
-      },
-      {
        "kind": "add",
        "text": "def _price_cents(sku: str, quantity: int) -> int:",
        "old": null,
@@ -664,9 +601,9 @@
        "new": 21
       },
       {
-       "kind": "add",
-       "text": "@router.post(\"/orders\", status_code=status.HTTP_202_ACCEPTED, response_model=OrderResponse)",
-       "old": null,
+       "kind": "ctx",
+       "text": "@router.post(\"/orders\", status_code=status.HTTP_201_CREATED, response_model=OrderResponse)",
+       "old": 14,
        "new": 22
       },
       {

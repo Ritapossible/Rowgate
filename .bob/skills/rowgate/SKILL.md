@@ -109,8 +109,11 @@ answered.
 - **fix code**: make the smallest change in `app/` that makes that test pass. Touch nothing
   else. Set `decision` to `"fix_code"` and `decided_by`.
 - **record breaking change**: with `office_edit`, set that row's `Contract status` cell to
-  `BREAKING`, and add a row on the `Changelog` sheet at the next empty row (date, version
-  `v3.3`, cell, change, `breaking, accepted`, approver). Set `decision` to `"record_breaking"`
+  `BREAKING`, and add a row on the `Changelog` sheet at the next empty row: **today's real
+  date**, written as a `YYYY-MM-DD` string like the rows above it (do not copy the date from
+  the row above, and do not write a date value); version `v3.3`; the cell; the change; the
+  decision `breaking, accepted`; and in `Approved by` the **person** who decided, the same
+  name you put in `decided_by` (never a branch name). Set `decision` to `"record_breaking"`
   and `workbook_edit` to the cells you changed and the Changelog row number.
 - **reject**: delete that test file, set `decision` to `"reject"`.
 

@@ -84,7 +84,7 @@ Type `/rowgate feature/fast-checkout`, or paste:
 | Tests | 3 files in `tests/contract/`, `run_contract_tests.sh before` red | Check each file name has the cell | `04-tests-red.png` |
 | Findings | Summary from `render_dossier.py` | Check: 3 breaks, `Orders!D11` skipped, 0 problems | `05-findings.png` |
 | Decide | Bob asks per finding | **F1 Orders!C14: fix code · F2 Billing!E9: record breaking change · F3 Auth!E5: fix code** | `06-decisions.png` |
-| Workbook | `office_edit` on Billing and Changelog | Open the .xlsx and look at `Billing!H9` and the new Changelog row | `07-workbook.png` |
+| Workbook | `office_edit` on Billing and Changelog | Open the .xlsx and look at `Billing!H9` and the new Changelog row. Check the row's date is **today** and `Approved by` is a person, not a branch | `07-workbook.png` |
 | After | `run_contract_tests.sh after`, green for F1 and F3 | Check `render_dossier.py` says 0 problems | `08-green.png` |
 
 Expected result, confirmed by the 26 Sep dry run: **3 breaks** (`Orders!C14`, `Billing!E9`,

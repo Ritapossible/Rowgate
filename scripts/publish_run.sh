@@ -26,6 +26,11 @@ cp web/public/dossier.html "$STAGE/dossier.html"
 # publish then added another level.
 mkdir -p "$STAGE/bob_sessions"
 find bob_sessions -maxdepth 1 -type f -exec cp {} "$STAGE/bob_sessions/" \; 2>/dev/null || true
+# The files Bob actually produced, so main carries them too: the branch holds the live tests,
+# but a judge lands on main and the pitch is that the tests stay in the repo.
+mkdir -p "$STAGE/run"
+find tests/contract -maxdepth 1 -name 'test_*.py' -exec cp {} "$STAGE/run/" \;
+cp out/findings.json "$STAGE/run/findings.json"
 git checkout -q -- web/public/data 2>/dev/null || true
 rm -f web/public/dossier.html web/public/data/run.json
 
@@ -34,7 +39,10 @@ git checkout -q main
 cp "$STAGE"/data/*.json web/public/data/
 cp "$STAGE/dossier.html" web/public/dossier.html
 find "$STAGE/bob_sessions" -maxdepth 1 -type f -exec cp {} bob_sessions/ \;
-git add web/public/data web/public/dossier.html bob_sessions
+mkdir -p submission/run
+rm -f submission/run/test_*.py submission/run/findings.json
+find "$STAGE/run" -maxdepth 1 -type f -exec cp {} submission/run/ \;
+git add web/public/data web/public/dossier.html bob_sessions submission/run
 git commit -q -m "Publish Rowgate run on $BRANCH" && echo "committed on main"
 if [[ "${1:-}" != "--no-push" ]]; then git push -q origin main && echo "pushed main"; fi
 git checkout -q "$BRANCH"

@@ -6,10 +6,10 @@
  "signed": "2026-08-14",
  "totals": {
   "rules": 41,
-  "ACTIVE": 27,
+  "ACTIVE": 26,
   "PLANNED": 5,
   "DEPRECATED": 1,
-  "BREAKING": 0
+  "BREAKING": 1
  },
  "sheets": [
   {
@@ -589,7 +589,7 @@
      "currency",
      "string (ISO 4217)",
      "Y",
-     "ACTIVE",
+     "BREAKING",
      "Mandatory for multi-currency settlement. Partner ledger rejects invoices without it."
     ],
     [
@@ -658,7 +658,7 @@
     "6": "ACTIVE",
     "7": "ACTIVE",
     "8": "ACTIVE",
-    "9": "ACTIVE",
+    "9": "BREAKING",
     "10": "ACTIVE",
     "11": "ACTIVE",
     "12": "PLANNED",
@@ -916,7 +916,7 @@
   },
   {
    "name": "Changelog",
-   "maxRow": 5,
+   "maxRow": 6,
    "maxCol": 6,
    "letters": [
     "A",
@@ -967,6 +967,14 @@
      "Orders!C14",
      "Create must return 201 (INC-2291)",
      "clarification",
+     "A. Okafor"
+    ],
+    [
+     "2025-07-14",
+     "v3.3",
+     "Billing!E9",
+     "currency field removed from GET /invoices/{id} response",
+     "breaking, accepted",
      "A. Okafor"
     ]
    ],

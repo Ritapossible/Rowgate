@@ -1,0 +1,862 @@
+{
+ "doc": {
+  "branch": "feature/fast-checkout",
+  "base": "main",
+  "workbook": "contract/api-contract.xlsx",
+  "workbook_version": "v3.2",
+  "findings": [
+   {
+    "id": "F1",
+    "cell": "Orders!C14",
+    "rule": "ORD-011",
+    "contract_says": "POST /orders with a valid order must return HTTP 201 Created.",
+    "code_does": "Returns HTTP 202 Accepted (fast-checkout change).",
+    "evidence": {
+     "file": "app/orders.py",
+     "line": 22
+    },
+    "verdict": "BREAK",
+    "reasoning": "status_code was changed from HTTP_201_CREATED to HTTP_202_ACCEPTED. The contract note (Orders!I14) states the POS treats any other 2xx as a failed checkout and retries (INC-2291).",
+    "test": "tests/contract/test_orders_C14_create_returns_201.py",
+    "decision": "fix_code",
+    "decided_by": "A. Okafor"
+   },
+   {
+    "id": "F2",
+    "cell": "Billing!E9",
+    "rule": "BIL-007",
+    "contract_says": "GET /invoices/{id} response must include field `currency` (string, ISO 4217, Required=Y).",
+    "code_does": "The `currency` field was removed from InvoiceResponse in models.py and from create_invoice_for in billing.py.",
+    "evidence": {
+     "file": "app/models.py",
+     "line": 22
+    },
+    "verdict": "BREAK",
+    "reasoning": "currency was deleted from InvoiceResponse; the contract (Billing!I9) marks it mandatory for multi-currency settlement and notes the partner ledger rejects invoices without it.",
+    "test": "tests/contract/test_billing_E9_invoice_has_currency.py",
+    "decision": "record_breaking",
+    "decided_by": "A. Okafor",
+    "workbook_edit": {
+     "cells": {
+      "Billing!H9": "BREAKING",
+      "Changelog!A6": "2025-07-14",
+      "Changelog!B6": "v3.3",
+      "Changelog!C6": "Billing!E9",
+      "Changelog!D6": "currency field removed from GET /invoices/{id} response",
+      "Changelog!E6": "breaking, accepted",
+      "Changelog!F6": "A. Okafor"
+     },
+     "changelog_row": 6
+    }
+   },
+   {
+    "id": "F3",
+    "cell": "Auth!E5",
+    "rule": "AUT-002",
+    "contract_says": "POST /auth/token with wrong client_secret must return HTTP 401.",
+    "code_does": "Raises HTTPException(status_code=400, ...) instead of returning a 401 via error_response.",
+    "evidence": {
+     "file": "app/auth.py",
+     "line": 25
+    },
+    "verdict": "BREAK",
+    "reasoning": "The branch changed error_response(401, ...) to HTTPException(status_code=400, ...); Auth!H5 states the POS shows 're-enter API key' only on 401 + invalid_grant, so a 400 silently breaks the POS UX.",
+    "test": "tests/contract/test_auth_E5_invalid_secret_returns_401.py",
+    "decision": "fix_code",
+    "decided_by": "A. Okafor"
+   },
+   {
+    "id": "F4",
+    "cell": "Auth!D5",
+    "related_cells": [
+     "Errors!D6"
+    ],
+    "rule": "AUT-002",
+    "contract_says": "Error body for wrong client_secret must be {\"error\": \"invalid_grant\", \"error_description\": \"Client authentication failed\"}.",
+    "code_does": "HTTPException produces {\"detail\": \"invalid client credentials\"} — wrong key names and wrong text.",
+    "evidence": {
+     "file": "app/auth.py",
+     "line": 25
+    },
+    "verdict": "BREAK",
+    "reasoning": "FastAPI's HTTPException uses the `detail` key; the error envelope on the Errors sheet (ERR-004) requires `error` and `error_description`, with the exact text shown verbatim to cashiers (Errors!F6).",
+    "test": "tests/contract/test_auth_D5_invalid_secret_error_envelope.py",
+    "decision": "fix_code",
+    "decided_by": "A. Okafor"
+   }
+  ],
+  "skipped": [
+   {
+    "cell": "Orders!H11",
+    "change": "Python field `request_id` renamed to `req_id` in OrderResponse.",
+    "why": "Field carries `serialization_alias=\"request_id\"` so the wire name is exactly `request_id` as required by ORD-008. Internal rename only.",
+    "evidence": {
+     "file": "app/models.py",
+     "line": 15
+    }
+   },
+   {
+    "cell": "Orders!H5",
+    "change": "Order status value changed from `confirmed` to `pending` on creation.",
+    "why": "`pending` is within the allowed enum `pending | confirmed` (ORD-002); no contract row is broken.",
+    "evidence": {
+     "file": "app/orders.py",
+     "line": 28
+    }
+   }
+  ]
+ },
+ "findings": [
+  {
+   "id": "F1",
+   "cell": "Orders!C14",
+   "rule": "ORD-011",
+   "contract_says": "POST /orders with a valid order must return HTTP 201 Created.",
+   "code_does": "Returns HTTP 202 Accepted (fast-checkout change).",
+   "evidence": {
+    "file": "app/orders.py",
+    "line": 22
+   },
+   "verdict": "BREAK",
+   "reasoning": "status_code was changed from HTTP_201_CREATED to HTTP_202_ACCEPTED. The contract note (Orders!I14) states the POS treats any other 2xx as a failed checkout and retries (INC-2291).",
+   "test": "tests/contract/test_orders_C14_create_returns_201.py",
+   "decision": "fix_code",
+   "decided_by": "A. Okafor",
+   "row": {
+    "sheet": "Orders",
+    "letters": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "H",
+     "I"
+    ],
+    "headers": [
+     "Rule",
+     "Operation",
+     "HTTP status",
+     "Field",
+     "Type",
+     "Required",
+     "Scenario / error ref",
+     "Contract status",
+     "Notes"
+    ],
+    "cells": [
+     "ORD-011",
+     "POST /orders",
+     "201",
+     "—",
+     "—",
+     "—",
+     "valid order: synchronous create",
+     "ACTIVE",
+     "POS treats any other 2xx as a failed checkout and retries (see INC-2291)."
+    ],
+    "row": 14,
+    "hit": 2
+   },
+   "related": [],
+   "diff": [
+    {
+     "kind": "at",
+     "text": "@@ app/orders.py around line 22 @@"
+    },
+    {
+     "kind": "del",
+     "text": "-@router.post(\"/orders\", status_code=status.HTTP_201_CREATED, response_model=OrderResponse)"
+    },
+    {
+     "kind": "add",
+     "text": "+def _price_cents(sku: str, quantity: int) -> int:"
+    },
+    {
+     "kind": "add",
+     "text": "+    return store.PRICES_CENTS.get(sku, store.DEFAULT_PRICE_CENTS) * quantity"
+    },
+    {
+     "kind": "add",
+     "text": "+"
+    },
+    {
+     "kind": "add",
+     "text": "+"
+    },
+    {
+     "kind": "add",
+     "text": "+# Fast checkout: accept the order immediately and confirm it asynchronously,"
+    },
+    {
+     "kind": "add",
+     "text": "+# so the POS no longer waits on invoice creation."
+    },
+    {
+     "kind": "hit add",
+     "text": "+@router.post(\"/orders\", status_code=status.HTTP_202_ACCEPTED, response_model=OrderResponse)"
+    },
+    {
+     "kind": "ctx",
+     "text": " def create_order(body: OrderCreate, x_request_id: str | None = Header(default=None)) -> OrderResponse:"
+    },
+    {
+     "kind": "ctx",
+     "text": "     order_id = f\"ord_{uuid.uuid4().hex[:12]}\""
+    },
+    {
+     "kind": "del",
+     "text": "-    unit_price = store.PRICES_CENTS.get(body.sku, store.DEFAULT_PRICE_CENTS)"
+    },
+    {
+     "kind": "ctx",
+     "text": "     order = OrderResponse("
+    },
+    {
+     "kind": "ctx",
+     "text": "         order_id=order_id,"
+    },
+    {
+     "kind": "del",
+     "text": "-        request_id=x_request_id or f\"req_{uuid.uuid4().hex[:12]}\","
+    },
+    {
+     "kind": "del",
+     "text": "-        status=\"confirmed\","
+    },
+    {
+     "kind": "del",
+     "text": "-        total_cents=unit_price * body.quantity,"
+    },
+    {
+     "kind": "add",
+     "text": "+        req_id=x_request_id or f\"req_{uuid.uuid4().hex[:12]}\","
+    },
+    {
+     "kind": "add",
+     "text": "+        status=\"pending\","
+    }
+   ],
+   "before": "failed",
+   "after": "passed"
+  },
+  {
+   "id": "F2",
+   "cell": "Billing!E9",
+   "rule": "BIL-007",
+   "contract_says": "GET /invoices/{id} response must include field `currency` (string, ISO 4217, Required=Y).",
+   "code_does": "The `currency` field was removed from InvoiceResponse in models.py and from create_invoice_for in billing.py.",
+   "evidence": {
+    "file": "app/models.py",
+    "line": 22
+   },
+   "verdict": "BREAK",
+   "reasoning": "currency was deleted from InvoiceResponse; the contract (Billing!I9) marks it mandatory for multi-currency settlement and notes the partner ledger rejects invoices without it.",
+   "test": "tests/contract/test_billing_E9_invoice_has_currency.py",
+   "decision": "record_breaking",
+   "decided_by": "A. Okafor",
+   "workbook_edit": {
+    "cells": {
+     "Billing!H9": "BREAKING",
+     "Changelog!A6": "2025-07-14",
+     "Changelog!B6": "v3.3",
+     "Changelog!C6": "Billing!E9",
+     "Changelog!D6": "currency field removed from GET /invoices/{id} response",
+     "Changelog!E6": "breaking, accepted",
+     "Changelog!F6": "A. Okafor"
+    },
+    "changelog_row": 6
+   },
+   "row": {
+    "sheet": "Billing",
+    "letters": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "H",
+     "I"
+    ],
+    "headers": [
+     "Rule",
+     "Endpoint",
+     "Scenario",
+     "HTTP status",
+     "Field",
+     "Type",
+     "Required",
+     "Contract status",
+     "Notes"
+    ],
+    "cells": [
+     "BIL-007",
+     "GET /invoices/{id}",
+     "known invoice",
+     "200",
+     "currency",
+     "string (ISO 4217)",
+     "Y",
+     "BREAKING",
+     "Mandatory for multi-currency settlement. Partner ledger rejects invoices without it."
+    ],
+    "row": 9,
+    "hit": 4
+   },
+   "related": [],
+   "diff": [
+    {
+     "kind": "at",
+     "text": "@@ app/models.py around line 22 @@"
+    },
+    {
+     "kind": "hit ctx",
+     "text": " class InvoiceResponse(BaseModel):"
+    },
+    {
+     "kind": "ctx",
+     "text": "     invoice_id: str"
+    },
+    {
+     "kind": "ctx",
+     "text": "     order_id: str"
+    },
+    {
+     "kind": "ctx",
+     "text": "     amount_cents: int"
+    },
+    {
+     "kind": "ctx",
+     "text": "     tax_cents: int | None = None"
+    },
+    {
+     "kind": "del",
+     "text": "-    currency: str"
+    },
+    {
+     "kind": "ctx",
+     "text": "     status: str"
+    },
+    {
+     "kind": "ctx",
+     "text": "     issued_at: str"
+    }
+   ],
+   "before": "failed",
+   "after": "failed"
+  },
+  {
+   "id": "F3",
+   "cell": "Auth!E5",
+   "rule": "AUT-002",
+   "contract_says": "POST /auth/token with wrong client_secret must return HTTP 401.",
+   "code_does": "Raises HTTPException(status_code=400, ...) instead of returning a 401 via error_response.",
+   "evidence": {
+    "file": "app/auth.py",
+    "line": 25
+   },
+   "verdict": "BREAK",
+   "reasoning": "The branch changed error_response(401, ...) to HTTPException(status_code=400, ...); Auth!H5 states the POS shows 're-enter API key' only on 401 + invalid_grant, so a 400 silently breaks the POS UX.",
+   "test": "tests/contract/test_auth_E5_invalid_secret_returns_401.py",
+   "decision": "fix_code",
+   "decided_by": "A. Okafor",
+   "row": {
+    "sheet": "Auth",
+    "letters": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "H"
+    ],
+    "headers": [
+     "Rule",
+     "Endpoint",
+     "grant_type",
+     "Scenario",
+     "HTTP status",
+     "Error ref",
+     "Contract status",
+     "Notes"
+    ],
+    "cells": [
+     "AUT-002",
+     "POST /auth/token",
+     "client_credentials",
+     "wrong client_secret",
+     "401",
+     "ERR-004",
+     "ACTIVE",
+     "POS shows 're-enter API key' only on 401 + invalid_grant."
+    ],
+    "row": 5,
+    "hit": 4
+   },
+   "related": [],
+   "diff": [
+    {
+     "kind": "at",
+     "text": "@@ app/auth.py around line 25 @@"
+    },
+    {
+     "kind": "add",
+     "text": "+"
+    },
+    {
+     "kind": "ctx",
+     "text": " @router.post(\"/auth/token\", response_model=TokenResponse)"
+    },
+    {
+     "kind": "ctx",
+     "text": " def issue_token(body: TokenRequest):"
+    },
+    {
+     "kind": "ctx",
+     "text": "     if body.grant_type not in SUPPORTED_GRANTS:"
+    },
+    {
+     "kind": "ctx",
+     "text": "         return error_response(400, \"unsupported_grant_type\", f\"grant_type {body.grant_type} is not supported\")"
+    },
+    {
+     "kind": "del",
+     "text": "-    if CLIENTS.get(body.client_id) != body.client_secret:"
+    },
+    {
+     "kind": "del",
+     "text": "-        return error_response(401, \"invalid_grant\", \"Client authentication failed\")"
+    },
+    {
+     "kind": "add",
+     "text": "+    if not _is_valid_client(body.client_id, body.client_secret):"
+    },
+    {
+     "kind": "hit add",
+     "text": "+        raise HTTPException(status_code=400, detail=\"invalid client credentials\")"
+    },
+    {
+     "kind": "ctx",
+     "text": "     return TokenResponse(access_token=secrets.token_urlsafe(24), token_type=\"Bearer\", expires_in=3600)"
+    }
+   ],
+   "before": "failed",
+   "after": "passed"
+  },
+  {
+   "id": "F4",
+   "cell": "Auth!D5",
+   "related_cells": [
+    "Errors!D6"
+   ],
+   "rule": "AUT-002",
+   "contract_says": "Error body for wrong client_secret must be {\"error\": \"invalid_grant\", \"error_description\": \"Client authentication failed\"}.",
+   "code_does": "HTTPException produces {\"detail\": \"invalid client credentials\"} — wrong key names and wrong text.",
+   "evidence": {
+    "file": "app/auth.py",
+    "line": 25
+   },
+   "verdict": "BREAK",
+   "reasoning": "FastAPI's HTTPException uses the `detail` key; the error envelope on the Errors sheet (ERR-004) requires `error` and `error_description`, with the exact text shown verbatim to cashiers (Errors!F6).",
+   "test": "tests/contract/test_auth_D5_invalid_secret_error_envelope.py",
+   "decision": "fix_code",
+   "decided_by": "A. Okafor",
+   "row": {
+    "sheet": "Auth",
+    "letters": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "H"
+    ],
+    "headers": [
+     "Rule",
+     "Endpoint",
+     "grant_type",
+     "Scenario",
+     "HTTP status",
+     "Error ref",
+     "Contract status",
+     "Notes"
+    ],
+    "cells": [
+     "AUT-002",
+     "POST /auth/token",
+     "client_credentials",
+     "wrong client_secret",
+     "401",
+     "ERR-004",
+     "ACTIVE",
+     "POS shows 're-enter API key' only on 401 + invalid_grant."
+    ],
+    "row": 5,
+    "hit": 3
+   },
+   "related": [
+    {
+     "sheet": "Errors",
+     "letters": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+     ],
+     "headers": [
+      "Code",
+      "HTTP status",
+      "error",
+      "Body (exact shape)",
+      "Used by",
+      "Notes"
+     ],
+     "cells": [
+      "ERR-004",
+      "401",
+      "invalid_grant",
+      "{\"error\": \"invalid_grant\", \"error_description\": \"Client authentication failed\"}",
+      "AUT-002",
+      "error_description text is shown to cashiers verbatim."
+     ],
+     "row": 6,
+     "hit": 3
+    }
+   ],
+   "diff": [
+    {
+     "kind": "at",
+     "text": "@@ app/auth.py around line 25 @@"
+    },
+    {
+     "kind": "add",
+     "text": "+"
+    },
+    {
+     "kind": "ctx",
+     "text": " @router.post(\"/auth/token\", response_model=TokenResponse)"
+    },
+    {
+     "kind": "ctx",
+     "text": " def issue_token(body: TokenRequest):"
+    },
+    {
+     "kind": "ctx",
+     "text": "     if body.grant_type not in SUPPORTED_GRANTS:"
+    },
+    {
+     "kind": "ctx",
+     "text": "         return error_response(400, \"unsupported_grant_type\", f\"grant_type {body.grant_type} is not supported\")"
+    },
+    {
+     "kind": "del",
+     "text": "-    if CLIENTS.get(body.client_id) != body.client_secret:"
+    },
+    {
+     "kind": "del",
+     "text": "-        return error_response(401, \"invalid_grant\", \"Client authentication failed\")"
+    },
+    {
+     "kind": "add",
+     "text": "+    if not _is_valid_client(body.client_id, body.client_secret):"
+    },
+    {
+     "kind": "hit add",
+     "text": "+        raise HTTPException(status_code=400, detail=\"invalid client credentials\")"
+    },
+    {
+     "kind": "ctx",
+     "text": "     return TokenResponse(access_token=secrets.token_urlsafe(24), token_type=\"Bearer\", expires_in=3600)"
+    }
+   ],
+   "before": "failed",
+   "after": "passed"
+  }
+ ],
+ "skipped": [
+  {
+   "cell": "Orders!H11",
+   "change": "Python field `request_id` renamed to `req_id` in OrderResponse.",
+   "why": "Field carries `serialization_alias=\"request_id\"` so the wire name is exactly `request_id` as required by ORD-008. Internal rename only.",
+   "evidence": {
+    "file": "app/models.py",
+    "line": 15
+   },
+   "row": {
+    "sheet": "Orders",
+    "letters": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "H",
+     "I"
+    ],
+    "headers": [
+     "Rule",
+     "Operation",
+     "HTTP status",
+     "Field",
+     "Type",
+     "Required",
+     "Scenario / error ref",
+     "Contract status",
+     "Notes"
+    ],
+    "cells": [
+     "ORD-008",
+     "POST /orders",
+     "↳ ORD-011",
+     "request_id",
+     "string",
+     "Y",
+     "valid order; echoes X-Request-ID if sent",
+     "ACTIVE",
+     "POS reconciles orders by request_id. Name on the wire must be exactly request_id."
+    ],
+    "row": 11,
+    "hit": 7
+   },
+   "diff": [
+    {
+     "kind": "at",
+     "text": "@@ app/models.py around line 15 @@"
+    },
+    {
+     "kind": "ctx",
+     "text": "     customer_id: str = Field(min_length=1)"
+    },
+    {
+     "kind": "ctx",
+     "text": " "
+    },
+    {
+     "kind": "ctx",
+     "text": " "
+    },
+    {
+     "kind": "ctx",
+     "text": " class OrderResponse(BaseModel):"
+    },
+    {
+     "kind": "ctx",
+     "text": "     order_id: str"
+    },
+    {
+     "kind": "del",
+     "text": "-    request_id: str"
+    },
+    {
+     "kind": "add",
+     "text": "+    # Internal name follows our req_* convention; the wire name stays request_id."
+    },
+    {
+     "kind": "hit add",
+     "text": "+    req_id: str = Field(serialization_alias=\"request_id\")"
+    },
+    {
+     "kind": "ctx",
+     "text": "     status: str"
+    },
+    {
+     "kind": "ctx",
+     "text": "     total_cents: int"
+    },
+    {
+     "kind": "ctx",
+     "text": "     currency: str"
+    },
+    {
+     "kind": "ctx",
+     "text": "     created_at: str"
+    },
+    {
+     "kind": "ctx",
+     "text": " "
+    }
+   ]
+  },
+  {
+   "cell": "Orders!H5",
+   "change": "Order status value changed from `confirmed` to `pending` on creation.",
+   "why": "`pending` is within the allowed enum `pending | confirmed` (ORD-002); no contract row is broken.",
+   "evidence": {
+    "file": "app/orders.py",
+    "line": 28
+   },
+   "row": {
+    "sheet": "Orders",
+    "letters": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "H",
+     "I"
+    ],
+    "headers": [
+     "Rule",
+     "Operation",
+     "HTTP status",
+     "Field",
+     "Type",
+     "Required",
+     "Scenario / error ref",
+     "Contract status",
+     "Notes"
+    ],
+    "cells": [
+     "ORD-002",
+     "POST /orders",
+     "↳ ORD-011",
+     "status",
+     "enum: pending | confirmed",
+     "Y",
+     "valid order",
+     "ACTIVE",
+     ""
+    ],
+    "row": 5,
+    "hit": 7
+   },
+   "diff": [
+    {
+     "kind": "at",
+     "text": "@@ app/orders.py around line 28 @@"
+    },
+    {
+     "kind": "add",
+     "text": "+@router.post(\"/orders\", status_code=status.HTTP_202_ACCEPTED, response_model=OrderResponse)"
+    },
+    {
+     "kind": "ctx",
+     "text": " def create_order(body: OrderCreate, x_request_id: str | None = Header(default=None)) -> OrderResponse:"
+    },
+    {
+     "kind": "ctx",
+     "text": "     order_id = f\"ord_{uuid.uuid4().hex[:12]}\""
+    },
+    {
+     "kind": "del",
+     "text": "-    unit_price = store.PRICES_CENTS.get(body.sku, store.DEFAULT_PRICE_CENTS)"
+    },
+    {
+     "kind": "ctx",
+     "text": "     order = OrderResponse("
+    },
+    {
+     "kind": "ctx",
+     "text": "         order_id=order_id,"
+    },
+    {
+     "kind": "del",
+     "text": "-        request_id=x_request_id or f\"req_{uuid.uuid4().hex[:12]}\","
+    },
+    {
+     "kind": "del",
+     "text": "-        status=\"confirmed\","
+    },
+    {
+     "kind": "del",
+     "text": "-        total_cents=unit_price * body.quantity,"
+    },
+    {
+     "kind": "add",
+     "text": "+        req_id=x_request_id or f\"req_{uuid.uuid4().hex[:12]}\","
+    },
+    {
+     "kind": "hit add",
+     "text": "+        status=\"pending\","
+    },
+    {
+     "kind": "add",
+     "text": "+        total_cents=_price_cents(body.sku, body.quantity),"
+    },
+    {
+     "kind": "ctx",
+     "text": "         currency=store.CURRENCY,"
+    },
+    {
+     "kind": "ctx",
+     "text": "         created_at=datetime.now(timezone.utc).isoformat(timespec=\"seconds\"),"
+    },
+    {
+     "kind": "ctx",
+     "text": "     )"
+    },
+    {
+     "kind": "ctx",
+     "text": "     store.ORDERS[order_id] = order.model_dump()"
+    },
+    {
+     "kind": "ctx",
+     "text": "     create_invoice_for(order)"
+    }
+   ]
+  }
+ ],
+ "counts": {
+  "breaks": 4,
+  "skipped": 2,
+  "red_before": 4,
+  "green_after": 3,
+  "recorded": 1,
+  "cells_changed": 7
+ },
+ "problems": [],
+ "changes": [
+  {
+   "cell": "Billing!H9",
+   "old": "ACTIVE",
+   "new": "BREAKING"
+  },
+  {
+   "cell": "Changelog!A6",
+   "old": "",
+   "new": "2025-07-14"
+  },
+  {
+   "cell": "Changelog!B6",
+   "old": "",
+   "new": "v3.3"
+  },
+  {
+   "cell": "Changelog!C6",
+   "old": "",
+   "new": "Billing!E9"
+  },
+  {
+   "cell": "Changelog!D6",
+   "old": "",
+   "new": "currency field removed from GET /invoices/{id} response"
+  },
+  {
+   "cell": "Changelog!E6",
+   "old": "",
+   "new": "breaking, accepted"
+  },
+  {
+   "cell": "Changelog!F6",
+   "old": "",
+   "new": "A. Okafor"
+  }
+ ],
+ "head": "528ce25",
+ "generated": "2026-09-26 22:24 UTC"
+}

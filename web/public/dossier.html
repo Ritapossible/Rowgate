@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rowgate · feature/fast-checkout</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --panel: #ffffff; --ink: #1b1d21; --muted: #5f6570; --line: #e3e4e8;
+    --red: #c62f2f; --red-bg: #fdecec; --green: #1d7a46; --green-bg: #e7f5ec;
+    --amber: #9a6200; --amber-bg: #fff4dc; --blue: #1f5fbf; --blue-bg: #e8f0fc;
+    --hit: #ffe28a; --code-bg: #f1f2f4;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121417; --panel: #1b1e23; --ink: #e8e9ec; --muted: #9aa0aa; --line: #2c3037;
+      --red: #ff7b7b; --red-bg: #3a1c1e; --green: #62d394; --green-bg: #173024;
+      --amber: #f2c14e; --amber-bg: #372c14; --blue: #8ab4ff; --blue-bg: #1b2a44;
+      --hit: #6b5a12; --code-bg: #15171b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); }
+  main { max-width: 1040px; margin: 0 auto; padding: 32px 16px 64px; }
+  header h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  header h1 svg { flex: none; }
+  header p { margin: 0; color: var(--muted); }
+  code, pre, .mono { font-family: var(--mono); font-size: 13px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 24px 0 32px; }
+  .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .stat b { display: block; font-size: 28px; line-height: 1.1; }
+  .stat span { color: var(--muted); font-size: 13px; }
+  h2 { font-size: 18px; margin: 36px 0 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+  .card-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; margin-bottom: 14px; }
+  .cell { font: 600 18px var(--mono); }
+  .pill { font: 600 12px var(--sans); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .pill.red { color: var(--red); background: var(--red-bg); }
+  .pill.green { color: var(--green); background: var(--green-bg); }
+  .pill.amber { color: var(--amber); background: var(--amber-bg); }
+  .pill.blue { color: var(--blue); background: var(--blue-bg); }
+  .pill.grey { color: var(--muted); background: var(--code-bg); }
+  .says { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .says div { border-left: 3px solid var(--line); padding-left: 10px; }
+  .says .contract { border-color: var(--blue); }
+  .says .code { border-color: var(--red); }
+  .label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  .scroll { overflow-x: auto; margin: 0 0 14px; border: 1px solid var(--line); border-radius: 8px; }
+  table.row { border-collapse: collapse; width: 100%; font-size: 13px; }
+  table.row th, table.row td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+  table.row th { color: var(--muted); font-weight: 600; background: var(--code-bg); white-space: nowrap; }
+  table.row th small { display: block; font: 11px var(--mono); opacity: 0.7; }
+  table.row td.hit { background: var(--hit); font-weight: 700; outline: 2px solid var(--amber); outline-offset: -2px; }
+  table.row td.rownum { color: var(--muted); font-family: var(--mono); width: 1%; }
+  pre.diff { margin: 0 0 14px; background: var(--code-bg); border-radius: 8px; padding: 10px 0; overflow-x: auto; }
+  pre.diff span { display: block; padding: 0 12px; white-space: pre; }
+  pre.diff .add { background: var(--green-bg); color: var(--green); }
+  pre.diff .del { background: var(--red-bg); color: var(--red); }
+  pre.diff .at { color: var(--muted); }
+  pre.diff .hit { font-weight: 700; box-shadow: inset 4px 0 0 var(--amber); }
+  table.edits td.old { color: var(--red); text-decoration: line-through; }
+  table.edits td.new { color: var(--green); font-weight: 600; }
+  .test { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .test code, .decision code { overflow-wrap: anywhere; min-width: 0; }
+  .arrow { color: var(--muted); }
+  .why { color: var(--muted); margin: 0 0 12px; }
+  .decision { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .problems { overflow-wrap: anywhere; border: 2px solid var(--red); background: var(--red-bg); color: var(--red); border-radius: 10px; padding: 12px 16px; }
+  .skip { border-style: dashed; }
+  footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+  footer pre { background: var(--code-bg); padding: 10px 12px; border-radius: 8px; overflow-x: auto; color: var(--ink); }
+  @media (max-width: 640px) { .says { grid-template-columns: 1fr; } header h1 { font-size: 22px; } }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1><svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#0F1611"/><path d="M17 51V29a15 15 0 0 1 30 0v22" fill="none" stroke="#E8DCB8" stroke-width="6" stroke-linecap="round"/><rect x="17" y="34" width="30" height="8" fill="#E8DCB8" opacity=".38"/><rect x="27" y="31" width="10" height="14" rx="2" fill="#E3B64F"/></svg>Rowgate · <span class="mono">feature/fast-checkout</span></h1>
+  <p>Checked against <b>contract/api-contract.xlsx</b> (v3.2)
+     · base <span class="mono">main</span> · head <span class="mono">528ce25</span>
+     · 2026-09-26 22:24 UTC</p>
+</header>
+
+
+
+<section class="stats">
+  <div class="stat"><b>4</b><span>contract cells broken</span></div>
+  <div class="stat"><b>4/4</b><span>tests red on the branch</span></div>
+  <div class="stat"><b>3/4</b><span>green after approved fixes</span></div>
+  <div class="stat"><b>1</b><span>breaking changes recorded in the workbook</span></div>
+  <div class="stat"><b>2</b><span>lookalikes checked and skipped</span></div>
+</section>
+
+
+
+
+
+<h2>Broken contract cells</h2>
+
+<article class="card" id="F1">
+  <div class="card-head">
+    <span class="cell">Orders!C14</span>
+    <span class="pill blue">ORD-011</span>
+    
+    <span class="pill red">BREAK</span>
+  </div>
+  <div class="says">
+    <div class="contract"><span class="label">Contract says</span>POST /orders with a valid order must return HTTP 201 Created.</div>
+    <div class="code"><span class="label">Branch does</span>Returns HTTP 202 Accepted (fast-checkout change).</div>
+  </div>
+  <span class="label">Signed row · Orders</span>
+  
+<div class="scroll"><table class="row">
+  <tr><th></th><th><small>A</small>Rule</th><th><small>B</small>Operation</th><th><small>C</small>HTTP status</th><th><small>D</small>Field</th><th><small>E</small>Type</th><th><small>F</small>Required</th><th><small>G</small>Scenario / error ref</th><th><small>H</small>Contract status</th><th><small>I</small>Notes</th></tr>
+  <tr><td class="rownum">14</td><td>ORD-011</td><td>POST /orders</td><td class="hit">201</td><td>—</td><td>—</td><td>—</td><td>valid order: synchronous create</td><td>ACTIVE</td><td>POS treats any other 2xx as a failed checkout and retries (see INC-2291).</td></tr>
+</table></div>
+
+  
+  <span class="label">Diff · app/orders.py:22</span>
+  <pre class="diff"><span class="at">@@ app/orders.py around line 22 @@</span><span class="del">-@router.post(&#34;/orders&#34;, status_code=status.HTTP_201_CREATED, response_model=OrderResponse)</span><span class="add">+def _price_cents(sku: str, quantity: int) -&gt; int:</span><span class="add">+    return store.PRICES_CENTS.get(sku, store.DEFAULT_PRICE_CENTS) * quantity</span><span class="add">+</span><span class="add">+</span><span class="add">+# Fast checkout: accept the order immediately and confirm it asynchronously,</span><span class="add">+# so the POS no longer waits on invoice creation.</span><span class="hit add">+@router.post(&#34;/orders&#34;, status_code=status.HTTP_202_ACCEPTED, response_model=OrderResponse)</span><span class="ctx"> def create_order(body: OrderCreate, x_request_id: str | None = Header(default=None)) -&gt; OrderResponse:</span><span class="ctx">     order_id = f&#34;ord_{uuid.uuid4().hex[:12]}&#34;</span><span class="del">-    unit_price = store.PRICES_CENTS.get(body.sku, store.DEFAULT_PRICE_CENTS)</span><span class="ctx">     order = OrderResponse(</span><span class="ctx">         order_id=order_id,</span><span class="del">-        request_id=x_request_id or f&#34;req_{uuid.uuid4().hex[:12]}&#34;,</span><span class="del">-        status=&#34;confirmed&#34;,</span><span class="del">-        total_cents=unit_price * body.quantity,</span><span class="add">+        req_id=x_request_id or f&#34;req_{uuid.uuid4().hex[:12]}&#34;,</span><span class="add">+        status=&#34;pending&#34;,</span></pre>
+  <p class="why">status_code was changed from HTTP_201_CREATED to HTTP_202_ACCEPTED. The contract note (Orders!I14) states the POS treats any other 2xx as a failed checkout and retries (INC-2291).</p>
+  <div class="test">
+    <span class="label">Test</span><code>tests/contract/test_orders_C14_create_returns_201.py</code>
+    <span class="pill red">red</span><span class="arrow">→</span><span class="pill green">green</span>
+  </div>
+  <div class="decision">
+    <span class="label">Decision</span>
+    <span class="pill green">code fixed</span>
+    
+    <span>by A. Okafor</span>
+    
+    
+  </div>
+</article>
+
+<article class="card" id="F2">
+  <div class="card-head">
+    <span class="cell">Billing!E9</span>
+    <span class="pill blue">BIL-007</span>
+    
+    <span class="pill red">BREAK</span>
+  </div>
+  <div class="says">
+    <div class="contract"><span class="label">Contract says</span>GET /invoices/{id} response must include field `currency` (string, ISO 4217, Required=Y).</div>
+    <div class="code"><span class="label">Branch does</span>The `currency` field was removed from InvoiceResponse in models.py and from create_invoice_for in billing.py.</div>
+  </div>
+  <span class="label">Signed row · Billing</span>
+  
+<div class="scroll"><table class="row">
+  <tr><th></th><th><small>A</small>Rule</th><th><small>B</small>Endpoint</th><th><small>C</small>Scenario</th><th><small>D</small>HTTP status</th><th><small>E</small>Field</th><th><small>F</small>Type</th><th><small>G</small>Required</th><th><small>H</small>Contract status</th><th><small>I</small>Notes</th></tr>
+  <tr><td class="rownum">9</td><td>BIL-007</td><td>GET /invoices/{id}</td><td>known invoice</td><td>200</td><td class="hit">currency</td><td>string (ISO 4217)</td><td>Y</td><td>BREAKING</td><td>Mandatory for multi-currency settlement. Partner ledger rejects invoices without it.</td></tr>
+</table></div>
+
+  
+  <span class="label">Diff · app/models.py:22</span>
+  <pre class="diff"><span class="at">@@ app/models.py around line 22 @@</span><span class="hit ctx"> class InvoiceResponse(BaseModel):</span><span class="ctx">     invoice_id: str</span><span class="ctx">     order_id: str</span><span class="ctx">     amount_cents: int</span><span class="ctx">     tax_cents: int | None = None</span><span class="del">-    currency: str</span><span class="ctx">     status: str</span><span class="ctx">     issued_at: str</span></pre>
+  <p class="why">currency was deleted from InvoiceResponse; the contract (Billing!I9) marks it mandatory for multi-currency settlement and notes the partner ledger rejects invoices without it.</p>
+  <div class="test">
+    <span class="label">Test</span><code>tests/contract/test_billing_E9_invoice_has_currency.py</code>
+    <span class="pill red">red</span><span class="arrow">→</span><span class="pill red">red</span>
+  </div>
+  <div class="decision">
+    <span class="label">Decision</span>
+    <span class="pill amber">breaking change recorded</span>
+    
+    <span>by A. Okafor</span>
+    
+    
+      <span class="pill amber mono">Billing!H9 = BREAKING</span><span class="pill amber mono">Changelog!A6 = 2025-07-14</span><span class="pill amber mono">Changelog!B6 = v3.3</span><span class="pill amber mono">Changelog!C6 = Billing!E9</span><span class="pill amber mono">Changelog!D6 = currency field removed from GET /invoices/{id} response</span><span class="pill amber mono">Changelog!E6 = breaking, accepted</span><span class="pill amber mono">Changelog!F6 = A. Okafor</span>
+      <span class="pill amber mono">Changelog!A6</span>
+    
+  </div>
+</article>
+
+<article class="card" id="F3">
+  <div class="card-head">
+    <span class="cell">Auth!E5</span>
+    <span class="pill blue">AUT-002</span>
+    
+    <span class="pill red">BREAK</span>
+  </div>
+  <div class="says">
+    <div class="contract"><span class="label">Contract says</span>POST /auth/token with wrong client_secret must return HTTP 401.</div>
+    <div class="code"><span class="label">Branch does</span>Raises HTTPException(status_code=400, ...) instead of returning a 401 via error_response.</div>
+  </div>
+  <span class="label">Signed row · Auth</span>
+  
+<div class="scroll"><table class="row">
+  <tr><th></th><th><small>A</small>Rule</th><th><small>B</small>Endpoint</th><th><small>C</small>grant_type</th><th><small>D</small>Scenario</th><th><small>E</small>HTTP status</th><th><small>F</small>Error ref</th><th><small>G</small>Contract status</th><th><small>H</small>Notes</th></tr>
+  <tr><td class="rownum">5</td><td>AUT-002</td><td>POST /auth/token</td><td>client_credentials</td><td>wrong client_secret</td><td class="hit">401</td><td>ERR-004</td><td>ACTIVE</td><td>POS shows &#39;re-enter API key&#39; only on 401 + invalid_grant.</td></tr>
+</table></div>
+
+  
+  <span class="label">Diff · app/auth.py:25</span>
+  <pre class="diff"><span class="at">@@ app/auth.py around line 25 @@</span><span class="add">+</span><span class="ctx"> @router.post(&#34;/auth/token&#34;, response_model=TokenResponse)</span><span class="ctx"> def issue_token(body: TokenRequest):</span><span class="ctx">     if body.grant_type not in SUPPORTED_GRANTS:</span><span class="ctx">         return error_response(400, &#34;unsupported_grant_type&#34;, f&#34;grant_type {body.grant_type} is not supported&#34;)</span><span class="del">-    if CLIENTS.get(body.client_id) != body.client_secret:</span><span class="del">-        return error_response(401, &#34;invalid_grant&#34;, &#34;Client authentication failed&#34;)</span><span class="add">+    if not _is_valid_client(body.client_id, body.client_secret):</span><span class="hit add">+        raise HTTPException(status_code=400, detail=&#34;invalid client credentials&#34;)</span><span class="ctx">     return TokenResponse(access_token=secrets.token_urlsafe(24), token_type=&#34;Bearer&#34;, expires_in=3600)</span></pre>
+  <p class="why">The branch changed error_response(401, ...) to HTTPException(status_code=400, ...); Auth!H5 states the POS shows &#39;re-enter API key&#39; only on 401 + invalid_grant, so a 400 silently breaks the POS UX.</p>
+  <div class="test">
+    <span class="label">Test</span><code>tests/contract/test_auth_E5_invalid_secret_returns_401.py</code>
+    <span class="pill red">red</span><span class="arrow">→</span><span class="pill green">green</span>
+  </div>
+  <div class="decision">
+    <span class="label">Decision</span>
+    <span class="pill green">code fixed</span>
+    
+    <span>by A. Okafor</span>
+    
+    
+  </div>
+</article>
+
+<article class="card" id="F4">
+  <div class="card-head">
+    <span class="cell">Auth!D5</span>
+    <span class="pill blue">AUT-002</span>
+    <span class="pill grey mono">Errors!D6</span>
+    <span class="pill red">BREAK</span>
+  </div>
+  <div class="says">
+    <div class="contract"><span class="label">Contract says</span>Error body for wrong client_secret must be {&#34;error&#34;: &#34;invalid_grant&#34;, &#34;error_description&#34;: &#34;Client authentication failed&#34;}.</div>
+    <div class="code"><span class="label">Branch does</span>HTTPException produces {&#34;detail&#34;: &#34;invalid client credentials&#34;} — wrong key names and wrong text.</div>
+  </div>
+  <span class="label">Signed row · Auth</span>
+  
+<div class="scroll"><table class="row">
+  <tr><th></th><th><small>A</small>Rule</th><th><small>B</small>Endpoint</th><th><small>C</small>grant_type</th><th><small>D</small>Scenario</th><th><small>E</small>HTTP status</th><th><small>F</small>Error ref</th><th><small>G</small>Contract status</th><th><small>H</small>Notes</th></tr>
+  <tr><td class="rownum">5</td><td>AUT-002</td><td>POST /auth/token</td><td>client_credentials</td><td class="hit">wrong client_secret</td><td>401</td><td>ERR-004</td><td>ACTIVE</td><td>POS shows &#39;re-enter API key&#39; only on 401 + invalid_grant.</td></tr>
+</table></div>
+
+  <span class="label">Referenced row · Errors</span>
+<div class="scroll"><table class="row">
+  <tr><th></th><th><small>A</small>Code</th><th><small>B</small>HTTP status</th><th><small>C</small>error</th><th><small>D</small>Body (exact shape)</th><th><small>E</small>Used by</th><th><small>F</small>Notes</th></tr>
+  <tr><td class="rownum">6</td><td>ERR-004</td><td>401</td><td>invalid_grant</td><td class="hit">{&#34;error&#34;: &#34;invalid_grant&#34;, &#34;error_description&#34;: &#34;Client authentication failed&#34;}</td><td>AUT-002</td><td>error_description text is shown to cashiers verbatim.</td></tr>
+</table></div>
+
+  <span class="label">Diff · app/auth.py:25</span>
+  <pre class="diff"><span class="at">@@ app/auth.py around line 25 @@</span><span class="add">+</span><span class="ctx"> @router.post(&#34;/auth/token&#34;, response_model=TokenResponse)</span><span class="ctx"> def issue_token(body: TokenRequest):</span><span class="ctx">     if body.grant_type not in SUPPORTED_GRANTS:</span><span class="ctx">         return error_response(400, &#34;unsupported_grant_type&#34;, f&#34;grant_type {body.grant_type} is not supported&#34;)</span><span class="del">-    if CLIENTS.get(body.client_id) != body.client_secret:</span><span class="del">-        return error_response(401, &#34;invalid_grant&#34;, &#34;Client authentication failed&#34;)</span><span class="add">+    if not _is_valid_client(body.client_id, body.client_secret):</span><span class="hit add">+        raise HTTPException(status_code=400, detail=&#34;invalid client credentials&#34;)</span><span class="ctx">     return TokenResponse(access_token=secrets.token_urlsafe(24), token_type=&#34;Bearer&#34;, expires_in=3600)</span></pre>
+  <p class="why">FastAPI&#39;s HTTPException uses the `detail` key; the error envelope on the Errors sheet (ERR-004) requires `error` and `error_description`, with the exact text shown verbatim to cashiers (Errors!F6).</p>
+  <div class="test">
+    <span class="label">Test</span><code>tests/contract/test_auth_D5_invalid_secret_error_envelope.py</code>
+    <span class="pill red">red</span><span class="arrow">→</span><span class="pill green">green</span>
+  </div>
+  <div class="decision">
+    <span class="label">Decision</span>
+    <span class="pill green">code fixed</span>
+    
+    <span>by A. Okafor</span>
+    
+    
+  </div>
+</article>
+
+
+<h2>Checked and skipped</h2>
+
+<article class="card skip">
+  <div class="card-head"><span class="cell">Orders!H11</span><span class="pill green">holds</span></div>
+  <p><span class="label">Looks like</span>Python field `request_id` renamed to `req_id` in OrderResponse.</p>
+  
+<div class="scroll"><table class="row">
+  <tr><th></th><th><small>A</small>Rule</th><th><small>B</small>Operation</th><th><small>C</small>HTTP status</th><th><small>D</small>Field</th><th><small>E</small>Type</th><th><small>F</small>Required</th><th><small>G</small>Scenario / error ref</th><th><small>H</small>Contract status</th><th><small>I</small>Notes</th></tr>
+  <tr><td class="rownum">11</td><td>ORD-008</td><td>POST /orders</td><td>↳ ORD-011</td><td>request_id</td><td>string</td><td>Y</td><td>valid order; echoes X-Request-ID if sent</td><td class="hit">ACTIVE</td><td>POS reconciles orders by request_id. Name on the wire must be exactly request_id.</td></tr>
+</table></div>
+
+  <p><span class="label">Why it is not a break</span>Field carries `serialization_alias=&#34;request_id&#34;` so the wire name is exactly `request_id` as required by ORD-008. Internal rename only.</p>
+  <span class="label">Diff · app/models.py:15</span>
+  <pre class="diff"><span class="at">@@ app/models.py around line 15 @@</span><span class="ctx">     customer_id: str = Field(min_length=1)</span><span class="ctx"> </span><span class="ctx"> </span><span class="ctx"> class OrderResponse(BaseModel):</span><span class="ctx">     order_id: str</span><span class="del">-    request_id: str</span><span class="add">+    # Internal name follows our req_* convention; the wire name stays request_id.</span><span class="hit add">+    req_id: str = Field(serialization_alias=&#34;request_id&#34;)</span><span class="ctx">     status: str</span><span class="ctx">     total_cents: int</span><span class="ctx">     currency: str</span><span class="ctx">     created_at: str</span><span class="ctx"> </span></pre>
+</article>
+
+<article class="card skip">
+  <div class="card-head"><span class="cell">Orders!H5</span><span class="pill green">holds</span></div>
+  <p><span class="label">Looks like</span>Order status value changed from `confirmed` to `pending` on creation.</p>
+  
+<div class="scroll"><table class="row">
+  <tr><th></th><th><small>A</small>Rule</th><th><small>B</small>Operation</th><th><small>C</small>HTTP status</th><th><small>D</small>Field</th><th><small>E</small>Type</th><th><small>F</small>Required</th><th><small>G</small>Scenario / error ref</th><th><small>H</small>Contract status</th><th><small>I</small>Notes</th></tr>
+  <tr><td class="rownum">5</td><td>ORD-002</td><td>POST /orders</td><td>↳ ORD-011</td><td>status</td><td>enum: pending | confirmed</td><td>Y</td><td>valid order</td><td class="hit">ACTIVE</td><td></td></tr>
+</table></div>
+
+  <p><span class="label">Why it is not a break</span>`pending` is within the allowed enum `pending | confirmed` (ORD-002); no contract row is broken.</p>
+  <span class="label">Diff · app/orders.py:28</span>
+  <pre class="diff"><span class="at">@@ app/orders.py around line 28 @@</span><span class="add">+@router.post(&#34;/orders&#34;, status_code=status.HTTP_202_ACCEPTED, response_model=OrderResponse)</span><span class="ctx"> def create_order(body: OrderCreate, x_request_id: str | None = Header(default=None)) -&gt; OrderResponse:</span><span class="ctx">     order_id = f&#34;ord_{uuid.uuid4().hex[:12]}&#34;</span><span class="del">-    unit_price = store.PRICES_CENTS.get(body.sku, store.DEFAULT_PRICE_CENTS)</span><span class="ctx">     order = OrderResponse(</span><span class="ctx">         order_id=order_id,</span><span class="del">-        request_id=x_request_id or f&#34;req_{uuid.uuid4().hex[:12]}&#34;,</span><span class="del">-        status=&#34;confirmed&#34;,</span><span class="del">-        total_cents=unit_price * body.quantity,</span><span class="add">+        req_id=x_request_id or f&#34;req_{uuid.uuid4().hex[:12]}&#34;,</span><span class="hit add">+        status=&#34;pending&#34;,</span><span class="add">+        total_cents=_price_cents(body.sku, body.quantity),</span><span class="ctx">         currency=store.CURRENCY,</span><span class="ctx">         created_at=datetime.now(timezone.utc).isoformat(timespec=&#34;seconds&#34;),</span><span class="ctx">     )</span><span class="ctx">     store.ORDERS[order_id] = order.model_dump()</span><span class="ctx">     create_invoice_for(order)</span></pre>
+</article>
+
+
+<h2>Workbook edits <span class="label" style="display:inline">measured against main:contract/api-contract.xlsx</span></h2>
+
+<article class="card">
+<div class="scroll"><table class="row edits">
+  <tr><th>Cell</th><th>Before</th><th>After</th></tr>
+  <tr><td class="mono">Billing!H9</td><td class="old">ACTIVE</td><td class="new">BREAKING</td></tr><tr><td class="mono">Changelog!A6</td><td class="old"></td><td class="new">2025-07-14</td></tr><tr><td class="mono">Changelog!B6</td><td class="old"></td><td class="new">v3.3</td></tr><tr><td class="mono">Changelog!C6</td><td class="old"></td><td class="new">Billing!E9</td></tr><tr><td class="mono">Changelog!D6</td><td class="old"></td><td class="new">currency field removed from GET /invoices/{id} response</td></tr><tr><td class="mono">Changelog!E6</td><td class="old"></td><td class="new">breaking, accepted</td></tr><tr><td class="mono">Changelog!F6</td><td class="old"></td><td class="new">A. Okafor</td></tr>
+</table></div>
+</article>
+
+
+<footer>
+  <p>The tests stay in the repo. Every later PR is checked by pytest, with no model involved:</p>
+  <pre>python -m pytest tests/contract -q</pre>
+  <p>Rollback: revert the approved fix commits listed above; the contract tests will go red again.</p>
+  <p>Generated by <b>Rowgate</b> (IBM Bob: Contract Gate mode + Rowgate Skill). Rendering is deterministic: scripts/render_dossier.py.</p>
+</footer>
+</main>
+</body>
+</html>

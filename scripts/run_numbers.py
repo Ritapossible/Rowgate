@@ -18,7 +18,7 @@ def main() -> int:
     if not RUN.exists():
         print("No published run yet (web/public/data/run.json). Finish the run and scripts/publish_run.sh first.")
         return 1
-    run = json.loads(RUN.read_text())
+    run = json.loads(RUN.read_text(encoding="utf-8"))
     c = run["counts"]
     print("## Rowgate run numbers\n")
     print(f"- Branch: {run['doc']['branch']} vs {run['doc']['base']}, workbook {run['doc'].get('workbook_version') or run['doc']['workbook']}")

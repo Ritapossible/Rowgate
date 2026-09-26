@@ -10,13 +10,13 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def render(tmp_path, doc):
     findings = tmp_path / "findings.json"
-    findings.write_text(json.dumps(doc))
+    findings.write_text(json.dumps(doc), encoding="utf-8")
     out = tmp_path / "dossier.html"
     proc = subprocess.run(
         [sys.executable, "scripts/render_dossier.py", "--findings", str(findings), "--out", str(out)],
         cwd=ROOT, capture_output=True, text=True,
     )
-    return proc, out.read_text() if out.exists() else ""
+    return proc, out.read_text(encoding="utf-8") if out.exists() else ""
 
 
 def synthetic(test_path):

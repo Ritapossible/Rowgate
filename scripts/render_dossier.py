@@ -261,7 +261,7 @@ def main() -> int:
     html = env.get_template("dossier.html.j2").render(**ctx)
     out = ROOT / args.out
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(html)
+    out.write_text(html, encoding="utf-8")
     counts, problems = ctx["counts"], ctx["problems"]
     print(f"wrote {args.out}: {counts['breaks']} breaks, {counts['skipped']} skipped, "
           f"{counts['cells_changed']} workbook cells changed, {len(problems)} problems")

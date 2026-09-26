@@ -118,7 +118,7 @@ def export_run() -> dict | None:
 
 def write(name: str, data) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    (OUT / name).write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
+    (OUT / name).write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"wrote web/public/data/{name}")
 
 

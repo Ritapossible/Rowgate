@@ -93,7 +93,7 @@
 <section class="stats">
   <div class="stat"><b>{{ counts.breaks }}</b><span>contract cells broken</span></div>
   <div class="stat"><b>{{ counts.red_before }}/{{ counts.breaks }}</b><span>tests red on the branch</span></div>
-  <div class="stat"><b>{{ counts.green_after }}/{{ counts.breaks }}</b><span>green after approved fixes</span></div>
+  <div class="stat"><b>{{ counts.green_after }}/{{ counts.fixed if counts.fixed is defined else counts.breaks }}</b><span>green after approved fixes</span></div>
   <div class="stat"><b>{{ counts.recorded }}</b><span>breaking changes recorded in the workbook</span></div>
   <div class="stat"><b>{{ counts.skipped }}</b><span>lookalikes checked and skipped</span></div>
 </section>

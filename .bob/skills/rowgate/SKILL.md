@@ -42,6 +42,23 @@ Use `office_read` on `contract/api-contract.xlsx`. Workbook rules:
   `{"error": "<code>", "error_description": "<text>"}`. FastAPI's default `{"detail": ...}` breaks it.
 - A cell address is `Sheet!<column><row>`, for example `Orders!C14`.
 
+### Which cell to cite
+
+Cite the cell that **states the rule being broken**, not the row's bookkeeping columns.
+This applies to findings and to `skipped` entries alike.
+
+| What broke | Cite | Example |
+| --- | --- | --- |
+| An HTTP status | the **HTTP status** cell (Orders C, Billing D, Auth E) | `Orders!C14` |
+| A field missing, renamed or retyped | the **Field** cell (Orders D, Billing E) | `Billing!E9` |
+| A value outside an allowed set | the **Type** cell holding that set (Orders E, Billing F) | `Orders!E5` |
+| An error body shape | the **Body (exact shape)** cell on Errors (column D) | `Errors!D6` |
+
+**Never cite the Contract status column** (Orders H, Billing H, Auth G). Those cells say
+`ACTIVE` or `PLANNED`; they are not the rule. Never cite the Scenario or Endpoint column
+either. Put supporting rows in `related_cells`, for example an Auth status break whose body
+shape lives on Errors: `"cell": "Auth!E5", "related_cells": ["Errors!D6"]`.
+
 ### 3. Plan (Plan mode; stop for approval)
 
 Map each changed file to the contract rows it can affect. List, per resource, the rows you

@@ -239,6 +239,7 @@ def build_context(findings_path: Path, patch_path: Path) -> dict:
         "skipped": len(skipped),
         "red_before": sum(1 for f in findings if f["before"] == "failed"),
         "green_after": sum(1 for f in findings if f["after"] == "passed"),
+        "fixed": sum(1 for f in findings if f.get("decision") == "fix_code"),
         "recorded": sum(1 for f in findings if f.get("decision") == "record_breaking"),
         "cells_changed": len(changes or []),
     }

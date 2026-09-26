@@ -74,7 +74,7 @@ export type Run = {
   doc: { branch: string; base: string; workbook: string; workbook_version?: string };
   findings: Finding[];
   skipped: Skipped[];
-  counts: { breaks: number; skipped: number; red_before: number; green_after: number; recorded: number; cells_changed: number };
+  counts: { breaks: number; skipped: number; red_before: number; green_after: number; fixed: number; recorded: number; cells_changed: number };
   problems: string[];
   changes: { cell: string; old: string; new: string }[] | null;
   head: string | null;

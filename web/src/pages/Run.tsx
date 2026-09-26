@@ -104,7 +104,7 @@ export default function RunPage({ run, pr, loading, hasDossier }: { run: Run | n
       <div className="stats">
         <div className="stat dark"><b>{c.breaks}</b><span>contract cells broken</span></div>
         <div className="stat"><b>{c.red_before}/{c.breaks}</b><span>tests red on the branch</span></div>
-        <div className="stat"><b>{c.green_after}/{c.breaks}</b><span>green after approved fixes</span></div>
+        <div className="stat"><b>{c.green_after}/{c.fixed ?? c.breaks}</b><span>green after approved fixes</span></div>
         <div className="stat"><b>{c.recorded}</b><span>breaking changes recorded</span></div>
         <div className="stat"><b>{c.skipped}</b><span>lookalikes skipped</span></div>
       </div>

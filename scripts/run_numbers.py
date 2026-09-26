@@ -11,6 +11,11 @@ import json
 import sys
 from pathlib import Path
 
+# The table below uses an arrow, and on Windows stdout defaults to the cp1252 locale as soon as
+# it is piped or redirected, which raises UnicodeEncodeError. Print UTF-8 regardless.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 RUN = Path(__file__).resolve().parent.parent / "web" / "public" / "data" / "run.json"
 
 

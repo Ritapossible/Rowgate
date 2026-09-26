@@ -16,7 +16,8 @@ note() { echo "  ! $1"; warn=1; }
 echo "Required"
 grep -q "MIT License" LICENSE 2>/dev/null && ok "MIT LICENSE" || bad "LICENSE missing or not MIT"
 png=$(find bob_sessions -type f \( -iname '*.png' -o -iname '*.jpg' \) | wc -l)
-md=$(find bob_sessions -type f -iname '*.md' | wc -l)
+# README.md documents the folder; it is not an exported task history.
+md=$(find bob_sessions -type f -iname '*.md' -not -iname 'README.md' | wc -l)
 [[ $png -gt 0 ]] && ok "bob_sessions: $png screenshot(s)" || bad "bob_sessions: no consumption-summary screenshots"
 [[ $md -gt 0 ]] && ok "bob_sessions: $md exported task history file(s)" || bad "bob_sessions: no exported task history (.md) files"
 [[ $md -ge $png || $png -eq 0 ]] || note "fewer exported .md files ($md) than screenshots ($png): export every task"

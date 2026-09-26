@@ -6,8 +6,9 @@ BRANCH="${1:-HEAD}"
 BASE="${2:-main}"
 cd "$(git rev-parse --show-toplevel)"
 mkdir -p out
-git diff --unified=5 "$BASE...$BRANCH" -- . ':!out' ':!bob_sessions' > out/diff.patch
-git diff --name-only "$BASE...$BRANCH" -- . ':!out' ':!bob_sessions' > out/changed_files.txt
+# --output writes the file directly, so a shell that adds a BOM on redirection cannot corrupt it
+git diff --unified=5 --output=out/diff.patch "$BASE...$BRANCH" -- . ':!out' ':!bob_sessions'
+git diff --name-only --output=out/changed_files.txt "$BASE...$BRANCH" -- . ':!out' ':!bob_sessions'
 echo "base=$BASE branch=$BRANCH"
 echo "changed files: $(wc -l < out/changed_files.txt)"
 sed 's/^/  /' out/changed_files.txt

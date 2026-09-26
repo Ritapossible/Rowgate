@@ -32,6 +32,11 @@ CELL = re.compile(r"^([A-Za-z]+)!([A-Z]+[0-9]+)$")
 TEST = re.compile(r"^tests/contract/test_[a-z]+_([A-Z]+[0-9]+)_[a-z0-9_]+\.py$")
 HUNK_HEAD = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
 HEADER_KEYS = {"Rule", "Code", "Date", "Party"}
+
+
+def read(path: Path) -> str:
+    """Read UTF-8 text, tolerating a byte-order mark (PowerShell adds one when it redirects)."""
+    return path.read_text(encoding="utf-8-sig")
 EXCERPT = 6  # lines of context either side of the cited line
 
 
@@ -147,7 +152,7 @@ def outcomes(path: Path) -> dict[str, str]:
     """Map test file → worst outcome in a pytest-json-report file."""
     if not path.exists():
         return {}
-    report = json.loads(path.read_text())
+    report = json.loads(read(path))
     result: dict[str, str] = {}
     rank = {"passed": 0, "skipped": 1, "failed": 2, "error": 3}
     for t in report.get("tests", []):
@@ -183,11 +188,11 @@ def validate(doc: dict) -> list[str]:
 
 def build_context(findings_path: Path, patch_path: Path) -> dict:
     """Everything the dossier shows, measured. Shared by the HTML renderer and the web export."""
-    doc = json.loads(findings_path.read_text())
+    doc = json.loads(read(findings_path))
     problems = validate(doc)
     workbook_path = doc.get("workbook", "contract/api-contract.xlsx")
     wb = load_workbook(ROOT / workbook_path)
-    patch = parse_patch(patch_path.read_text()) if patch_path.exists() else {}
+    patch = parse_patch(read(patch_path)) if patch_path.exists() else {}
     if not patch_path.exists():
         problems.append(f"{patch_path.relative_to(ROOT)} not found: run scripts/collect_diff.sh first")
     before = outcomes(ROOT / "out/test_results.before.json")

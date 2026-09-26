@@ -84,6 +84,9 @@ def test_workbook_changes_are_measured_against_git():
     from openpyxl import load_workbook
     # Start from the committed copy, so a demo run that edits the file doesn't break this test.
     wb = load_workbook(io.BytesIO(rd.git("show", "HEAD:contract/api-contract.xlsx", binary=True)))
-    wb["Billing"]["H9"] = "BREAKING"
+    # Flip H9 to whatever it is not, so this passes before and after a run records a breaking change.
+    was = wb["Billing"]["H9"].value
+    now = "ACTIVE" if was == "BREAKING" else "BREAKING"
+    wb["Billing"]["H9"] = now
     changes = rd.workbook_changes(wb, "HEAD", "contract/api-contract.xlsx")
-    assert changes == [{"cell": "Billing!H9", "old": "ACTIVE", "new": "BREAKING"}]
+    assert changes == [{"cell": "Billing!H9", "old": was, "new": now}]

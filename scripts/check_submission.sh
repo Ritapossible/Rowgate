@@ -3,7 +3,11 @@
 # Usage: scripts/check_submission.sh
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)"
-PY="${PYTHON:-python}"
+# Prefer the repo venv, so the scripts work in a terminal where it was not activated.
+if [[ -n "${PYTHON:-}" ]]; then PY="$PYTHON"
+elif [[ -x .venv/Scripts/python.exe ]]; then PY=.venv/Scripts/python.exe
+elif [[ -x .venv/bin/python ]]; then PY=.venv/bin/python
+else PY=python; fi
 fail=0; warn=0
 ok()   { echo "  ✓ $1"; }
 bad()  { echo "  ✗ $1"; fail=1; }

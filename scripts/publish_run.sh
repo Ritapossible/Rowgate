@@ -7,7 +7,11 @@
 # Usage: scripts/publish_run.sh [--no-push]
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
-PY="${PYTHON:-python}"
+# Prefer the repo venv, so the scripts work in a terminal where it was not activated.
+if [[ -n "${PYTHON:-}" ]]; then PY="$PYTHON"
+elif [[ -x .venv/Scripts/python.exe ]]; then PY=.venv/Scripts/python.exe
+elif [[ -x .venv/bin/python ]]; then PY=.venv/bin/python
+else PY=python; fi
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 [[ "$BRANCH" != "main" ]] || { echo "Run this on the reviewed branch, not main."; exit 1; }
 [[ -f out/findings.json ]] || { echo "No out/findings.json: finish the run first."; exit 1; }

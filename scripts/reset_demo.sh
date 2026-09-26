@@ -12,7 +12,11 @@ cd "$(git rev-parse --show-toplevel)"
 BRANCH=feature/fast-checkout
 START=$(git rev-parse --verify -q refs/heads/demo/start || git rev-parse --verify -q refs/remotes/origin/demo/start)
 [[ -n "$START" ]] || { echo "No demo/start branch (git fetch origin demo/start)"; exit 1; }
-PY="${PYTHON:-python}"
+# Prefer the repo venv, so the scripts work in a terminal where it was not activated.
+if [[ -n "${PYTHON:-}" ]]; then PY="$PYTHON"
+elif [[ -x .venv/Scripts/python.exe ]]; then PY=.venv/Scripts/python.exe
+elif [[ -x .venv/bin/python ]]; then PY=.venv/bin/python
+else PY=python; fi
 FORCE=0; [[ "${1:-}" == "--force" ]] && FORCE=1
 
 dirty=$(git status --porcelain -- . ':!out' ':!bob_sessions')

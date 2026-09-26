@@ -22,7 +22,10 @@ BRANCH=$(git rev-parse --abbrev-ref HEAD)
 STAGE=$(mktemp -d)
 cp -r web/public/data "$STAGE/data"
 cp web/public/dossier.html "$STAGE/dossier.html"
-mkdir -p "$STAGE/bob_sessions" && cp -r bob_sessions/. "$STAGE/bob_sessions/" 2>/dev/null || true
+# Copy only the top-level files: "cp -r dir/." nested bob_sessions inside itself, and each
+# publish then added another level.
+mkdir -p "$STAGE/bob_sessions"
+find bob_sessions -maxdepth 1 -type f -exec cp {} "$STAGE/bob_sessions/" \; 2>/dev/null || true
 git checkout -q -- web/public/data 2>/dev/null || true
 rm -f web/public/dossier.html web/public/data/run.json
 
@@ -30,7 +33,7 @@ git stash push -q --include-untracked -m "rowgate-publish" || true
 git checkout -q main
 cp "$STAGE"/data/*.json web/public/data/
 cp "$STAGE/dossier.html" web/public/dossier.html
-cp -r "$STAGE/bob_sessions/." bob_sessions/
+find "$STAGE/bob_sessions" -maxdepth 1 -type f -exec cp {} bob_sessions/ \;
 git add web/public/data web/public/dossier.html bob_sessions
 git commit -q -m "Publish Rowgate run on $BRANCH" && echo "committed on main"
 if [[ "${1:-}" != "--no-push" ]]; then git push -q origin main && echo "pushed main"; fi

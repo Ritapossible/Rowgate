@@ -94,10 +94,11 @@ or Bobcoins are spent.
 | --- | --- | --- | --- | --- |
 | — | — | start | 0 | 40 |
 | 26 Sep 14:30 WAT | Ask → Contract Gate | Rehearsal and dry run, one Bob task (2 workbook questions, `/rowgate`, 3 subagents, 3 tests, 2 fixes, 1 `office_edit`) | 0.848 | 39.152 |
+| 26 Sep 15:29 WAT | Contract Gate | Run of record, task02 (`/rowgate`, subagents, 4 tests, 3 fixes, 1 `office_edit`, publish) | _read from Settings → General_ | _40 − total_ |
 
-The 0.848 figure comes from the 26 Sep session-log entry, not yet re-read in Bob IDE →
-Settings → General. Confirm the running total there before the recorded run and correct this
-row if it differs.
+Neither figure has been read off Bob IDE → Settings → General yet: 0.848 comes from the
+26 Sep session-log entry, and task02's cost is unknown. Read the running total there and fill
+both rows in; the consumption summary per task is on the task header in History.
 
 Budget: rehearsal ≤ 8 · dry run 1 ≤ 10 · dry run 2 ≤ 10 · recorded run ≤ 8 · reserve ≥ 4.
 If dry run 1 costs more than 12, cut to two subagents (see ARCHITECTURE §8).
@@ -107,6 +108,7 @@ If dry run 1 costs more than 12, cut to two subagents (see ARCHITECTURE §8).
 | When (WAT) | What happened |
 | --- | --- |
 | 24 Sep | Idea chosen (Rowgate). Bob capability limits verified. Repo created; ARCHITECTURE, MEMORY, PLAN written. |
+| 26 Sep 15:29 WAT | **Run of record (task02).** Four breaks, all cited: Orders!C14, Billing!E9, Auth!E5 and a fourth the dry run had folded into F3 — Auth!D5, FastAPI's `{"detail": …}` instead of the shared error envelope. Two holds cleared (Orders!H11 alias, Orders!H5 enum). Three tests red → green, F2 stays red and is recorded with `Billing!H9 = BREAKING` + Changelog row 6. Renderer: 0 problems, 7 workbook cells changed. `decided_by` is a person now, so the Skill fix took. Two blemishes: F4 cites `Auth!D5`, which is the **Scenario** column, not the envelope rule (`Auth!F5` / the Errors sheet), and the Changelog date came out `2025-07-14` — Bob has no clock, so the Skill must take the date from `date +%F`. |
 | 26 Sep 14:30 WAT | **Dry run passed end to end.** Bob (Contract Gate + rowgate Skill) found 3 breaks with correct cells (Orders!C14, Billing!E9, Auth!E5), skipped 2 holds (Orders!D11 alias, Orders!E5 enum), wrote 3 cell-named tests all red, then F1/F3 fix_code → green, F2 record_breaking → office_edit set Billing!H9=BREAKING + Changelog row 6. Renderer: 0 problems. No false positives. Rehearsal cost 0.848 coins total. |
 | 26 Sep | Windows readiness pass on the user's PC. Two real bugs fixed: pathlib read/write used the cp1252 locale (render_dossier.py crashed on the dossier's arrow), and the scripts called bare `python`, which on this machine is the WindowsApps interpreter with none of the requirements — they now prefer `.venv`. `demo/start` and `feature/fast-checkout` rebased onto main to carry both fixes (D19 relaxed: the rebase happened in the user's own clone). `reset_demo.sh` says `Ready.`, 14 tests green, rehearsal cells verified in the workbook. Not yet pushed. 0 Bobcoins used. |
 | 25 Sep 21:00 WAT | Grok review: entry not submittable until the Bob run (agreed, expected). Added session-report naming `ibm-hackathon-lablab_task<NN>_<desc>` and the "all three subagents running in one frame" screenshot rule. Team name is `ibm-hackathon-lablab`, not `ibm-coding-challenge-uat`. |

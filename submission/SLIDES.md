@@ -3,7 +3,7 @@
 Built for the four judging criteria: **application of Bob**, **business value**,
 **originality**, **presentation**. One idea per slide, big type, real screenshots.
 Numbers marked **[N]** come from `python scripts/run_numbers.py` after the run;
-**[B]** from `submission/BASELINE.md`; **[C]** from `MEMORY.md` §6.
+**[B]** from `submission/BASELINE.md`. **[C]** is filled in: 6.1 Bobcoins per run (`MEMORY.md` §6).
 
 Visual style: the site's palette (forest-black `#0F1611`, cream `#E8DCB8`, paper `#F5F2EA`,
 amber `#E3B64F` for the cited cell), serif headlines (Newsreader), logo from
@@ -78,12 +78,16 @@ Diagram, left to right, Bob steps in cream and script steps in grey:
 
 | | Reading the diff | Rowgate |
 | --- | --- | --- |
-| Breaks found | **[B]** of 3 | **[N]** of 3 |
+| Breaks found | **[B]** of **[N]** | **[N]** of **[N]** |
 | Harmless rename flagged as a break | **[B]** | no, skipped with the reason |
 | Proven by a failing test | none | **[N]/[N]** red |
 | Time | **[B]** min | **[N]** min |
 
 Screenshot: the "Checked and skipped" card for `Orders!D11` (renamed in Python, same name on the wire).
+
+**[N] is the run's own break count, not 3.** The three planted edits broke four signed cells,
+because the auth change moved both the status code and the error envelope, and Rowgate cites
+each cell separately. `scripts/run_numbers.py` prints the figure to use.
 
 **Say:** "It also knows what *not* to flag. That's the difference between a gate and a noise machine."
 
@@ -95,7 +99,7 @@ Screenshot: the "Checked and skipped" card for `Orders!D11` (renamed in Python, 
 
 - The contract tests live in `tests/contract/`, so every later pull request is checked by plain pytest in CI, with no model and no tokens.
 - Screenshot: the GitHub PR from `feature/fast-checkout`, red on the contract test for the recorded breaking change.
-- Cost: **[C]** Bobcoins for the whole run, then zero per PR.
+- Cost: **6.1** Bobcoins for the whole run, then zero per PR.
 - Every number is measured: code from the diff, pass/fail from pytest, workbook edits from git.
 
 ---

@@ -93,15 +93,18 @@ or Bobcoins are spent.
 | When | Mode | What | Coins | Remaining |
 | --- | --- | --- | --- | --- |
 | — | — | start | 0 | 40 |
-| 26 Sep 14:30 WAT | Ask → Contract Gate | Rehearsal and dry run, one Bob task (2 workbook questions, `/rowgate`, 3 subagents, 3 tests, 2 fixes, 1 `office_edit`) | 0.848 | 39.152 |
-| 26 Sep 15:29 WAT | Contract Gate | Run of record, task02 (`/rowgate`, subagents, 4 tests, 3 fixes, 1 `office_edit`, publish) | _read from Settings → General_ | _40 − total_ |
+| 26 Sep 14:30 WAT | Ask → Contract Gate | task01: rehearsal and dry run in one task (2 workbook questions, `/rowgate`, 3 subagents, 3 tests, 2 fixes, 1 `office_edit`) | 6.24 | 33.76 |
+| 26 Sep 15:29 WAT | Contract Gate | task02: full run, published (`/rowgate`, subagents, 4 tests, 3 fixes, 1 `office_edit`, `check_submission.sh`) | 6.10 | 27.66 |
 
-Neither figure has been read off Bob IDE → Settings → General yet: 0.848 comes from the
-26 Sep session-log entry, and task02's cost is unknown. Read the running total there and fill
-both rows in; the consumption summary per task is on the task header in History.
+Both figures are the per-task totals on the task header in History, read 26 Sep.
+The 0.848 noted earlier was a mid-task reading of task01, not its final cost.
 
-Budget: rehearsal ≤ 8 · dry run 1 ≤ 10 · dry run 2 ≤ 10 · recorded run ≤ 8 · reserve ≥ 4.
-If dry run 1 costs more than 12, cut to two subagents (see ARCHITECTURE §8).
+**27.66 left, and a full run costs about 6.1.** That is four more runs. The recorded run
+needs one; keep two in reserve in case it has to be redone, and do not spend the rest on
+rehearsals — task01 already proved Bob reads inheritance and merged cells correctly.
+
+Budget from here: recorded run ≈ 6.1 · one retry ≈ 6.1 · reserve ≥ 15.
+If a run ever exceeds 10, cut to two subagents (see ARCHITECTURE §8).
 
 ## 7. Session log
 

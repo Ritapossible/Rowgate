@@ -29,6 +29,11 @@ else
 fi
 [[ -f web/public/dossier.html ]] && ok "single-file dossier published" || bad "web/public/dossier.html missing"
 
+echo "Bob's output is in the repo"
+# The Run page cites tests, commits and workbook edits. A run that is published and
+# then reset leaves those pointing at nothing, and the site contradicts the repo.
+if out=$("$PY" scripts/check_run_artifacts.py 2>&1); then echo "$out"; else echo "$out"; fail=1; fi
+
 echo "Safety"
 # IBM Cloud API keys are 44 chars of [A-Za-z0-9_-]; also catch obvious key names and private keys.
 secrets=$( { git ls-files; find bob_sessions -type f; } | sort -u | grep -v -E '\.(png|jpg|xlsx)$|package-lock\.json' \

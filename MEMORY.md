@@ -93,6 +93,11 @@ or Bobcoins are spent.
 | When | Mode | What | Coins | Remaining |
 | --- | --- | --- | --- | --- |
 | — | — | start | 0 | 40 |
+| 26 Sep 14:30 WAT | Ask → Contract Gate | Rehearsal and dry run, one Bob task (2 workbook questions, `/rowgate`, 3 subagents, 3 tests, 2 fixes, 1 `office_edit`) | 0.848 | 39.152 |
+
+The 0.848 figure comes from the 26 Sep session-log entry, not yet re-read in Bob IDE →
+Settings → General. Confirm the running total there before the recorded run and correct this
+row if it differs.
 
 Budget: rehearsal ≤ 8 · dry run 1 ≤ 10 · dry run 2 ≤ 10 · recorded run ≤ 8 · reserve ≥ 4.
 If dry run 1 costs more than 12, cut to two subagents (see ARCHITECTURE §8).

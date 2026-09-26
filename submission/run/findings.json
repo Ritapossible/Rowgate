@@ -1,0 +1,107 @@
+{
+ "branch": "feature/fast-checkout",
+ "base": "main",
+ "workbook": "contract/api-contract.xlsx",
+ "workbook_version": "v3.2",
+ "findings": [
+  {
+   "id": "F1",
+   "cell": "Orders!C14",
+   "rule": "ORD-011",
+   "contract_says": "POST /orders with a valid order must return HTTP 201 Created.",
+   "code_does": "Returns HTTP 202 Accepted (fast-checkout change).",
+   "evidence": {
+    "file": "app/orders.py",
+    "line": 22
+   },
+   "verdict": "BREAK",
+   "reasoning": "status_code was changed from HTTP_201_CREATED to HTTP_202_ACCEPTED. The contract note (Orders!I14) states the POS treats any other 2xx as a failed checkout and retries (INC-2291).",
+   "test": "tests/contract/test_orders_C14_create_returns_201.py",
+   "decision": "fix_code",
+   "decided_by": "A. Okafor"
+  },
+  {
+   "id": "F2",
+   "cell": "Billing!E9",
+   "rule": "BIL-007",
+   "contract_says": "GET /invoices/{id} response must include field `currency` (string, ISO 4217, Required=Y).",
+   "code_does": "The `currency` field was removed from InvoiceResponse in models.py and from create_invoice_for in billing.py.",
+   "evidence": {
+    "file": "app/models.py",
+    "line": 22
+   },
+   "verdict": "BREAK",
+   "reasoning": "currency was deleted from InvoiceResponse; the contract (Billing!I9) marks it mandatory for multi-currency settlement and notes the partner ledger rejects invoices without it.",
+   "test": "tests/contract/test_billing_E9_invoice_has_currency.py",
+   "decision": "record_breaking",
+   "decided_by": "A. Okafor",
+   "workbook_edit": {
+    "cells": {
+     "Billing!H9": "BREAKING",
+     "Changelog!A6": "2026-09-26",
+     "Changelog!B6": "v3.3",
+     "Changelog!C6": "Billing!E9",
+     "Changelog!D6": "currency field removed from GET /invoices/{id} response",
+     "Changelog!E6": "breaking, accepted",
+     "Changelog!F6": "A. Okafor"
+    },
+    "changelog_row": 6
+   }
+  },
+  {
+   "id": "F3",
+   "cell": "Auth!E5",
+   "rule": "AUT-002",
+   "contract_says": "POST /auth/token with wrong client_secret must return HTTP 401.",
+   "code_does": "Raises HTTPException(status_code=400, ...) instead of returning a 401 via error_response.",
+   "evidence": {
+    "file": "app/auth.py",
+    "line": 25
+   },
+   "verdict": "BREAK",
+   "reasoning": "The branch changed error_response(401, ...) to HTTPException(status_code=400, ...); Auth!H5 states the POS shows 're-enter API key' only on 401 + invalid_grant, so a 400 silently breaks the POS UX.",
+   "test": "tests/contract/test_auth_E5_invalid_secret_returns_401.py",
+   "decision": "fix_code",
+   "decided_by": "A. Okafor"
+  },
+  {
+   "id": "F4",
+   "cell": "Auth!D5",
+   "related_cells": [
+    "Errors!D6"
+   ],
+   "rule": "AUT-002",
+   "contract_says": "Error body for wrong client_secret must be {\"error\": \"invalid_grant\", \"error_description\": \"Client authentication failed\"}.",
+   "code_does": "HTTPException produces {\"detail\": \"invalid client credentials\"} — wrong key names and wrong text.",
+   "evidence": {
+    "file": "app/auth.py",
+    "line": 25
+   },
+   "verdict": "BREAK",
+   "reasoning": "FastAPI's HTTPException uses the `detail` key; the error envelope on the Errors sheet (ERR-004) requires `error` and `error_description`, with the exact text shown verbatim to cashiers (Errors!F6).",
+   "test": "tests/contract/test_auth_D5_invalid_secret_error_envelope.py",
+   "decision": "fix_code",
+   "decided_by": "A. Okafor"
+  }
+ ],
+ "skipped": [
+  {
+   "cell": "Orders!H11",
+   "change": "Python field `request_id` renamed to `req_id` in OrderResponse.",
+   "why": "Field carries `serialization_alias=\"request_id\"` so the wire name is exactly `request_id` as required by ORD-008. Internal rename only.",
+   "evidence": {
+    "file": "app/models.py",
+    "line": 15
+   }
+  },
+  {
+   "cell": "Orders!H5",
+   "change": "Order status value changed from `confirmed` to `pending` on creation.",
+   "why": "`pending` is within the allowed enum `pending | confirmed` (ORD-002); no contract row is broken.",
+   "evidence": {
+    "file": "app/orders.py",
+    "line": 28
+   }
+  }
+ ]
+}

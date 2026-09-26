@@ -87,9 +87,14 @@ Type `/rowgate feature/fast-checkout`, or paste:
 | Workbook | `office_edit` on Billing and Changelog | Open the .xlsx and look at `Billing!H9` and the new Changelog row | `07-workbook.png` |
 | After | `run_contract_tests.sh after`, green for F1 and F3 | Check `render_dossier.py` says 0 problems | `08-green.png` |
 
-Expected result: **3 breaks** (`Orders!C14`, `Billing!E9`, `Auth!E5`), **1 skipped**
-(`Orders!D11`, serialization alias), F1 and F3 red → green, F2 recorded as breaking with
-`Billing!H9 = BREAKING` and a Changelog row. If any of these differ, stop and tell Claude.
+Expected result, confirmed by the 26 Sep dry run: **3 breaks** (`Orders!C14`, `Billing!E9`,
+`Auth!E5`), **2 skipped** (`Orders!D11` serialization alias, `Orders!E5` value inside the
+allowed enum), F1 and F3 red → green, F2 stays red and is recorded as breaking with
+`Billing!H9 = BREAKING` and Changelog row 6, renderer reports **0 problems**. If any of
+these differ, stop and tell Claude.
+
+**Before any reset:** `scripts/reset_demo.sh --force` reverts every tracked file, so commit
+tooling changes first or they are lost.
 
 ## 4. Keep and publish (no coins)
 

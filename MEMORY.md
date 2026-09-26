@@ -102,6 +102,7 @@ If dry run 1 costs more than 12, cut to two subagents (see ARCHITECTURE §8).
 | When (WAT) | What happened |
 | --- | --- |
 | 24 Sep | Idea chosen (Rowgate). Bob capability limits verified. Repo created; ARCHITECTURE, MEMORY, PLAN written. |
+| 26 Sep 14:30 WAT | **Dry run passed end to end.** Bob (Contract Gate + rowgate Skill) found 3 breaks with correct cells (Orders!C14, Billing!E9, Auth!E5), skipped 2 holds (Orders!D11 alias, Orders!E5 enum), wrote 3 cell-named tests all red, then F1/F3 fix_code → green, F2 record_breaking → office_edit set Billing!H9=BREAKING + Changelog row 6. Renderer: 0 problems. No false positives. Rehearsal cost 0.848 coins total. |
 | 25 Sep 21:00 WAT | Grok review: entry not submittable until the Bob run (agreed, expected). Added session-report naming `ibm-hackathon-lablab_task<NN>_<desc>` and the "all three subagents running in one frame" screenshot rule. Team name is `ibm-hackathon-lablab`, not `ibm-coding-challenge-uat`. |
 | 25 Sep 20:00 WAT | Submission kit: submission/SLIDES.md, VIDEO.md, SUBMISSION.md, BASELINE.md; run_numbers.py; check_submission.sh (credential scan tested); RUNBOOK updated with the guide's session-export steps. Demo branches rebuilt once and frozen (D19). |
 | 25 Sep 19:36 WAT | Bob hackathon account confirmed (team ibm-hackathon-lablab, 40 coins, 0 used). On phone only; setup and runs wait for a computer. |

@@ -43,7 +43,9 @@ customModes:
       finding's decision.
     groups:
       - read
-      - edit
+      - - edit
+        - fileRegex: '^(app|tests[/\\]contract|out|contract)[/\\]'
+          description: Product code, contract tests, run output, the signed workbook
       - subagent
       - execute
       - skill

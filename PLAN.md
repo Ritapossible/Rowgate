@@ -25,8 +25,8 @@ Non-AI scaffolding may be built before kickoff; all Bob work waits for the hacka
 ## Kickoff (Fri 16:00 WAT)
 
 - [x] Find the IBM Bob invite email (check spam; search "IBM Bob"), accept it
-- [x] Hackathon account confirmed: team `ibm-hackathon-lablab`, Enterprise, 40 Bobcoins, 0 used (25 Sep 19:36 WAT)
-- [ ] Sign in to Bob IDE on the computer and select team `ibm-hackathon-lablab`
+- [x] Hackathon account confirmed: team `ibm-coding-challenge-2`, Enterprise, 40 Bobcoins, 0 used (25 Sep 19:36 WAT)
+- [ ] Sign in to Bob IDE on the computer and select team `ibm-coding-challenge-2`
 
 ## Phase 1 — Fixture · 0 Bobcoins · ✅ done Fri 25 Sep morning (before kickoff, no Bob)
 

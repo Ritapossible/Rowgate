@@ -34,7 +34,7 @@ or Bobcoins are spent.
 | `office_read` and `office_edit` for `.docx`, `.xlsx`, `.pptx` — **2.1.0 (Aug 2026)**. Edit = set values, add/remove content, find-and-replace. Comments not mentioned | Changelog 2.1.0 |
 | Hackathon account: invite email from the IBM Bob team **at the start of the hackathon** to the registration email ("added as a team member to ibm-hackathon-xxx", Enterprise plan). 40 Bobcoins auto-applied, no top-up. Sign in with an IBMid on the registration email. Usage shown in Bob IDE → Settings → General. Use only the `ibm-coding-challenge-xxx` instance during the event | Hackathon guide (May 2026 edition) — https://watsonx-hackathons-2026.s3.us.cloud-object-storage.appdomain.cloud/Lablab-IBM-Bob-hackathon-guide-May-2026.pdf |
 | Separate personal free trial: 50 Bobcoins for 30 days | https://bob.ibm.com/trial |
-| **Confirmed 25 Sep 19:36 WAT:** hackathon account active. Team `ibm-hackathon-lablab`, Enterprise plan, region US East, 40 Bobcoins, 0 used. Use this team (not a personal account) for every Bob step | Bob admin portal, Subscription page |
+| **Confirmed 25 Sep 19:36 WAT:** hackathon account active. Team `ibm-coding-challenge-2`, Enterprise plan, region US East, 40 Bobcoins, 0 used. Use this team (not a personal account) for every Bob step | Bob admin portal, Subscription page |
 | 2.2.0 (Sep 2026): live subagent tool results in chat; `plugins/` subdirectory for skills, modes, rules, MCP; HTTPS hook handlers | Changelog 2.2.0 |
 
 ### Unverified — check at kickoff (Fri 25 Sep)
@@ -92,27 +92,24 @@ or Bobcoins are spent.
 
 | When (UTC) | Mode | What | Coins | Remaining |
 | --- | --- | --- | --- | --- |
-| — | — | start | 0 | 40 |
+| — | — | start | 0 | 40.00 |
 | 26 Sep 21:30 | Ask → Contract Gate | task01 `ee9a0d46`: workbook rehearsal and a dry run, in one task | 6.24 | 33.76 |
-| 26 Sep 22:29 → 27 Sep 00:26 | Contract Gate | task02 `b0a94399`: the published run and, continuing **in the same task**, the run of record | _needs one authoritative reading_ | — |
+| 26 Sep 22:29 → 27 Sep 00:26 | Contract Gate | task02 `b0a94399`: the published run and, continuing **in the same task**, the run of record — four tests, three fixes, one `office_edit`, plus the citation correction | 12.98 | **20.78** |
 
-**There are two Bob tasks, not three.** The exported histories prove it: the run of record is a
-continuation of task02's task (`b0a94399826d5e79effdbadf0d58e326`), and task02's earlier export
-is a byte-exact prefix of the final one. An earlier version of this ledger listed a separate
-"task03" at 6.02; that was wrong.
+Read off Bob IDE → Settings → General on 27 Sep: **budget 40.00, usage 19.22, 51% remaining.**
+task02's figure is that total minus task01's, and it reconciles: the 6.10 and 6.02 readings taken
+during task02 sum to 12.12, and the remaining 0.86 is the citation-correction exchange and the
+extra prompts after them. A task's cost only grows, so those two readings were never two tasks.
 
-**The cost of task02 is unresolved.** Its header was read as 6.10 after the published run, and
-6.02 was later reported for what was believed to be a separate task. A task's cost cannot fall,
-so one reading is a misreading. Read the account total in Bob IDE → **Settings → General**
-(used and remaining are shown directly) and fill this row in; with task01 at 6.24 the total is
-either 12.34 (remaining 27.66) or 12.26 (remaining 27.74). Either way there is room for three
-more runs at about 6.1.
+**There are two Bob tasks, not three.** The run of record continued task02's task
+(`b0a94399826d5e79effdbadf0d58e326`); task02's earlier export is a byte-exact prefix of the final
+one. An earlier version of this ledger listed a separate "task03" at 6.02 and double-counted.
 
-A full `/rowgate` run costs about 6.1 — that is the figure for **[C]** on the slides.
+**20.78 left — about three more runs at ~6.1.** A full `/rowgate` run costs about 6.1, which is
+the figure for **[C]** on the slides.
 
-Times in this table are UTC. Note that timestamps elsewhere in this file are labelled WAT but
-were taken from this machine's clock, which is set to UTC−7; real WAT is UTC+1, so those labels
-read 8 hours early.
+Times here are UTC. Timestamps elsewhere in this file are labelled WAT but were taken from this
+machine's clock, which is set to UTC−7; real WAT is UTC+1, so those labels read 8 hours early.
 
 If a run ever exceeds 10, cut to two subagents (see ARCHITECTURE §8).
 
@@ -125,9 +122,9 @@ If a run ever exceeds 10, cut to two subagents (see ARCHITECTURE §8).
 | 26 Sep 22:29 UTC | **task02, first pass — published, later superseded within the same task.** Four breaks, all cited: Orders!C14, Billing!E9, Auth!E5 and a fourth the dry run had folded into F3 — Auth!D5, FastAPI's `{"detail": …}` instead of the shared error envelope. Two holds cleared (Orders!H11 alias, Orders!H5 enum). Three tests red → green, F2 stays red and is recorded with `Billing!H9 = BREAKING` + Changelog row 6. Renderer: 0 problems, 7 workbook cells changed. `decided_by` is a person now, so the Skill fix took. Two blemishes: F4 cites `Auth!D5`, which is the **Scenario** column, not the envelope rule (`Auth!F5` / the Errors sheet), and the Changelog date came out `2025-07-14` — Bob has no clock, so the Skill must take the date from `date +%F`. |
 | 26 Sep 14:30 WAT | **Dry run passed end to end.** Bob (Contract Gate + rowgate Skill) found 3 breaks with correct cells (Orders!C14, Billing!E9, Auth!E5), skipped 2 holds (Orders!D11 alias, Orders!E5 enum), wrote 3 cell-named tests all red, then F1/F3 fix_code → green, F2 record_breaking → office_edit set Billing!H9=BREAKING + Changelog row 6. Renderer: 0 problems. No false positives. Rehearsal cost 0.848 coins total. |
 | 26 Sep | Windows readiness pass on the user's PC. Two real bugs fixed: pathlib read/write used the cp1252 locale (render_dossier.py crashed on the dossier's arrow), and the scripts called bare `python`, which on this machine is the WindowsApps interpreter with none of the requirements — they now prefer `.venv`. `demo/start` and `feature/fast-checkout` rebased onto main to carry both fixes (D19 relaxed: the rebase happened in the user's own clone). `reset_demo.sh` says `Ready.`, 14 tests green, rehearsal cells verified in the workbook. Not yet pushed. 0 Bobcoins used. |
-| 25 Sep 21:00 WAT | Grok review: entry not submittable until the Bob run (agreed, expected). Added session-report naming `ibm-hackathon-lablab_task<NN>_<desc>` and the "all three subagents running in one frame" screenshot rule. Team name is `ibm-hackathon-lablab`, not `ibm-coding-challenge-uat`. |
+| 25 Sep 21:00 WAT | Grok review: entry not submittable until the Bob run (agreed, expected). Added session-report naming `ibm-coding-challenge-2_task<NN>_<desc>` and the "all three subagents running in one frame" screenshot rule. Team name recorded as `ibm-hackathon-lablab` at the time; **this was wrong** — Settings → General on 27 Sep shows the team is `ibm-coding-challenge-2`, which is the `ibm-coding-challenge-xxx` instance the guide requires. Corrected throughout. |
 | 25 Sep 20:00 WAT | Submission kit: submission/SLIDES.md, VIDEO.md, SUBMISSION.md, BASELINE.md; run_numbers.py; check_submission.sh (credential scan tested); RUNBOOK updated with the guide's session-export steps. Demo branches rebuilt once and frozen (D19). |
-| 25 Sep 19:36 WAT | Bob hackathon account confirmed (team ibm-hackathon-lablab, 40 coins, 0 used). On phone only; setup and runs wait for a computer. |
+| 25 Sep 19:36 WAT | Bob hackathon account confirmed (team ibm-coding-challenge-2, 40 coins, 0 used). On phone only; setup and runs wait for a computer. |
 | 25 Sep 18:20 WAT | Phase 2 started: Rowgate Skill + test template, Contract Gate mode and /rowgate text (paste-ready), RUNBOOK.md, publish_run.sh (tested in a scratch clone). Waiting on the Bob account to run. |
 | 25 Sep AM (3) | Web app built (D17): Overview, Run, Contract explorer; `export_site.py`. Checked in light/dark, desktop/phone, with and without a run (sample run kept out of the repo). |
 | 25 Sep AM (2) | Measured evidence (D15), `reset_demo.sh`, `demo/start` (D16), CI. Full simulated run renders with 0 problems. 14 tests green. |

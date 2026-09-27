@@ -8,8 +8,8 @@ reports"). For **every** Bob task you run, including the rehearsal:
 
 1. In Bob's chat panel: **Views and More Actions → History**. Make sure the Rowgate workspace is selected.
 2. Open the task, then click the **task header** to show its consumption summary.
-3. **Screenshot** the summary → `bob_sessions/ibm-hackathon-lablab_task<NN>_<short-description>.png`,
-   for example `ibm-hackathon-lablab_task01_rehearsal.png`, `ibm-hackathon-lablab_task02_rowgate-run.png`.
+3. **Screenshot** the summary → `bob_sessions/ibm-coding-challenge-2_task<NN>_<short-description>.png`,
+   for example `ibm-coding-challenge-2_task01_rehearsal.png`, `ibm-coding-challenge-2_task02_rowgate-run.png`.
 4. Click **Export task history** → save it beside the screenshot with the same name and `.md`.
 
 The name carries the team, the task number and a short description, so judges can match
@@ -40,7 +40,7 @@ scripts/reset_demo.sh --force   # must end with "Ready."
 ## 1. Once: set up Bob (no coins)
 
 1. Open the `Rowgate` folder in Bob IDE, signed in to the **hackathon** team
-   **`ibm-hackathon-lablab`** (Settings → General). Never run Rowgate on a personal account.
+   **`ibm-coding-challenge-2`** (Settings → General). Never run Rowgate on a personal account.
 2. **Skill:** `.bob/skills/rowgate/SKILL.md` is already in the repo. Check Bob lists it
    (Skills panel). If Bob asks to approve it on first use, approve.
 3. **Mode:** create a custom mode and paste the fields from
@@ -59,7 +59,7 @@ Ask mode, paste:
 
 Expected: the `POST /orders` field rows inherit from **ORD-011** (`Orders!C14` = 201), and
 BIL-007's status is the merged cell **Billing!D3** (200). If Bob gets this wrong, tell
-Claude before spending more coins. Session report → `ibm-hackathon-lablab_task01_rehearsal`.
+Claude before spending more coins. Session report → `ibm-coding-challenge-2_task01_rehearsal`.
 
 ## 3. The run (Contract Gate mode)
 

@@ -40,5 +40,5 @@ come from `python scripts/run_numbers.py`, **[B]** from `submission/BASELINE.md`
 ## Don't
 
 - Don't call Rowgate a "workflow". Say "custom mode and Skill".
-- Don't show a personal Bob account; the team in Settings must be `ibm-hackathon-lablab`.
+- Don't show a personal Bob account; the team in Settings must be `ibm-coding-challenge-2`.
 - Don't show sample data. Everything on screen must come from the recorded run.

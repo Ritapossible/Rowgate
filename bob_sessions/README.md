@@ -1,8 +1,8 @@
 # Bob task session reports
 
 One screenshot of the task consumption summary and one exported task history per Bob task,
-named `ibm-hackathon-lablab_task<NN>_<description>`, as the hackathon guide requires. Team
-`ibm-hackathon-lablab`, Enterprise plan, region US East.
+named `ibm-coding-challenge-2_task<NN>_<description>`, as the hackathon guide requires. Team
+`ibm-coding-challenge-2`, Enterprise plan, region US East.
 
 | Task | Bob task id | What it was | Final cost |
 | --- | --- | --- | --- |

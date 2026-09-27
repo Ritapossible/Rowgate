@@ -1,0 +1,19 @@
+This is Rowgate. It reads the API contract your partner actually signed, a spreadsheet, and turns the rows a release branch breaks into failing tests.
+
+A partner signs a document. Forty-one rules: status codes, required fields, error bodies. Then a branch quietly changes one, the diff looks fine, the tests stay green, and nobody finds out until the partner's system rejects it. That document never enters code review.
+
+Here's a real run. Four signed cells broken on one branch. Every finding cites the exact cell, shows the line of code that breaks it, and comes with a test named after that cell, which fails, then passes once it's fixed.
+
+It also knows what not to flag. A field renamed in Python, but the alias keeps the wire name identical, so the contract still holds. Skipped, with the reason.
+
+This is IBM Bob. Rowgate is a custom mode and a Skill. One command. Bob opens the spreadsheet directly, plans which signed rows the diff can touch, and waits for me to approve.
+
+Then three subagents check orders, billing and auth at the same time, each in its own clean context. That is the part one pass over a diff cannot do: three resources, no crosstalk, one verdict per signed row.
+
+Four breaks, four failing tests. Then a human decides each one. Three get fixed in code. One is accepted as a breaking change, and Bob writes that back into the signed workbook itself.
+
+This is the pull request it was pointed at. Three commits, five files, every change defensible on its own.
+
+And now it cannot merge. Not because a model objected, but because a row a person signed in a spreadsheet is a test, and it fails. The model read the sheet once. The tests stay, and every future pull request is checked for free.
+
+I read that diff myself, already knowing where the breaks were, and found two of four in twelve minutes. Rowgate found all four.

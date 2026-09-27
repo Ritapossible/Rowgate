@@ -19,7 +19,7 @@ def _price_cents(sku: str, quantity: int) -> int:
 
 # Fast checkout: accept the order immediately and confirm it asynchronously,
 # so the POS no longer waits on invoice creation.
-@router.post("/orders", status_code=status.HTTP_202_ACCEPTED, response_model=OrderResponse)
+@router.post("/orders", status_code=status.HTTP_201_CREATED, response_model=OrderResponse)
 def create_order(body: OrderCreate, x_request_id: str | None = Header(default=None)) -> OrderResponse:
     order_id = f"ord_{uuid.uuid4().hex[:12]}"
     order = OrderResponse(

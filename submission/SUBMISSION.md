@@ -1,6 +1,6 @@
 # lablab.ai submission: paste-ready
 
-Fill **[N]** from `python scripts/run_numbers.py` and **[B]** from `submission/BASELINE.md`.
+Numbers are filled in from the run of record. Only the video and slide links are left.
 Run `scripts/check_submission.sh` before you press Submit.
 
 ## Project title
@@ -34,11 +34,12 @@ pass and fail come from pytest, and workbook edits are compared against git. The
 the repository, so every later pull request is checked by plain pytest in CI, with no model and
 no tokens.
 
-On a sample partner API with three planted edits and one harmless rename, reading the diff
-found [B] and flagged the rename. Rowgate found all [N] broken cells, skipped the rename with
-the reason (the wire name is unchanged), and proved each break with a failing test. The three
-edits break [N] signed cells, because the auth change moved both the status code and the error
-envelope and each cell is cited separately; use the count `scripts/run_numbers.py` prints.
+On a sample partner API, three planted edits break four signed cells — the auth change moves
+both the status code and the error envelope, and each cell is cited separately. Reading the
+diff by hand found 2 of the 4 in 12 minutes, and that was the author, who knew the answers.
+Rowgate found all 4, proved each with a failing test, and skipped two lookalikes with reasons:
+a Python field rename that `serialization_alias` keeps identical on the wire, and a status
+value that is inside the allowed enum. Zero false alarms.
 
 ## Technologies / tags
 

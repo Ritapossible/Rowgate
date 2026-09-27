@@ -2,8 +2,8 @@
 
 Built for the four judging criteria: **application of Bob**, **business value**,
 **originality**, **presentation**. One idea per slide, big type, real screenshots.
-Numbers marked **[N]** come from `python scripts/run_numbers.py` after the run;
-**[B]** from `submission/BASELINE.md`. **[C]** is filled in: 6.1 Bobcoins per run (`MEMORY.md` §6).
+Every number below is filled in from the run of record: `python scripts/run_numbers.py`
+for the run, `submission/BASELINE.md` for the human comparison, `MEMORY.md` §6 for the cost.
 
 Visual style: the site's palette (forest-black `#0F1611`, cream `#E8DCB8`, paper `#F5F2EA`,
 amber `#E3B64F` for the cited cell), serif headlines (Newsreader), logo from
@@ -74,20 +74,23 @@ Diagram, left to right, Bob steps in cream and script steps in grey:
 
 ## 5. Proof: the run *(presentation)*
 
-**[N] of [N] broken cells found. 0 false alarms.**
+**4 of 4 broken cells found. 0 false alarms.**
 
 | | Reading the diff | Rowgate |
 | --- | --- | --- |
-| Breaks found | **[B]** of **[N]** | **[N]** of **[N]** |
-| Harmless rename flagged as a break | **[B]** | no, skipped with the reason |
-| Proven by a failing test | none | **[N]/[N]** red |
-| Time | **[B]** min | **[N]** min |
+| Broken cells found | **2** of 4 | **4** of 4 |
+| Proven by a failing test | none | **4/4** red, then decided one by one |
+| False alarms | — | **0** — 2 lookalikes skipped, each with its reason |
+| Effort | **12 min** of a reviewer's attention | one Bob run, **6.1** Bobcoins |
 
 Screenshot: the "Checked and skipped" card for `Orders!D11` (renamed in Python, same name on the wire).
 
-**[N] is the run's own break count, not 3.** The three planted edits broke four signed cells,
-because the auth change moved both the status code and the error envelope, and Rowgate cites
-each cell separately. `scripts/run_numbers.py` prints the figure to use.
+**Be straight about the baseline:** the 12 minutes are the author's own, and the author knew
+where the breaks were. It still missed half of them. A reviewer seeing the branch cold would
+not do better — that is the argument, and it is stronger for being stated plainly.
+
+**Four cells, three edits.** The auth change moved both the status code and the error envelope,
+and Rowgate cites each broken cell separately.
 
 **Say:** "It also knows what *not* to flag. That's the difference between a gate and a noise machine."
 
@@ -116,7 +119,7 @@ each cell separately. `scripts/run_numbers.py` prints the figure to use.
 
 ## Checklist before exporting the PDF
 
-- [ ] Every **[N]**, **[B]**, **[C]** replaced with a real number
+- [x] Every number filled in from the run of record (4 breaks, 2 by hand, 6.1 coins)
 - [ ] Screenshots from the real run, not the sample
 - [ ] No use of the word "workflow" for Rowgate (it's the Contract Gate mode + Rowgate Skill)
 - [ ] Exported as PDF for the lablab form

@@ -1,8 +1,7 @@
 # Rowgate video: 3:00 script
 
 Record the **real run** (`RUNBOOK.md` step 3) in full, then cut it down. Bob will take
-minutes where the video shows seconds; that's what the edit is for. Numbers marked **[N]**
-come from `python scripts/run_numbers.py`, **[B]** from `submission/BASELINE.md`.
+minutes where the video shows seconds; that's what the edit is for. All numbers below are filled in from the run of record.
 
 ## Recording setup
 
@@ -25,7 +24,7 @@ come from `python scripts/run_numbers.py`, **[B]** from `submission/BASELINE.md`
 | **1:25–1:45** | `tests/contract/` with three files named after cells; terminal: `run_contract_tests.sh before`, **red** | "For every broken cell, Bob writes one test named after it, and every test fails on this branch. If Bob had cited the wrong cell, the test would pass and the finding would die." |
 | **1:45–2:10** | The decision prompt: fix code for Orders!C14 and Auth!E5, record breaking change for Billing!E9. Then the spreadsheet: `Billing!H9 = BREAKING` and the new Changelog row | "Now a human decides. Two get fixed. One is accepted as a breaking change, and Bob writes that into the signed workbook itself." |
 | **2:10–2:35** | rowgate.vercel.app/run: stats row, one finding card (cell highlighted, diff line, red → green), then scroll to **Checked and skipped: Orders!D11** | "Everything here is measured: code from the diff, pass and fail from pytest, workbook edits from git. And it skipped the rename that only *looks* like a break, because the wire name didn't change." |
-| **2:35–2:50** | Numbers card: **[B] of [N]** by reading the diff vs **[N] of [N]** with Rowgate, 0 false alarms, **[N]/[N]** red → decided | "Reading the diff, I found [B] of [N] and flagged the harmless rename. Rowgate found every one, and flagged nothing wrong." |
+| **2:35–2:50** | Numbers card: **2 of 4** by reading the diff vs **4 of 4** with Rowgate, 0 false alarms, **4/4** red → decided | "Reading the diff myself, knowing where the breaks were, I found two of four in twelve minutes. Rowgate found all four, proved each with a failing test, and flagged nothing that wasn't broken." |
 | **2:50–3:00** | The PR again, now **red** on the contract test; end card with logo, rowgate.vercel.app, and `bob_sessions/` in the repo | "The model read the sheet once. The tests stay, so every future pull request is checked for free. Rowgate: the signed contract, as a release gate." |
 
 ## Edit list

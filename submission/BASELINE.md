@@ -20,14 +20,19 @@ measured numbers.
 
 ## Record
 
-| | Your result |
+| | Result |
 | --- | --- |
-| Minutes spent | |
-| Problems you flagged (write each one down) | |
-| Did you flag the `request_id` → `req_id` rename as a break? (yes/no) | |
-| Would you have approved the PR? (yes/no) | |
+| Who | the author, who already knew where the breaks were |
+| Minutes spent | **12** |
+| Broken cells found | **2** of 4 |
+| Did you flag the `request_id` → `req_id` rename as a break? | not recorded |
+| Would you have approved the PR? | not recorded |
 
-Put these numbers into the slides (**[B]**) and the video's numbers card.
+**This baseline flatters the diff and still loses.** It was run by the author, who knew the
+answers in advance; a reviewer seeing the branch cold would do no better. Say so on the slide
+rather than presenting 12 minutes as a neutral measurement. Two of the four broken cells were
+missed even with foreknowledge, which is the point: the diff does not show what the contract
+promised.
 
 ---
 

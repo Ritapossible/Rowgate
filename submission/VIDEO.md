@@ -11,7 +11,11 @@ minutes where the video shows seconds; that's what the edit is for. All numbers 
   rowgate.vercel.app · PR **Files changed** · `api-contract.xlsx` (Excel or LibreOffice) ·
   Bob IDE · rowgate.vercel.app/run · PR **Checks**.
 - Record the voice-over **separately** afterwards (phone voice memo in a quiet room is fine),
-  then lay it over the cut. That's easier than talking while Bob works.
+  then lay it over the cut. That's easier than talking while Bob works. The lines below are the
+  shot list's short form; **`submission/VOICEOVER.md` is the sheet to read from**, timed to about
+  two words per second with the word count per block.
+- The frames that are not footage are already rendered in `submission/cards/`: the numbers card,
+  the end card, and a transparent caption chip per cell. `scripts/render_cards.py` remakes them.
 
 **The pull request is https://github.com/Ritapossible/Rowgate/pull/1, and it is red** — Bob's
 contract test for `Billing!E9` is on the branch now, so CI fails on purpose. Open the PR on the

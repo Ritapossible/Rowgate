@@ -1,5 +1,3 @@
-
-
 """Orders!C14 · ORD-011: POST /orders with a valid order must return HTTP 201 Created.
 
 Written by Rowgate. The file name cites the cell; the test asserts the signed contract,
@@ -20,4 +18,3 @@ def test_orders_C14_create_returns_201(client):
     """
     r = client.post("/orders", json=VALID_ORDER)
     assert r.status_code == 201
-

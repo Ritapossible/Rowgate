@@ -66,11 +66,11 @@
   },
   {
    "id": "F4",
-   "cell": "Auth!D5",
+   "cell": "Errors!D6",
    "related_cells": [
-    "Errors!D6"
+    "Auth!E5"
    ],
-   "rule": "AUT-002",
+   "rule": "ERR-004",
    "contract_says": "Error body for wrong client_secret must be {\"error\": \"invalid_grant\", \"error_description\": \"Client authentication failed\"}.",
    "code_does": "HTTPException produces {\"detail\": \"invalid client credentials\"} — wrong key names and wrong text.",
    "evidence": {
@@ -79,14 +79,14 @@
    },
    "verdict": "BREAK",
    "reasoning": "FastAPI's HTTPException uses the `detail` key; the error envelope on the Errors sheet (ERR-004) requires `error` and `error_description`, with the exact text shown verbatim to cashiers (Errors!F6).",
-   "test": "tests/contract/test_auth_D5_invalid_secret_error_envelope.py",
+   "test": "tests/contract/test_errors_D6_invalid_secret_error_envelope.py",
    "decision": "fix_code",
    "decided_by": "A. Okafor"
   }
  ],
  "skipped": [
   {
-   "cell": "Orders!H11",
+   "cell": "Orders!D11",
    "change": "Python field `request_id` renamed to `req_id` in OrderResponse.",
    "why": "Field carries `serialization_alias=\"request_id\"` so the wire name is exactly `request_id` as required by ORD-008. Internal rename only.",
    "evidence": {
@@ -95,7 +95,7 @@
    }
   },
   {
-   "cell": "Orders!H5",
+   "cell": "Orders!E5",
    "change": "Order status value changed from `confirmed` to `pending` on creation.",
    "why": "`pending` is within the allowed enum `pending | confirmed` (ORD-002); no contract row is broken.",
    "evidence": {

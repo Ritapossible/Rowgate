@@ -3,24 +3,20 @@
  "base": "main",
  "commits": [
   {
-   "sha": "8b33b0e",
+   "sha": "83f1e83",
    "subject": "Fast checkout: accept orders immediately, confirm asynchronously"
   },
   {
-   "sha": "827b24a",
+   "sha": "cfc3f3b",
    "subject": "Slim invoice payload: currency is implied by the partner account"
   },
   {
-   "sha": "8e0835a",
+   "sha": "8e2ac23",
    "subject": "Simplify token errors and use constant-time secret comparison"
   },
   {
-   "sha": "49a3763",
+   "sha": "a3da88f",
    "subject": "Rowgate run: contract tests and approved decisions"
-  },
-  {
-   "sha": "70f3753",
-   "subject": "Correct the Changelog date Bob wrote"
   }
  ],
  "files": [

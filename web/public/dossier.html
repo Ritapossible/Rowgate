@@ -79,8 +79,8 @@
 <header>
   <h1><svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#0F1611"/><path d="M17 51V29a15 15 0 0 1 30 0v22" fill="none" stroke="#E8DCB8" stroke-width="6" stroke-linecap="round"/><rect x="17" y="34" width="30" height="8" fill="#E8DCB8" opacity=".38"/><rect x="27" y="31" width="10" height="14" rx="2" fill="#E3B64F"/></svg>Rowgate · <span class="mono">feature/fast-checkout</span></h1>
   <p>Checked against <b>contract/api-contract.xlsx</b> (v3.2)
-     · base <span class="mono">main</span> · head <span class="mono">70f3753</span>
-     · 2026-09-26 23:10 UTC</p>
+     · base <span class="mono">main</span> · head <span class="mono">a3da88f</span>
+     · 2026-09-27 00:49 UTC</p>
 </header>
 
 
@@ -212,33 +212,33 @@
 
 <article class="card" id="F4">
   <div class="card-head">
-    <span class="cell">Auth!D5</span>
-    <span class="pill blue">AUT-002</span>
-    <span class="pill grey mono">Errors!D6</span>
+    <span class="cell">Errors!D6</span>
+    <span class="pill blue">ERR-004</span>
+    <span class="pill grey mono">Auth!E5</span>
     <span class="pill red">BREAK</span>
   </div>
   <div class="says">
     <div class="contract"><span class="label">Contract says</span>Error body for wrong client_secret must be {&#34;error&#34;: &#34;invalid_grant&#34;, &#34;error_description&#34;: &#34;Client authentication failed&#34;}.</div>
     <div class="code"><span class="label">Branch does</span>HTTPException produces {&#34;detail&#34;: &#34;invalid client credentials&#34;} — wrong key names and wrong text.</div>
   </div>
-  <span class="label">Signed row · Auth</span>
+  <span class="label">Signed row · Errors</span>
   
-<div class="scroll"><table class="row">
-  <tr><th></th><th><small>A</small>Rule</th><th><small>B</small>Endpoint</th><th><small>C</small>grant_type</th><th><small>D</small>Scenario</th><th><small>E</small>HTTP status</th><th><small>F</small>Error ref</th><th><small>G</small>Contract status</th><th><small>H</small>Notes</th></tr>
-  <tr><td class="rownum">5</td><td>AUT-002</td><td>POST /auth/token</td><td>client_credentials</td><td class="hit">wrong client_secret</td><td>401</td><td>ERR-004</td><td>ACTIVE</td><td>POS shows &#39;re-enter API key&#39; only on 401 + invalid_grant.</td></tr>
-</table></div>
-
-  <span class="label">Referenced row · Errors</span>
 <div class="scroll"><table class="row">
   <tr><th></th><th><small>A</small>Code</th><th><small>B</small>HTTP status</th><th><small>C</small>error</th><th><small>D</small>Body (exact shape)</th><th><small>E</small>Used by</th><th><small>F</small>Notes</th></tr>
   <tr><td class="rownum">6</td><td>ERR-004</td><td>401</td><td>invalid_grant</td><td class="hit">{&#34;error&#34;: &#34;invalid_grant&#34;, &#34;error_description&#34;: &#34;Client authentication failed&#34;}</td><td>AUT-002</td><td>error_description text is shown to cashiers verbatim.</td></tr>
+</table></div>
+
+  <span class="label">Referenced row · Auth</span>
+<div class="scroll"><table class="row">
+  <tr><th></th><th><small>A</small>Rule</th><th><small>B</small>Endpoint</th><th><small>C</small>grant_type</th><th><small>D</small>Scenario</th><th><small>E</small>HTTP status</th><th><small>F</small>Error ref</th><th><small>G</small>Contract status</th><th><small>H</small>Notes</th></tr>
+  <tr><td class="rownum">5</td><td>AUT-002</td><td>POST /auth/token</td><td>client_credentials</td><td>wrong client_secret</td><td class="hit">401</td><td>ERR-004</td><td>ACTIVE</td><td>POS shows &#39;re-enter API key&#39; only on 401 + invalid_grant.</td></tr>
 </table></div>
 
   <span class="label">Diff · app/auth.py:25</span>
   <pre class="diff"><span class="at">@@ app/auth.py around line 25 @@</span><span class="add">+</span><span class="ctx"> @router.post(&#34;/auth/token&#34;, response_model=TokenResponse)</span><span class="ctx"> def issue_token(body: TokenRequest):</span><span class="ctx">     if body.grant_type not in SUPPORTED_GRANTS:</span><span class="ctx">         return error_response(400, &#34;unsupported_grant_type&#34;, f&#34;grant_type {body.grant_type} is not supported&#34;)</span><span class="del">-    if CLIENTS.get(body.client_id) != body.client_secret:</span><span class="del">-        return error_response(401, &#34;invalid_grant&#34;, &#34;Client authentication failed&#34;)</span><span class="add">+    if not _is_valid_client(body.client_id, body.client_secret):</span><span class="hit add">+        raise HTTPException(status_code=400, detail=&#34;invalid client credentials&#34;)</span><span class="ctx">     return TokenResponse(access_token=secrets.token_urlsafe(24), token_type=&#34;Bearer&#34;, expires_in=3600)</span></pre>
   <p class="why">FastAPI&#39;s HTTPException uses the `detail` key; the error envelope on the Errors sheet (ERR-004) requires `error` and `error_description`, with the exact text shown verbatim to cashiers (Errors!F6).</p>
   <div class="test">
-    <span class="label">Test</span><code>tests/contract/test_auth_D5_invalid_secret_error_envelope.py</code>
+    <span class="label">Test</span><code>tests/contract/test_errors_D6_invalid_secret_error_envelope.py</code>
     <span class="pill red">red</span><span class="arrow">→</span><span class="pill green">green</span>
   </div>
   <div class="decision">
@@ -255,12 +255,12 @@
 <h2>Checked and skipped</h2>
 
 <article class="card skip">
-  <div class="card-head"><span class="cell">Orders!H11</span><span class="pill green">holds</span></div>
+  <div class="card-head"><span class="cell">Orders!D11</span><span class="pill green">holds</span></div>
   <p><span class="label">Looks like</span>Python field `request_id` renamed to `req_id` in OrderResponse.</p>
   
 <div class="scroll"><table class="row">
   <tr><th></th><th><small>A</small>Rule</th><th><small>B</small>Operation</th><th><small>C</small>HTTP status</th><th><small>D</small>Field</th><th><small>E</small>Type</th><th><small>F</small>Required</th><th><small>G</small>Scenario / error ref</th><th><small>H</small>Contract status</th><th><small>I</small>Notes</th></tr>
-  <tr><td class="rownum">11</td><td>ORD-008</td><td>POST /orders</td><td>↳ ORD-011</td><td>request_id</td><td>string</td><td>Y</td><td>valid order; echoes X-Request-ID if sent</td><td class="hit">ACTIVE</td><td>POS reconciles orders by request_id. Name on the wire must be exactly request_id.</td></tr>
+  <tr><td class="rownum">11</td><td>ORD-008</td><td>POST /orders</td><td>↳ ORD-011</td><td class="hit">request_id</td><td>string</td><td>Y</td><td>valid order; echoes X-Request-ID if sent</td><td>ACTIVE</td><td>POS reconciles orders by request_id. Name on the wire must be exactly request_id.</td></tr>
 </table></div>
 
   <p><span class="label">Why it is not a break</span>Field carries `serialization_alias=&#34;request_id&#34;` so the wire name is exactly `request_id` as required by ORD-008. Internal rename only.</p>
@@ -269,12 +269,12 @@
 </article>
 
 <article class="card skip">
-  <div class="card-head"><span class="cell">Orders!H5</span><span class="pill green">holds</span></div>
+  <div class="card-head"><span class="cell">Orders!E5</span><span class="pill green">holds</span></div>
   <p><span class="label">Looks like</span>Order status value changed from `confirmed` to `pending` on creation.</p>
   
 <div class="scroll"><table class="row">
   <tr><th></th><th><small>A</small>Rule</th><th><small>B</small>Operation</th><th><small>C</small>HTTP status</th><th><small>D</small>Field</th><th><small>E</small>Type</th><th><small>F</small>Required</th><th><small>G</small>Scenario / error ref</th><th><small>H</small>Contract status</th><th><small>I</small>Notes</th></tr>
-  <tr><td class="rownum">5</td><td>ORD-002</td><td>POST /orders</td><td>↳ ORD-011</td><td>status</td><td>enum: pending | confirmed</td><td>Y</td><td>valid order</td><td class="hit">ACTIVE</td><td></td></tr>
+  <tr><td class="rownum">5</td><td>ORD-002</td><td>POST /orders</td><td>↳ ORD-011</td><td>status</td><td class="hit">enum: pending | confirmed</td><td>Y</td><td>valid order</td><td>ACTIVE</td><td></td></tr>
 </table></div>
 
   <p><span class="label">Why it is not a break</span>`pending` is within the allowed enum `pending | confirmed` (ORD-002); no contract row is broken.</p>

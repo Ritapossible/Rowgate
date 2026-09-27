@@ -1,4 +1,4 @@
-"""Auth!D5 · AUT-002 / ERR-004: wrong client_secret error body must use the shared error envelope.
+"""Errors!D6 · ERR-004 / AUT-002: wrong client_secret error body must use the shared error envelope.
 
 Expected: {"error": "invalid_grant", "error_description": "Client authentication failed"}
 FastAPI's default {"detail": ...} is NOT accepted by POS.
@@ -17,10 +17,10 @@ WRONG_SECRET = {
 }
 
 
-def test_auth_D5_invalid_secret_error_envelope(client):
-    """Auth!D5 · AUT-002 / ERR-004: wrong client_secret → error envelope with invalid_grant.
+def test_errors_D6_invalid_secret_error_envelope(client):
+    """Errors!D6 · ERR-004 / AUT-002: wrong client_secret → error envelope with invalid_grant.
 
-    Related cell: Errors!D6
+    Related cell: Auth!E5
     Contract: {"error": "invalid_grant", "error_description": "Client authentication failed"}
     error_description text is shown to cashiers verbatim (Errors!F6).
     """

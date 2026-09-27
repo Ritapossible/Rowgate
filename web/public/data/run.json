@@ -67,11 +67,11 @@
    },
    {
     "id": "F4",
-    "cell": "Auth!D5",
+    "cell": "Errors!D6",
     "related_cells": [
-     "Errors!D6"
+     "Auth!E5"
     ],
-    "rule": "AUT-002",
+    "rule": "ERR-004",
     "contract_says": "Error body for wrong client_secret must be {\"error\": \"invalid_grant\", \"error_description\": \"Client authentication failed\"}.",
     "code_does": "HTTPException produces {\"detail\": \"invalid client credentials\"} — wrong key names and wrong text.",
     "evidence": {
@@ -80,14 +80,14 @@
     },
     "verdict": "BREAK",
     "reasoning": "FastAPI's HTTPException uses the `detail` key; the error envelope on the Errors sheet (ERR-004) requires `error` and `error_description`, with the exact text shown verbatim to cashiers (Errors!F6).",
-    "test": "tests/contract/test_auth_D5_invalid_secret_error_envelope.py",
+    "test": "tests/contract/test_errors_D6_invalid_secret_error_envelope.py",
     "decision": "fix_code",
     "decided_by": "A. Okafor"
    }
   ],
   "skipped": [
    {
-    "cell": "Orders!H11",
+    "cell": "Orders!D11",
     "change": "Python field `request_id` renamed to `req_id` in OrderResponse.",
     "why": "Field carries `serialization_alias=\"request_id\"` so the wire name is exactly `request_id` as required by ORD-008. Internal rename only.",
     "evidence": {
@@ -96,7 +96,7 @@
     }
    },
    {
-    "cell": "Orders!H5",
+    "cell": "Orders!E5",
     "change": "Order status value changed from `confirmed` to `pending` on creation.",
     "why": "`pending` is within the allowed enum `pending | confirmed` (ORD-002); no contract row is broken.",
     "evidence": {
@@ -451,11 +451,11 @@
   },
   {
    "id": "F4",
-   "cell": "Auth!D5",
+   "cell": "Errors!D6",
    "related_cells": [
-    "Errors!D6"
+    "Auth!E5"
    ],
-   "rule": "AUT-002",
+   "rule": "ERR-004",
    "contract_says": "Error body for wrong client_secret must be {\"error\": \"invalid_grant\", \"error_description\": \"Client authentication failed\"}.",
    "code_does": "HTTPException produces {\"detail\": \"invalid client credentials\"} — wrong key names and wrong text.",
    "evidence": {
@@ -464,73 +464,73 @@
    },
    "verdict": "BREAK",
    "reasoning": "FastAPI's HTTPException uses the `detail` key; the error envelope on the Errors sheet (ERR-004) requires `error` and `error_description`, with the exact text shown verbatim to cashiers (Errors!F6).",
-   "test": "tests/contract/test_auth_D5_invalid_secret_error_envelope.py",
+   "test": "tests/contract/test_errors_D6_invalid_secret_error_envelope.py",
    "decision": "fix_code",
    "decided_by": "A. Okafor",
    "row": {
-    "sheet": "Auth",
+    "sheet": "Errors",
     "letters": [
      "A",
      "B",
      "C",
      "D",
      "E",
-     "F",
-     "G",
-     "H"
+     "F"
     ],
     "headers": [
-     "Rule",
-     "Endpoint",
-     "grant_type",
-     "Scenario",
+     "Code",
      "HTTP status",
-     "Error ref",
-     "Contract status",
+     "error",
+     "Body (exact shape)",
+     "Used by",
      "Notes"
     ],
     "cells": [
-     "AUT-002",
-     "POST /auth/token",
-     "client_credentials",
-     "wrong client_secret",
-     "401",
      "ERR-004",
-     "ACTIVE",
-     "POS shows 're-enter API key' only on 401 + invalid_grant."
+     "401",
+     "invalid_grant",
+     "{\"error\": \"invalid_grant\", \"error_description\": \"Client authentication failed\"}",
+     "AUT-002",
+     "error_description text is shown to cashiers verbatim."
     ],
-    "row": 5,
+    "row": 6,
     "hit": 3
    },
    "related": [
     {
-     "sheet": "Errors",
+     "sheet": "Auth",
      "letters": [
       "A",
       "B",
       "C",
       "D",
       "E",
-      "F"
+      "F",
+      "G",
+      "H"
      ],
      "headers": [
-      "Code",
+      "Rule",
+      "Endpoint",
+      "grant_type",
+      "Scenario",
       "HTTP status",
-      "error",
-      "Body (exact shape)",
-      "Used by",
+      "Error ref",
+      "Contract status",
       "Notes"
      ],
      "cells": [
-      "ERR-004",
-      "401",
-      "invalid_grant",
-      "{\"error\": \"invalid_grant\", \"error_description\": \"Client authentication failed\"}",
       "AUT-002",
-      "error_description text is shown to cashiers verbatim."
+      "POST /auth/token",
+      "client_credentials",
+      "wrong client_secret",
+      "401",
+      "ERR-004",
+      "ACTIVE",
+      "POS shows 're-enter API key' only on 401 + invalid_grant."
      ],
-     "row": 6,
-     "hit": 3
+     "row": 5,
+     "hit": 4
     }
    ],
    "diff": [
@@ -585,7 +585,7 @@
  ],
  "skipped": [
   {
-   "cell": "Orders!H11",
+   "cell": "Orders!D11",
    "change": "Python field `request_id` renamed to `req_id` in OrderResponse.",
    "why": "Field carries `serialization_alias=\"request_id\"` so the wire name is exactly `request_id` as required by ORD-008. Internal rename only.",
    "evidence": {
@@ -628,7 +628,7 @@
      "POS reconciles orders by request_id. Name on the wire must be exactly request_id."
     ],
     "row": 11,
-    "hit": 7
+    "hit": 3
    },
    "diff": [
     {
@@ -690,7 +690,7 @@
    ]
   },
   {
-   "cell": "Orders!H5",
+   "cell": "Orders!E5",
    "change": "Order status value changed from `confirmed` to `pending` on creation.",
    "why": "`pending` is within the allowed enum `pending | confirmed` (ORD-002); no contract row is broken.",
    "evidence": {
@@ -733,7 +733,7 @@
      ""
     ],
     "row": 5,
-    "hit": 7
+    "hit": 4
    },
    "diff": [
     {
@@ -858,6 +858,6 @@
    "new": "A. Okafor"
   }
  ],
- "head": "70f3753",
- "generated": "2026-09-26 23:10 UTC"
+ "head": "a3da88f",
+ "generated": "2026-09-27 00:49 UTC"
 }

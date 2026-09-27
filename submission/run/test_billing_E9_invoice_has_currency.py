@@ -6,7 +6,6 @@ not the current behaviour of the code.
 
 # Fixtures come from tests/conftest.py:
 #   client -> fastapi.testclient.TestClient on a fresh store
-#   order  -> JSON of an order created with X-Request-ID: req_test_001
 
 VALID_ORDER = {"sku": "KORA-TEE", "quantity": 2, "customer_id": "cus_001"}
 

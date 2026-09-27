@@ -114,6 +114,28 @@ that is not in the repository is the kind of thing a judge checks.
 
 ---
 
+## Additional Information  (1900 / 2000)
+
+VERIFY IT IN 60 SECONDS
+
+1. rowgate.vercel.app/run - the published run. Every finding cites a cell, shows the diff line, and names its test. Nothing here is typed by hand; it is exported from the run's own output.
+2. rowgate.vercel.app/dossier.html - the same run as one self-contained file.
+3. github.com/Ritapossible/Rowgate/pull/1 - the pull request under review. CI is RED on purpose: test_billing_E9_invoice_has_currency fails because a human accepted that break instead of fixing it, and the workbook records it. 1 failed, 17 passed. Please do not merge it; the branch carries the planted breaks the demo depends on.
+4. bob_sessions/ - consumption screenshots and exported task histories for both Bob tasks.
+5. .bob/skills/rowgate/SKILL.md - the procedure Bob follows.
+
+THINGS WE'D RATHER YOU HEAR FROM US
+
+- The human baseline (2 of 4 breaks found in 12 minutes) was done by the author, who already knew where the breaks were. It flatters the manual comparison and still loses. A cold reviewer would not do better.
+- In an early run Bob cited the wrong column - the Contract status cell instead of the cell stating the rule. We fixed the Skill with a table naming which cell states each kind of rule. In the run of record Bob made the mistake once more, was told which Skill rule it had broken, and re-cited the findings itself, renaming its own test file. Those references are Bob's, not hand-edited.
+- Exactly one cell anywhere in the output is a human edit: a changelog date Bob invented rather than read from the clock. It is documented in bob_sessions/README.md rather than quietly corrected.
+
+scripts/check_submission.sh is the gate we ran before submitting. It fails if a test the run cites is missing from the branch, if a commit shown on the site is not on it, or if the run claims workbook edits the workbook does not have.
+
+19.22 of 40 Bobcoins used, across two tasks. MIT licensed.
+
+---
+
 ## Step 2 and 3 of the form
 
 - Demo: https://rowgate.vercel.app

@@ -6,7 +6,7 @@ from fastapi.exceptions import RequestValidationError
 from app import auth, billing, orders
 from app.errors import validation_error_handler
 
-app = FastAPI(title="Kora Partner API", version="3.2.0")
+app = FastAPI(title="Kora Partner API", version="3.3.0-rc1")
 app.add_exception_handler(RequestValidationError, validation_error_handler)
 app.include_router(orders.router)
 app.include_router(billing.router)

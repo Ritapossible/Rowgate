@@ -25,7 +25,9 @@ cp web/public/dossier.html "$STAGE/dossier.html"
 # Copy only the top-level files: "cp -r dir/." nested bob_sessions inside itself, and each
 # publish then added another level.
 mkdir -p "$STAGE/bob_sessions"
-find bob_sessions -maxdepth 1 -type f -exec cp {} "$STAGE/bob_sessions/" \; 2>/dev/null || true
+# README.md is main's own note about these reports, not a session report: copying it from the
+# branch would overwrite whatever main says.
+find bob_sessions -maxdepth 1 -type f ! -name README.md -exec cp {} "$STAGE/bob_sessions/" \; 2>/dev/null || true
 # The files Bob actually produced, so main carries them too: the branch holds the live tests,
 # but a judge lands on main and the pitch is that the tests stay in the repo.
 mkdir -p "$STAGE/run"

@@ -95,15 +95,15 @@ or Bobcoins are spent.
 | — | — | start | 0 | 40 |
 | 26 Sep 14:30 WAT | Ask → Contract Gate | task01: rehearsal and dry run in one task (2 workbook questions, `/rowgate`, 3 subagents, 3 tests, 2 fixes, 1 `office_edit`) | 6.24 | 33.76 |
 | 26 Sep 15:29 WAT | Contract Gate | task02: full run, published (`/rowgate`, subagents, 4 tests, 3 fixes, 1 `office_edit`, `check_submission.sh`) | 6.10 | 27.66 |
+| 26 Sep 17:26 WAT | Contract Gate | **task03: the run of record** (`/rowgate`, 3 subagents in parallel, 4 tests, 3 fixes, 1 `office_edit`, citations re-cited by Bob on request) | 6.02 | 21.64 |
 
-Both figures are the per-task totals on the task header in History, read 26 Sep.
+All three figures are the per-task totals on the task header in History, read 26 Sep.
 The 0.848 noted earlier was a mid-task reading of task01, not its final cost.
 
-**27.66 left, and a full run costs about 6.1.** That is four more runs. The recorded run
-needs one; keep two in reserve in case it has to be redone, and do not spend the rest on
-rehearsals — task01 already proved Bob reads inheritance and merged cells correctly.
+**21.64 left.** The recorded run is done (task03), so nothing further has to be spent. Three
+runs cost 6.24, 6.10 and 6.02, so a full `/rowgate` run is reliably about 6.1 — that is the
+figure for **[C]** on the slides. Any redo costs another 6.1 and there is room for three.
 
-Budget from here: recorded run ≈ 6.1 · one retry ≈ 6.1 · reserve ≥ 15.
 If a run ever exceeds 10, cut to two subagents (see ARCHITECTURE §8).
 
 ## 7. Session log
@@ -111,6 +111,7 @@ If a run ever exceeds 10, cut to two subagents (see ARCHITECTURE §8).
 | When (WAT) | What happened |
 | --- | --- |
 | 24 Sep | Idea chosen (Rowgate). Bob capability limits verified. Repo created; ARCHITECTURE, MEMORY, PLAN written. |
+| 26 Sep 17:26 WAT | **Run of record: task03, 6.02 coins.** The three subagents ran **in parallel** (confirmed on screen). Four breaks, every citation in the column that states the rule: `Orders!C14`, `Billing!E9`, `Auth!E5`, `Errors!D6`; two holds cleared on `Orders!D11` and `Orders!E5`. Bob's first pass repeated task02's three wrong columns; asked which Skill rule it had broken, it re-cited them itself and renamed its own test file. 4/4 red → 3/4 green, F2 recorded with `Billing!H9 = BREAKING` + Changelog row 6, renderer 0 problems. Branch committed and pushed **before** publishing, so the Run page's commits all exist. `check_submission.sh`: **Ready to submit.** One human edit: the Changelog date, see `bob_sessions/README.md`. |
 | 26 Sep 15:29 WAT | **Run of record (task02).** Four breaks, all cited: Orders!C14, Billing!E9, Auth!E5 and a fourth the dry run had folded into F3 — Auth!D5, FastAPI's `{"detail": …}` instead of the shared error envelope. Two holds cleared (Orders!H11 alias, Orders!H5 enum). Three tests red → green, F2 stays red and is recorded with `Billing!H9 = BREAKING` + Changelog row 6. Renderer: 0 problems, 7 workbook cells changed. `decided_by` is a person now, so the Skill fix took. Two blemishes: F4 cites `Auth!D5`, which is the **Scenario** column, not the envelope rule (`Auth!F5` / the Errors sheet), and the Changelog date came out `2025-07-14` — Bob has no clock, so the Skill must take the date from `date +%F`. |
 | 26 Sep 14:30 WAT | **Dry run passed end to end.** Bob (Contract Gate + rowgate Skill) found 3 breaks with correct cells (Orders!C14, Billing!E9, Auth!E5), skipped 2 holds (Orders!D11 alias, Orders!E5 enum), wrote 3 cell-named tests all red, then F1/F3 fix_code → green, F2 record_breaking → office_edit set Billing!H9=BREAKING + Changelog row 6. Renderer: 0 problems. No false positives. Rehearsal cost 0.848 coins total. |
 | 26 Sep | Windows readiness pass on the user's PC. Two real bugs fixed: pathlib read/write used the cp1252 locale (render_dossier.py crashed on the dossier's arrow), and the scripts called bare `python`, which on this machine is the WindowsApps interpreter with none of the requirements — they now prefer `.venv`. `demo/start` and `feature/fast-checkout` rebased onto main to carry both fixes (D19 relaxed: the rebase happened in the user's own clone). `reset_demo.sh` says `Ready.`, 14 tests green, rehearsal cells verified in the workbook. Not yet pushed. 0 Bobcoins used. |

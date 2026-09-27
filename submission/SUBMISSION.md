@@ -34,9 +34,11 @@ pass and fail come from pytest, and workbook edits are compared against git. The
 the repository, so every later pull request is checked by plain pytest in CI, with no model and
 no tokens.
 
-On a sample partner API with three planted breaks and one harmless rename, reading the diff
-found [B] of 3 and flagged the rename. Rowgate found [N] of 3, skipped the rename with the
-reason (the wire name is unchanged), and proved each break with a failing test.
+On a sample partner API with three planted edits and one harmless rename, reading the diff
+found [B] and flagged the rename. Rowgate found all [N] broken cells, skipped the rename with
+the reason (the wire name is unchanged), and proved each break with a failing test. The three
+edits break [N] signed cells, because the auth change moved both the status code and the error
+envelope and each cell is cited separately; use the count `scripts/run_numbers.py` prints.
 
 ## Technologies / tags
 

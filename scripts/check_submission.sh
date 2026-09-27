@@ -39,7 +39,7 @@ echo "Safety"
 # IBM Cloud API keys are 44 chars of [A-Za-z0-9_-]; also catch obvious key names and private keys.
 secrets=$( { git ls-files; find bob_sessions -type f; } | sort -u | grep -v -E '\.(png|jpg|xlsx)$|package-lock\.json' \
   | xargs -r grep -n -I -E '(api[_-]?key|apikey|IBM_CLOUD|BOB_API|secret_key|access_token)["'"'"' ]*[:=]["'"'"' ]*[A-Za-z0-9_\-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY|\b[A-Za-z0-9_-]{44}\b' 2>/dev/null \
-  | grep -v -E 'demo-secret-kora-pos|sha512-|integrity|test_[A-Za-z0-9_]{20,}' | head -5)
+  | grep -v -E 'demo-secret-kora-pos|sha512-|integrity|test_[A-Za-z0-9_]{20,}' | head -5)
 [[ -z "$secrets" ]] && ok "no credential-like strings found" || { bad "possible credentials, remove before submitting:"; echo "$secrets" | sed 's/^/      /'; }
 
 echo "Wording"

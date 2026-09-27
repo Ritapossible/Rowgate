@@ -28,14 +28,14 @@ amber `#E3B64F` for the cited cell), serif headlines (Newsreader), logo from
 
 **Review reads the diff. The partner signed a spreadsheet.**
 
-Left: the PR, 5 files, +24 −12, existing tests green, "looks mergeable".
+Left: the PR, 5 files, +21 −9, existing tests green, "looks mergeable".
 Right: `api-contract.xlsx`, 41 signed rules, 6 sheets, 0 of them in the diff.
 
 - Partner integrations in banking, telco and insurance are signed as spreadsheets and never become OpenAPI.
 - A status code or a required field changes; nothing in the PR says so.
 - The cost lands after release: failed checkouts, rejected invoices, support tickets.
 
-**Say:** "In our demo the pull request is green. It still breaks three signed rows."
+**Say:** "In our demo nothing in the repo's own test suite objects. It still breaks four signed cells."
 
 ---
 

@@ -12,8 +12,9 @@ minutes where the video shows seconds; that's what the edit is for. All numbers 
   Bob IDE · rowgate.vercel.app/run · PR **Checks**.
 - Record the voice-over **separately** afterwards (phone voice memo in a quiet room is fine),
   then lay it over the cut. That's easier than talking while Bob works. The lines below are the
-  shot list's short form; **`submission/VOICEOVER.md` is the sheet to read from**, timed to about
-  two words per second with the word count per block.
+  shot list's short form; **`submission/VOICEOVER.md` is the sheet to read from.** It is written for the
+  three clips that were actually captured — the website, the subagent run and the pull request —
+  and the shot list below is the fuller version, for reference.
 - The frames that are not footage are already rendered in `submission/cards/`: the numbers card,
   the end card, and a transparent caption chip per cell. `scripts/render_cards.py` remakes them.
 
